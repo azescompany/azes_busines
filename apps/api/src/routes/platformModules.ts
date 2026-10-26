@@ -17,11 +17,7 @@ import { z } from 'zod';
 import { requireAuth, requirePermission, type AuthedEnv } from '../auth/requireAuth.js';
 import { nowSec } from '../auth/tokens.js';
 import { createDb } from '../db/client.js';
-import {
-  moduleMenus,
-  organizationModules,
-  platformModules,
-} from '../db/schema.js';
+import { moduleMenus, organizationModules, platformModules } from '../db/schema.js';
 import { ApiHttpError } from '../errors.js';
 
 function parseBody<T>(schema: z.ZodType<T>, raw: unknown): T {

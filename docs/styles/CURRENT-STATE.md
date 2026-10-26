@@ -142,15 +142,15 @@ in layout engine.
 
 ### App adoption (web)
 
-| App                | Theme / UI shell                                              | Notes                                                                                           |
-| ------------------ | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `account`          | `AzesUiProvider`                                              | Login/branding in app features; no dashboard layout yet                                         |
+| App                | Theme / UI shell                                              | Notes                                                                                                        |
+| ------------------ | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `account`          | `AzesUiProvider`                                              | Login/branding in app features; no dashboard layout yet                                                      |
 | `admin`            | `AzesUiProvider` + `AzesDashboardLayout` in `AdminShell`      | Port **200**; Home-only primary nav; locale + `AzesAccountMenu` in `headerEnd`; settings drawer (no AI rail) |
-| `azes-ui`          | Showcase / pilot                                              | Full platform demos · port **700**                                                              |
-| `agent-platform`   | `AzesThemeProvider` only                                      | Lighter Vite shell                                                                              |
-| `agent-site`       | `AzesThemeProvider` (+ Next exceptions per ADR-009)           | App Router · port 3000                                                                          |
-| `realestate`       | `AzesThemeProvider` (+ Next exceptions per ADR-009)           | App Router                                                                                      |
-| `real-estate-site` | `AzesUiProvider` + `AzesDashboardLayout` (`CaspianSiteShell`) | Caspian Key L-shell + Phase 2 scoop marketplace UI; brief: `styles-current/real-estate-site.md` |
+| `azes-ui`          | Showcase / pilot                                              | Full platform demos · port **700**                                                                           |
+| `agent-platform`   | `AzesThemeProvider` only                                      | Lighter Vite shell                                                                                           |
+| `agent-site`       | `AzesThemeProvider` (+ Next exceptions per ADR-009)           | App Router · port 3000                                                                                       |
+| `realestate`       | `AzesThemeProvider` (+ Next exceptions per ADR-009)           | App Router                                                                                                   |
+| `real-estate-site` | `AzesUiProvider` + `AzesDashboardLayout` (`CaspianSiteShell`) | Caspian Key L-shell + Phase 2 scoop marketplace UI; brief: `styles-current/real-estate-site.md`              |
 
 Native (`ui-native`) unchanged relative to the MUI web platform track.
 

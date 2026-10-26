@@ -27,10 +27,7 @@ import type { TenantRepository } from './org/tenantRepository.js';
 import type { PlatformOverviewDto } from './org/types.js';
 import { createDb } from './db/client.js';
 import type { MenuRepository } from './menu/repository.js';
-import {
-  createDrizzleMenuRepository,
-  createMemoryMenuRepository,
-} from './menu/repository.js';
+import { createDrizzleMenuRepository, createMemoryMenuRepository } from './menu/repository.js';
 import { createAuthRoutes } from './routes/auth.js';
 import { healthRoutes } from './routes/health.js';
 import { createLmsDashboardRoutes } from './routes/lmsDashboard.js';
@@ -82,9 +79,7 @@ export function createApp(options: CreateAppOptions = {}) {
   app.use('*', async (c, next) => {
     const repo =
       options.menuRepo ??
-      (c.env.DB
-        ? createDrizzleMenuRepository(createDb(c.env.DB))
-        : createMemoryMenuRepository());
+      (c.env.DB ? createDrizzleMenuRepository(createDb(c.env.DB)) : createMemoryMenuRepository());
     c.set('menuRepo', repo);
     await next();
   });

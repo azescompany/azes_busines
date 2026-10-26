@@ -14,7 +14,12 @@ import { and, eq } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { z } from 'zod';
 
-import { getAuthUser, requireAuth, requirePermission, type AuthedEnv } from '../auth/requireAuth.js';
+import {
+  getAuthUser,
+  requireAuth,
+  requirePermission,
+  type AuthedEnv,
+} from '../auth/requireAuth.js';
 import { nowSec } from '../auth/tokens.js';
 import { createDb } from '../db/client.js';
 import {
@@ -167,7 +172,12 @@ export function createAccessRoutes(_options: CreateAccessRoutesOptions = {}) {
         throw new ApiHttpError(400, 'VALIDATION_ERROR', 'orgId required');
       }
       if (!c.env.DB) {
-        return c.json({ userId, orgId, menuIds: body.menuIds, permissions: body.permissions ?? [] });
+        return c.json({
+          userId,
+          orgId,
+          menuIds: body.menuIds,
+          permissions: body.permissions ?? [],
+        });
       }
       const db = createDb(c.env.DB);
       const now = nowSec();

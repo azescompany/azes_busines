@@ -12,10 +12,7 @@
 
 import { ApiHttpError } from '../errors.js';
 import type { MenuRepository } from '../menu/repository.js';
-import {
-  resolveEffectiveNav,
-  resolveEffectivePermissions,
-} from '../menu/effectiveAccess.js';
+import { resolveEffectiveNav, resolveEffectivePermissions } from '../menu/effectiveAccess.js';
 import type { AuthNavItem } from './navCatalog.js';
 import { normalizeRoles, primaryRole } from './permissions.js';
 import { normalizeUsername, verifyPassword } from './password.js';

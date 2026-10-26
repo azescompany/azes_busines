@@ -125,7 +125,11 @@ export function createOrgRoutes(options: CreateOrgRoutesOptions = {}) {
         }
         const multi = (user as { orgMulti?: boolean }).orgMulti;
         if (multi === false) {
-          throw new ApiHttpError(403, 'FORBIDDEN', 'orgMulti required to create child organization');
+          throw new ApiHttpError(
+            403,
+            'FORBIDDEN',
+            'orgMulti required to create child organization',
+          );
         }
       }
     } else if (!claimHasPermission(user, 'org.manage_all')) {

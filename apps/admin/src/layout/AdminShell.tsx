@@ -10,12 +10,7 @@
  * ╚══════════════════════════════════════════════════════════════╝
  */
 
-import {
-  changeAppLocale,
-  LOCALE_META,
-  useTranslation,
-  type SupportedLocale,
-} from '@azes/i18n';
+import { changeAppLocale, LOCALE_META, useTranslation, type SupportedLocale } from '@azes/i18n';
 import { useAuthClient, useAuthSession } from '@azes/auth';
 import { MuiBox } from '@azes/ui-web';
 import { AzesDashboardLayout } from '@azes/ui-web/layout';
@@ -33,10 +28,7 @@ import { useSessionMe } from '../auth/useSessionMe.js';
 import { adminEnv } from '../config/env.js';
 import { OrgSwitcher } from '../features/organizations/index.js';
 import { ADMIN_NAMESPACE } from '../i18n/createAdminI18n.js';
-import {
-  createPrimaryNavFromMe,
-  isPathAllowedByNav,
-} from '../navigation/primaryNav.js';
+import { createPrimaryNavFromMe, isPathAllowedByNav } from '../navigation/primaryNav.js';
 import { createAdminRailNav } from '../navigation/railNav.js';
 import { AdminLogo } from './AdminLogo.js';
 

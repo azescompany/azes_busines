@@ -16,29 +16,29 @@ Academy SPA silinib; API LMS surface hələ monorepo-dadır. M1 Tenant Core LMS-
 
 ## Frontend
 
-| Path | Status |
-| --- | --- |
-| `apps/academy` | **REMOVED** (2026-10-26) |
-| `docs/academy`, `docs/menus` | **REMOVED** |
+| Path                         | Status                   |
+| ---------------------------- | ------------------------ |
+| `apps/academy`               | **REMOVED** (2026-10-26) |
+| `docs/academy`, `docs/menus` | **REMOVED**              |
 
 ## API route modules
 
-| File | Prefix / concern |
-| --- | --- |
-| `apps/api/src/routes/lms.ts` | `/api/v1/categories`, `/courses*`, enroll, lessons, progress, files |
-| `apps/api/src/routes/lmsManage.ts` | `/api/v1/manage/courses*`, modules, lessons, archive, files |
-| `apps/api/src/routes/lmsQuiz.ts` | manage + student quizzes/assignments/attempts |
-| `apps/api/src/routes/lmsDashboard.ts` | `/api/v1/me/*` dashboard/certs/bookmarks; manage analytics |
-| `apps/api/src/routes/org.ts` | `/api/v1/orgs*`, tracks, org-admins (RBAC era) |
+| File                                  | Prefix / concern                                                    |
+| ------------------------------------- | ------------------------------------------------------------------- |
+| `apps/api/src/routes/lms.ts`          | `/api/v1/categories`, `/courses*`, enroll, lessons, progress, files |
+| `apps/api/src/routes/lmsManage.ts`    | `/api/v1/manage/courses*`, modules, lessons, archive, files         |
+| `apps/api/src/routes/lmsQuiz.ts`      | manage + student quizzes/assignments/attempts                       |
+| `apps/api/src/routes/lmsDashboard.ts` | `/api/v1/me/*` dashboard/certs/bookmarks; manage analytics          |
+| `apps/api/src/routes/org.ts`          | `/api/v1/orgs*`, tracks, org-admins (RBAC era)                      |
 
 ## Migrations
 
-| Migration | Topic |
-| --- | --- |
-| `0002_lms_foundation.sql` | LMS core tables |
+| Migration                 | Topic              |
+| ------------------------- | ------------------ |
+| `0002_lms_foundation.sql` | LMS core tables    |
 | `0003_org_rbac_track.sql` | Org + RBAC + Track |
-| `0004_lms_quiz.sql` | Quiz |
-| `0005_lms_dashboard.sql` | Dashboard/certs |
+| `0004_lms_quiz.sql`       | Quiz               |
+| `0005_lms_dashboard.sql`  | Dashboard/certs    |
 
 ## OpenAPI / client
 

@@ -133,9 +133,7 @@ export function RoleMenusView() {
         <AzesSkeleton shape="rect" height={200} width="100%" />
       ) : (
         <Stack gap={1}>
-          <Text weight="bold">
-            {t('roleMenus.menusFor', { role: selectedRole })}
-          </Text>
+          <Text weight="bold">{t('roleMenus.menusFor', { role: selectedRole })}</Text>
           {(menusQuery.data?.items ?? []).map((menu) => (
             <FormControlLabel
               key={menu.id}

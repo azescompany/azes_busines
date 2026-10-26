@@ -19,20 +19,20 @@
 
 ## DONE meyarları
 
-| Meyar | Nəticə |
-| --- | --- |
-| Təşkilat yaratmaq / idarə | PASS — mövcud SuperAdmin CRUD + `GET /orgs/{id}` + profile patch |
-| İlkin OrgAdmin dəvəti + qəbul | PASS — invite create + `POST /invitations/accept` (token hash, TTL, single-use) |
-| OrgAdmin üzv dəvəti | PASS — `org.manage` + active org scope |
-| Multi-org membership | PASS — `organization_memberships` + `GET /me/organizations` |
-| Server-side rollar | PASS — membership role → `user_roles` sync on active switch |
-| Active org API | PASS — `POST /me/active-organization` → yeni token cütü |
-| Cross-org ID isolation | PASS — `tenantMembership.test.ts` (403) |
-| Tenant cache/UI ayrımı | PARTIAL — switch `invalidateQueries` + yeni JWT; brauzer E2E yox |
-| OpenAPI / Orval / `@azes/api` | PASS — OpenAPI **0.14.0**, `pnpm generate` |
-| Unit/integration testlər | PASS — api-server **81** tests |
-| Lint/typecheck/build | PARTIAL — api typecheck PASS; admin typecheck PASS; full monorepo build/Coordinator yox |
-| Qəbul hesabatı | Bu fayl |
+| Meyar                         | Nəticə                                                                                  |
+| ----------------------------- | --------------------------------------------------------------------------------------- |
+| Təşkilat yaratmaq / idarə     | PASS — mövcud SuperAdmin CRUD + `GET /orgs/{id}` + profile patch                        |
+| İlkin OrgAdmin dəvəti + qəbul | PASS — invite create + `POST /invitations/accept` (token hash, TTL, single-use)         |
+| OrgAdmin üzv dəvəti           | PASS — `org.manage` + active org scope                                                  |
+| Multi-org membership          | PASS — `organization_memberships` + `GET /me/organizations`                             |
+| Server-side rollar            | PASS — membership role → `user_roles` sync on active switch                             |
+| Active org API                | PASS — `POST /me/active-organization` → yeni token cütü                                 |
+| Cross-org ID isolation        | PASS — `tenantMembership.test.ts` (403)                                                 |
+| Tenant cache/UI ayrımı        | PARTIAL — switch `invalidateQueries` + yeni JWT; brauzer E2E yox                        |
+| OpenAPI / Orval / `@azes/api` | PASS — OpenAPI **0.14.0**, `pnpm generate`                                              |
+| Unit/integration testlər      | PASS — api-server **81** tests                                                          |
+| Lint/typecheck/build          | PARTIAL — api typecheck PASS; admin typecheck PASS; full monorepo build/Coordinator yox |
+| Qəbul hesabatı                | Bu fayl                                                                                 |
 
 ## Audit plan
 

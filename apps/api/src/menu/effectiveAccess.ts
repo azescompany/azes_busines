@@ -10,11 +10,7 @@
  * ╚══════════════════════════════════════════════════════════════╝
  */
 
-import {
-  normalizeRoles,
-  permissionsForRoles,
-  type Permission,
-} from '../auth/permissions.js';
+import { normalizeRoles, permissionsForRoles, type Permission } from '../auth/permissions.js';
 import type { AuthNavItem } from '../auth/navCatalog.js';
 import type { MenuRepository } from './repository.js';
 

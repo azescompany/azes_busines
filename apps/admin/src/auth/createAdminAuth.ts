@@ -63,7 +63,9 @@ async function bestEffortLogout(client: AuthClient): Promise<void> {
 
 function redirectToAccountLogin(): void {
   if (typeof window === 'undefined') return;
-  const returnUrl = encodeURIComponent(window.location.href.split('#')[0] ?? window.location.origin);
+  const returnUrl = encodeURIComponent(
+    window.location.href.split('#')[0] ?? window.location.origin,
+  );
   window.location.assign(`${adminEnv.accountAppUrl}/?returnUrl=${returnUrl}`);
 }
 

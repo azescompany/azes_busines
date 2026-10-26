@@ -82,7 +82,9 @@ function clearHandoffHash(): void {
  * Read `#azes_auth`, seed device fingerprint, establish session, strip hash.
  * Safe to call when no handoff is present (no-op).
  */
-export async function consumeAuthHandoff(client: AuthClient): Promise<'ok' | 'missing' | 'invalid'> {
+export async function consumeAuthHandoff(
+  client: AuthClient,
+): Promise<'ok' | 'missing' | 'invalid'> {
   if (typeof window === 'undefined') return 'missing';
   if (!hasPendingAuthHandoff()) return 'missing';
 

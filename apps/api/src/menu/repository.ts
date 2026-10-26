@@ -29,10 +29,7 @@ export interface MenuRepository {
   setRoleMenus(roleName: string, menuIds: string[]): Promise<string[]>;
 }
 
-function mapMenu(
-  row: typeof schema.menus.$inferSelect,
-  permissionCodes: string[],
-): MenuDto {
+function mapMenu(row: typeof schema.menus.$inferSelect, permissionCodes: string[]): MenuDto {
   return {
     id: row.id,
     app: row.app,
@@ -293,12 +290,7 @@ function defaultRoleMenus(): Record<string, string[]> {
       'menu-admin-role-menus',
       'menu-admin-customers',
     ],
-    orgAdmin: [
-      'menu-admin-home',
-      'menu-admin-orgs',
-      'menu-admin-users',
-      'menu-admin-customers',
-    ],
+    orgAdmin: ['menu-admin-home', 'menu-admin-orgs', 'menu-admin-users', 'menu-admin-customers'],
     instructor: ['menu-admin-home'],
     student: ['menu-admin-home'],
   };

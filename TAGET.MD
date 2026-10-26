@@ -290,15 +290,15 @@ M1 tenant core LMS-ə xüsusi məcburi asılılıq yaratmamalıdır.
 
 ### M0 DONE meyarları
 
-- [x] SSO və əsas auth ssenariləri yoxlanıb. *(unit + api-server auth/rbac tests; ports smoke)*
-- [x] Refresh, logout, 401 və 403 davranışı sınaqdan keçirilib. *(api-server auth + rateLimit tests)*
+- [x] SSO və əsas auth ssenariləri yoxlanıb. _(unit + api-server auth/rbac tests; ports smoke)_
+- [x] Refresh, logout, 401 və 403 davranışı sınaqdan keçirilib. _(api-server auth + rateLimit tests)_
 - [x] Auth təhlükəsizlik auditi yazılıb. → `docs/ops/M0-AUDIT-REPORT.md`
-- [x] Kritik risklər düzəldilib və ya açıq şəkildə bloklayıcı kimi sənədləşdirilib. *(handoff TTL; HttpOnly/git açıq)*
-- [x] D1 və miqrasiya davranışı yoxlanıb. *(migration inventory; local D1 bindings in wrangler)*
+- [x] Kritik risklər düzəldilib və ya açıq şəkildə bloklayıcı kimi sənədləşdirilib. _(handoff TTL; HttpOnly/git açıq)_
+- [x] D1 və miqrasiya davranışı yoxlanıb. _(migration inventory; local D1 bindings in wrangler)_
 - [ ] OpenAPI/Orval drift vəziyyəti təsdiqlənib. **BLOCKED:** `generate:check` requires `.git`
-- [x] Quality gates nəticələri qeydə alınıb. *(account/admin/api-server tests + scoped build PASS)*
-- [x] Portlar və lokal işə salınma sənədləşdirilib. *(100/200/700/8787 LISTEN)*
-- [x] Git və sirrlər üzrə yoxlama tamamlanıb. *(`.git` yoxdur — init user təsdiqi gözləyir)*
+- [x] Quality gates nəticələri qeydə alınıb. _(account/admin/api-server tests + scoped build PASS)_
+- [x] Portlar və lokal işə salınma sənədləşdirilib. _(100/200/700/8787 LISTEN)_
+- [x] Git və sirrlər üzrə yoxlama tamamlanıb. _(`.git` yoxdur — init user təsdiqi gözləyir)_
 - [x] LMS inventory hazırlanıb. → `docs/ops/M0-LMS-INVENTORY.md`
 - [x] M0 nəticə hesabatı təqdim edilib. → `docs/ops/M0-AUDIT-REPORT.md`
 
@@ -663,9 +663,6 @@ Hər mərhələnin sonunda təqdim et:
 M1 implementasiyasına başlama. Təşkilat, istifadəçi, dəvət və biznes UI funksiyalarını M0-a daxil etmə.
 
 M0 qəbul meyarları tam təsdiqlənəndən sonra STOP et və istifadəçinin M1 üçün təsdiqini gözlə.
-
-
-
 
 ## BACK END
 

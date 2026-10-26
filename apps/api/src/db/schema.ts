@@ -344,10 +344,7 @@ export const auditLogs = sqliteTable(
     metaJson: text('meta_json'),
     createdAt: integer('created_at', { mode: 'number' }).notNull(),
   },
-  (t) => [
-    index('audit_logs_created_idx').on(t.createdAt),
-    index('audit_logs_org_idx').on(t.orgId),
-  ],
+  (t) => [index('audit_logs_created_idx').on(t.createdAt), index('audit_logs_org_idx').on(t.orgId)],
 );
 
 export const crmCustomers = sqliteTable(

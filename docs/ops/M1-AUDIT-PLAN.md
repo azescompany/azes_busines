@@ -14,16 +14,16 @@
 
 ## Mövcud vəziyyət (tapıntılar)
 
-| Sahə | Vəziyyət |
-| --- | --- |
-| `organizations` | Var (`0003_org_rbac_track.sql`); CRUD SuperAdmin (`org.create` / `org.manage_all`) |
-| `users.org_id` | Tək aktiv təşkilat pointeri; multi-membership yoxdur |
-| Rollar | Global `user_roles` + `roles`; JWT `roles` + `orgId` |
-| OrgAdmin | `POST /api/v1/org-admins` — user + `orgAdmin` rol + `org_id` (müvəqqəti parol) |
-| Scope | `assertSameOrg` / `assertCanWriteTrack` — `users.org_id` üzərindən |
-| Dəvət | Yox |
-| Active org switch | Yox |
-| Admin UI | Yalnız Home (M0); Orgs/Users yox |
+| Sahə              | Vəziyyət                                                                           |
+| ----------------- | ---------------------------------------------------------------------------------- |
+| `organizations`   | Var (`0003_org_rbac_track.sql`); CRUD SuperAdmin (`org.create` / `org.manage_all`) |
+| `users.org_id`    | Tək aktiv təşkilat pointeri; multi-membership yoxdur                               |
+| Rollar            | Global `user_roles` + `roles`; JWT `roles` + `orgId`                               |
+| OrgAdmin          | `POST /api/v1/org-admins` — user + `orgAdmin` rol + `org_id` (müvəqqəti parol)     |
+| Scope             | `assertSameOrg` / `assertCanWriteTrack` — `users.org_id` üzərindən                 |
+| Dəvət             | Yox                                                                                |
+| Active org switch | Yox                                                                                |
+| Admin UI          | Yalnız Home (M0); Orgs/Users yox                                                   |
 
 **Qərar:** Parallel org modeli yaratmamaq. `organizations` + mövcud permission saxlanılır; üzərinə `organization_memberships` + `organization_invitations` əlavə olunur. `users.org_id` = **aktiv təşkilat**.
 

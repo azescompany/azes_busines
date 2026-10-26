@@ -46,7 +46,7 @@ work.
 | `@azes/realestate`        | Next.js | `next dev`           | 3001 |
 | `@azes/real-estate-site`  | Next.js | `next dev`           | 400  |
 | `@azes/agent-platform`    | Vite    | `vite`               | 5175 |
-| `@azes/azes-ui`           | Vite    | `vite`               | 700 |
+| `@azes/azes-ui`           | Vite    | `vite`               | 700  |
 | `@azes/mobile-account`    | Expo    | Metro (`expo start`) | 8081 |
 | `@azes/mobile-agent`      | Expo    | Metro (`expo start`) | 8082 |
 | `@azes/mobile-realestate` | Expo    | Metro (`expo start`) | 8083 |

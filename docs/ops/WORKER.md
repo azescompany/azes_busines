@@ -150,14 +150,14 @@ Living snapshots: `docs/styles/CURRENT-STATE.md` (Dizayner), `docs/api/CURRENT-S
 > silindi. Köhnə monorepo baza kimi qalır; üzərində yeni məhsul/repo işləri üçün.
 > LMS track dayandırılıb. `apps/api` LMS route-ları hələ ağacda ola bilər (ayrıca təmizlik).
 
-| Field                 | Value                                                                 |
-| --------------------- | --------------------------------------------------------------------- |
-| Current step          | TAGET M1 Tenant Core                                                  |
-| Status                | `COMPLETED` (PARTIAL — D1 migrate/E2E brauzer; no `.git`)              |
-| Last completed        | M1 membership/invite/active-org + Admin UI (2026-10-26)               |
-| Next action           | STOP — user M1 qəbulu; sonra M2 Module Registry                       |
-| Decisions (CLAUDE §3) | N/A — sources silinib                                                 |
-| M3–M8 status          | historical only (kod/docs silinib)                                    |
+| Field                 | Value                                                     |
+| --------------------- | --------------------------------------------------------- |
+| Current step          | TAGET M1 Tenant Core                                      |
+| Status                | `COMPLETED` (PARTIAL — D1 migrate/E2E brauzer; no `.git`) |
+| Last completed        | M1 membership/invite/active-org + Admin UI (2026-10-26)   |
+| Next action           | STOP — user M1 qəbulu; sonra M2 Module Registry           |
+| Decisions (CLAUDE §3) | N/A — sources silinib                                     |
+| M3–M8 status          | historical only (kod/docs silinib)                        |
 
 ### Adaptasiya (haradayıq → yeni prompt)
 

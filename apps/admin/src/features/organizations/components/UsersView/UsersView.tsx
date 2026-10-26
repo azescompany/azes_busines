@@ -11,10 +11,7 @@
  */
 
 import type { OrgMembership } from '@azes/api/azes/models';
-import {
-  useGetApiV1MeOrganizations,
-  useGetApiV1OrgsOrgIdMembers,
-} from '@azes/api/azes/orgs';
+import { useGetApiV1MeOrganizations, useGetApiV1OrgsOrgIdMembers } from '@azes/api/azes/orgs';
 import { useTranslation } from '@azes/i18n';
 import { Stack, Text } from '@azes/ui-web';
 import { AzesTable, type AzesTableProps } from '@azes/ui-web/table';

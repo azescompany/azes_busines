@@ -19,22 +19,22 @@
 
 ## Tamamlanan
 
-| Mərhələ | Nəticə |
-| --- | --- |
+| Mərhələ                     | Nəticə                                                         |
+| --------------------------- | -------------------------------------------------------------- |
 | M1.6 Bootstrap & Live Authz | `useSessionMe` + `requirePermission`→`effectiveCan`; test PASS |
-| M2 Module Registry | `0008_platform_modules`; `GET/PUT …/modules` |
-| M2.5 Hierarchy & orgMulti | `0009`; root yalnız SuperAdmin; `parentOrganizationId` |
-| M3 User Access Profiles | `0010`; profiles + user access API |
-| M3.5 Data Scope | membership `data_scope`; CRM list filter |
-| M4 Audit & CRM | `0011`; audit-logs + customers CRUD + Admin UI |
+| M2 Module Registry          | `0008_platform_modules`; `GET/PUT …/modules`                   |
+| M2.5 Hierarchy & orgMulti   | `0009`; root yalnız SuperAdmin; `parentOrganizationId`         |
+| M3 User Access Profiles     | `0010`; profiles + user access API                             |
+| M3.5 Data Scope             | membership `data_scope`; CRM list filter                       |
+| M4 Audit & CRM              | `0011`; audit-logs + customers CRUD + Admin UI                 |
 
 ## Validation
 
-| Gate | Nəticə |
-| --- | --- |
-| migrate 0008–0011 | PASS |
-| vitest menu/rbac/tenant/erp (27) | PASS |
-| api-server + admin typecheck | PASS |
+| Gate                             | Nəticə |
+| -------------------------------- | ------ |
+| migrate 0008–0011                | PASS   |
+| vitest menu/rbac/tenant/erp (27) | PASS   |
+| api-server + admin typecheck     | PASS   |
 
 ## Açıq risklər
 

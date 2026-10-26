@@ -350,9 +350,7 @@ export function createMemoryTenantRepository(seed?: {
   }>;
   activeOrgByUser?: Record<string, string | null>;
 }): TenantRepository {
-  const orgs = new Map(
-    (seed?.orgs ?? []).map((o) => [o.id, { ...o }]),
-  );
+  const orgs = new Map((seed?.orgs ?? []).map((o) => [o.id, { ...o }]));
   const memberships: MembershipDto[] = (seed?.memberships ?? []).map((m) => {
     const org = orgs.get(m.orgId);
     const ts = nowSec();
@@ -372,9 +370,7 @@ export function createMemoryTenantRepository(seed?: {
   });
   const invitations: InvitationDto[] = [];
   const inviteHashes = new Map<string, string>();
-  const activeOrg = new Map<string, string | null>(
-    Object.entries(seed?.activeOrgByUser ?? {}),
-  );
+  const activeOrg = new Map<string, string | null>(Object.entries(seed?.activeOrgByUser ?? {}));
 
   return {
     async getOrganizationMeta(orgId) {

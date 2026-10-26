@@ -10,10 +10,7 @@
  * ╚══════════════════════════════════════════════════════════════╝
  */
 
-export function checkPermission(
-  permissions: readonly string[] | undefined,
-  code: string,
-): boolean {
+export function checkPermission(permissions: readonly string[] | undefined, code: string): boolean {
   if (!permissions || permissions.length === 0) return false;
   return permissions.includes(code);
 }

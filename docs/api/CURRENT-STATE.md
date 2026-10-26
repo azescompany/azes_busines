@@ -84,12 +84,12 @@ Feature pages
 
 ### App adoption
 
-| App       | `configureApi`                     | Auth → API                                 | Query usage notes                                                |
-| --------- | ---------------------------------- | ------------------------------------------ | ---------------------------------------------------------------- |
-| `account` | yes (`accountEnv.apiBaseUrl`)      | `createAccountAuth`                        | Login via `@azes/api/azes`; refresh `{ refreshToken, deviceId }` |
-| `admin`   | yes (`adminEnv.apiBaseUrl`)        | `createAdminAuth` + `#azes_auth` consume   | Port **200**; L-shell Home-only; Account post-login handoff      |
-| `azes-ui` | showcase                           | n/a                                        | Design system demo                                               |
-| `api`     | n/a (is the server)                | Phase 2B `/api/v1/auth/*`                  | Local Wrangler + D1; seed `local.dev` (see apps/api README)      |
+| App       | `configureApi`                | Auth → API                               | Query usage notes                                                |
+| --------- | ----------------------------- | ---------------------------------------- | ---------------------------------------------------------------- |
+| `account` | yes (`accountEnv.apiBaseUrl`) | `createAccountAuth`                      | Login via `@azes/api/azes`; refresh `{ refreshToken, deviceId }` |
+| `admin`   | yes (`adminEnv.apiBaseUrl`)   | `createAdminAuth` + `#azes_auth` consume | Port **200**; L-shell Home-only; Account post-login handoff      |
+| `azes-ui` | showcase                      | n/a                                      | Design system demo                                               |
+| `api`     | n/a (is the server)           | Phase 2B `/api/v1/auth/*`                | Local Wrangler + D1; seed `local.dev` (see apps/api README)      |
 
 Account post-login `returnUrl` allowlist: admin origin (default), agent-site
 (`VITE_AGENT_SITE_APP_URL`), **and** marketplace (`VITE_REAL_ESTATE_SITE_APP_URL`,

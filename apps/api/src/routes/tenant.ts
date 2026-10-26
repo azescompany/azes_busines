@@ -19,11 +19,7 @@ import {
   createMemoryAuthRepository,
   type AuthRepository,
 } from '../auth/repository.js';
-import {
-  getAuthUser,
-  requireAuth,
-  type AuthedEnv,
-} from '../auth/requireAuth.js';
+import { getAuthUser, requireAuth, type AuthedEnv } from '../auth/requireAuth.js';
 import { createDb } from '../db/client.js';
 import { requireJwtAccessSecret, type ApiEnv } from '../env.js';
 import { ApiHttpError } from '../errors.js';
@@ -125,9 +121,7 @@ export function createTenantRoutes(options: CreateTenantRoutesOptions = {}) {
     const authRepo = resolveAuthRepo(c.env, options.authRepo);
     const menuRepo =
       options.menuRepo ??
-      (c.env.DB
-        ? createDrizzleMenuRepository(createDb(c.env.DB))
-        : createMemoryMenuRepository());
+      (c.env.DB ? createDrizzleMenuRepository(createDb(c.env.DB)) : createMemoryMenuRepository());
     const result = await setActiveOrganization({
       authRepo,
       tenant,
@@ -242,10 +236,7 @@ export function createTenantRoutes(options: CreateTenantRoutesOptions = {}) {
     const orgId = c.req.param('orgId');
     const tenant = resolveTenantRepo(c.env, options.tenantRepo);
     await assertCanManageOrg(tenant, user, orgId);
-    const body = parseBody(
-      z.object({ name: z.string().min(1).optional() }),
-      await c.req.json(),
-    );
+    const body = parseBody(z.object({ name: z.string().min(1).optional() }), await c.req.json());
     if (!body.name) {
       throw new ApiHttpError(400, 'VALIDATION_ERROR', 'No fields to update');
     }
