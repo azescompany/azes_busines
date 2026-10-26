@@ -4,7 +4,7 @@
  * ║ File: apps/api/test/auth.test.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-19
- * ║ Updated: 2026-10-19
+ * ║ Updated: 2026-10-26
  * ║ Purpose: Phase 2B/2E auth route tests (memory AuthRepository)
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
@@ -383,7 +383,8 @@ describe('auth routes', () => {
       role: 'member',
       orgId: null,
       permissions: [],
-      nav: [{ id: 'overview', path: '/', i18nKey: 'nav.overview' }],
+      // member has no default admin role_menus in memory menu seed
+      nav: [],
       activeTracks: [],
       status: 'active',
     });
