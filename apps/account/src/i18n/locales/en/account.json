@@ -1,0 +1,98 @@
+{
+  "brand": "AZES Academy",
+  "welcome": "Welcome to AZES Academy",
+  "title": "Sign in",
+  "language": "Language",
+  "footer": "© {{year}} AZES Academy",
+  "heroTitle": "Secure access to your learning account",
+  "heroSubtitle": "Sign in to continue. After a successful login you are sent to the Academy application.",
+  "showcase": {
+    "title": "Courses, learners, and progress — one panel",
+    "subtitle": "Manage your courses, learners, and learning progress from a single workspace.",
+    "benefits": {
+      "listings": "Courses and programs",
+      "stats": "Stats and analytics",
+      "agents": "Instructor and learner profiles"
+    },
+    "listings": {
+      "title": "Courses",
+      "chip0": "Published",
+      "chip1": "Active",
+      "p0": "12L",
+      "p1": "8M",
+      "p2": "94%",
+      "p3": "4.9"
+    },
+    "stats": {
+      "k0": "Learners",
+      "v0": "128",
+      "k1": "Completed",
+      "v1": "36",
+      "k2": "Certificates",
+      "v2": "12",
+      "s0": "New",
+      "s1": "In progress",
+      "s2": "Done"
+    },
+    "agent": {
+      "role": "Lead instructor",
+      "verified": "Verified",
+      "s0": "18",
+      "s1": "24",
+      "s2": "2h",
+      "contact": "Profile",
+      "message": "Message"
+    },
+    "map": {
+      "title": "Learning path",
+      "c0": "Video",
+      "c1": "Quiz",
+      "c2": "Assignment"
+    },
+    "deals": {
+      "c0": "New",
+      "c1": "In progress",
+      "c2": "Completed",
+      "p0": "3/5",
+      "p1": "8/10",
+      "p2": "12/12",
+      "p3": "5/8",
+      "p4": "10/10"
+    }
+  },
+  "slogans": {
+    "0": "Secure access to your learning account",
+    "1": "Session protected by device ID",
+    "2": "Safe handoff to Academy"
+  },
+  "subtitle": "Sign in to continue",
+  "aside": "After a successful login you are sent to the Academy application.",
+  "username": "Username",
+  "password": "Password",
+  "forgotPassword": "Forgot password?",
+  "rememberDevice": "Remember device",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
+  "capsLock": "Caps Lock is on",
+  "submit": "Sign in",
+  "submitting": "Signing in…",
+  "success": "Signed in successfully",
+  "redirectingAnnounce": "Signed in successfully. Redirecting you now.",
+  "sessionEnded": "Session ended",
+  "security": {
+    "title": "Security",
+    "body": "Session protected by device ID",
+    "details": "A stable identifier for this device helps keep your session distinct from others. Signing in from a new or unrecognized device may require extra confirmation.",
+    "more": "Details",
+    "less": "Hide",
+    "deviceId": "ID",
+    "dismiss": "Dismiss"
+  },
+  "errors": {
+    "invalidCredentials": "Invalid username or password.",
+    "accountDisabled": "This account is disabled or not yet active.",
+    "rateLimited": "Too many sign-in attempts. Please wait a few minutes and try again.",
+    "noToken": "Login succeeded but no access token was returned.",
+    "generic": "Sign-in failed."
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "name": "@azes/state",
+  "version": "0.0.0",
+  "private": true,
+  "description": "AZES Redux Toolkit foundation for client/global state (not server cache)",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "lint": "eslint ."
+  },
+  "peerDependencies": {
+    "react": "^18.3.0 || ^19.0.0",
+    "react-redux": "^9.0.0"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.8.2",
+    "react-redux": "^9.2.0"
+  },
+  "devDependencies": {
+    "@azes/typescript-config": "workspace:*",
+    "@azes/vitest-config": "workspace:*",
+    "@types/react": "^19.1.9",
+    "react": "^19.1.1",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

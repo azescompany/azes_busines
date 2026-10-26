@@ -1,0 +1,55 @@
+---
+description: Server vs client state ownership (TanStack Query and Redux Toolkit)
+alwaysApply: true
+---
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║ AZES COMPANY
+║ File: state-management.mdc
+║ Author: AZES_COMPANY
+║ Created: 2026-08-22
+║ Updated: 2026-10-09
+║ Purpose: Enforce TanStack Query vs Redux Toolkit ownership boundary
+║ Layer: tooling
+╚══════════════════════════════════════════════════════════════╝
+-->
+
+# State Management Rules
+
+## Ownership
+
+```text
+SERVER STATE   -> TanStack Query  (packages/api query/mutations)
+CLIENT/UI STATE -> Redux Toolkit   (packages/state)
+```
+
+Do **not** put API response data into Redux unless there is a very specific, documented reason
+(ADR or `docs/ops/WORKER.md` note).
+
+## TanStack Query owns
+
+Fetching, caching, stale state, refetching, retries, pagination, infinite queries, mutation
+lifecycle, optimistic updates where appropriate, server-state synchronization.
+
+## Redux Toolkit may own
+
+Session/client state, current workspace, selected organization, global preferences,
+application-level UI state, cross-route workflows, persisted client preferences.
+
+## MUST NOT enter Redux
+
+- Server/remote data owned by TanStack Query
+- Derived data computable from queries/selectors
+- Ephemeral local component state that never crosses routes
+- Secrets/tokens in plain persisted state (use secure auth adapters)
+
+## Agent rules
+
+- Prefer Query hooks from `@azes/api` for remote data.
+- Prefer RTK slices from `@azes/state` only for justified client/global state.
+- Do not invent a second cache of the same server data in Redux.
+- For API/QueryClient/auth-bridge runtime work, follow `.cursor/rules/apiMenecerAgent.mdc`
+  and keep `docs/api/CURRENT-STATE.md` current.
+
+See `docs/architecture/state-architecture.md` and `docs/decisions/ADR-002-state-management.md`.

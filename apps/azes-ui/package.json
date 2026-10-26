@@ -1,0 +1,39 @@
+{
+  "name": "@azes/azes-ui",
+  "version": "0.0.0",
+  "private": true,
+  "description": "AZES design system showcase (Vite)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 700 --strictPort",
+    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "preview": "vite preview --port 700 --strictPort",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:visual": "playwright test -c ../../e2e/playwright.visual.config.ts",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@azes/i18n": "workspace:*",
+    "@azes/permissions": "workspace:*",
+    "@azes/ui-web": "workspace:*",
+    "@azes/validation": "workspace:*",
+    "@hookform/resolvers": "^5.9.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@azes/typescript-config": "workspace:*",
+    "@azes/vitest-config": "workspace:*",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "jsdom": "^26.1.0",
+    "typescript": "^5.9.2",
+    "vite": "^7.0.6",
+    "vitest": "^3.2.4"
+  }
+}

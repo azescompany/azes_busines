@@ -1,0 +1,3501 @@
+# AZES COMPANY
+# File: packages/api/openapi/azes/openapi.yaml
+# Author: AZES_COMPANY
+# Created: 2026-10-19
+# Updated: 2026-10-26
+# Purpose: AZES OpenAPI — auth + LMS + tenant + menu RBAC (M1.5)
+# Layer: package
+
+openapi: 3.0.3
+info:
+  title: AZES API
+  version: 0.16.0
+  description: |
+    AZES HTTP API client contract (auth + LMS + tenant + menu RBAC + ERP modules/CRM).
+    Runtime behaviour is owned by apps/api (@azes/api-server).
+    GET /me is the Admin session bootstrap (nav + permissions).
+servers:
+  - url: http://127.0.0.1:8787
+    description: Local Wrangler Worker
+tags:
+  - name: auth
+    description: Authentication (login / refresh / logout / me)
+  - name: courses
+    description: Academy LMS catalogue / curriculum / enrollments (read)
+  - name: manage
+    description: Academy LMS instructor/org write APIs
+  - name: quizzes
+    description: Quiz attempts and student assignment submissions
+  - name: dashboard
+    description: Me dashboard, notifications, bookmarks, certificates
+  - name: orgs
+    description: Organizations, Tracks, memberships and invitations (TAGET M1)
+  - name: menus
+    description: Admin menu catalog and role↔menu bindings (TAGET M1.5)
+paths:
+  /api/v1/me:
+    get:
+      tags: [auth]
+      operationId: getApiV1Me
+      summary: Current authenticated user (Bearer access JWT)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Session identity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthMeResponse'
+        '401':
+          description: Missing, invalid, revoked, or expired access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '403':
+          description: Account disabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/categories:
+    get:
+      tags: [courses]
+      operationId: getApiV1Categories
+      summary: List course categories
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Category list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/courses:
+    get:
+      tags: [courses]
+      operationId: getApiV1Courses
+      summary: List courses (published; staff also see own drafts)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+        - name: q
+          in: query
+          schema:
+            type: string
+        - name: categoryId
+          in: query
+          schema:
+            type: string
+        - name: level
+          in: query
+          schema:
+            type: string
+            enum: [beginner, intermediate, advanced]
+      responses:
+        '200':
+          description: Paginated courses
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseListResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/courses/{courseId}/enroll:
+    post:
+      tags: [courses]
+      operationId: postApiV1CoursesCourseIdEnroll
+      summary: Enroll in a published course (idempotent; invite needs Track access)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Enrolled (or existing enrollment)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Enrollment'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/courses/{courseId}/curriculum:
+    get:
+      tags: [courses]
+      operationId: getApiV1CoursesCourseIdCurriculum
+      summary: Course curriculum (modules + lesson summaries)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Curriculum
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurriculumResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/courses/{slug}:
+    get:
+      tags: [courses]
+      operationId: getApiV1CoursesSlug
+      summary: Course detail by slug
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Course detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseDetail'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/me/enrollments:
+    get:
+      tags: [courses]
+      operationId: getApiV1MeEnrollments
+      summary: Current user enrollments
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Enrollment list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrollmentListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/me/learning:
+    get:
+      tags: [courses]
+      operationId: getApiV1MeLearning
+      summary: My learning — enrollments with progress (Öyrənməm)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Learning list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LearningListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/courses/{courseId}/progress:
+    get:
+      tags: [courses]
+      operationId: getApiV1CoursesCourseIdProgress
+      summary: Course progress for current user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseProgress'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/lessons/{lessonId}:
+    get:
+      tags: [courses]
+      operationId: getApiV1LessonsLessonId
+      summary: Lesson detail (enrollment required)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: lessonId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lesson
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LessonDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/lessons/{lessonId}/complete:
+    post:
+      tags: [courses]
+      operationId: postApiV1LessonsLessonIdComplete
+      summary: Mark lesson complete (idempotent)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: lessonId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LessonProgress'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/files/{fileId}/content:
+    get:
+      tags: [courses]
+      operationId: getApiV1FilesFileIdContent
+      summary: Download file via signed query (exp, uid, sig)
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: exp
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: uid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: sig
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: File bytes
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/manage/courses:
+    post:
+      tags: [manage]
+      operationId: postApiV1ManageCourses
+      summary: Create draft course (instructor/admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageCourseCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseDetail'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/manage/courses/{courseId}:
+    patch:
+      tags: [manage]
+      operationId: patchApiV1ManageCoursesCourseId
+      summary: Update course (owner instructor or admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageCoursePatch'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseDetail'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/manage/courses/{courseId}/modules:
+    post:
+      tags: [manage]
+      operationId: postApiV1ManageCoursesCourseIdModules
+      summary: Add module to course
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageModuleCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModuleCurriculum'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/manage/modules/{moduleId}/lessons:
+    post:
+      tags: [manage]
+      operationId: postApiV1ManageModulesModuleIdLessons
+      summary: Add lesson to module
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: moduleId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageLessonCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LessonSummary'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/manage/courses/{courseId}/publish:
+    post:
+      tags: [manage]
+      operationId: postApiV1ManageCoursesCourseIdPublish
+      summary: Publish course (min 1 module + 1 lesson)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Published
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseDetail'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/manage/files:
+    post:
+      tags: [manage]
+      operationId: postApiV1ManageFiles
+      summary: Upload course material (R2; mime + 5MB limit)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                purpose:
+                  type: string
+                  description: e.g. course_material, cover
+      responses:
+        '201':
+          description: Stored
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManageFileAsset'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '503':
+          description: R2 not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/manage/courses/{courseId}/modules/reorder:
+    put:
+      tags: [manage]
+      operationId: putApiV1ManageCoursesCourseIdModulesReorder
+      summary: Reorder modules (full id list)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageReorderIds'
+      responses:
+        '200':
+          description: Reordered modules
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [courseId, modules]
+                properties:
+                  courseId:
+                    type: string
+                  modules:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ModuleCurriculum'
+
+  /api/v1/manage/modules/{moduleId}/lessons/reorder:
+    put:
+      tags: [manage]
+      operationId: putApiV1ManageModulesModuleIdLessonsReorder
+      summary: Reorder lessons in a module
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: moduleId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageReorderIds'
+      responses:
+        '200':
+          description: Reordered lessons
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [moduleId, lessons]
+                properties:
+                  moduleId:
+                    type: string
+                  lessons:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LessonSummary'
+
+  /api/v1/manage/lessons/{lessonId}/archive:
+    post:
+      tags: [manage]
+      operationId: postApiV1ManageLessonsLessonIdArchive
+      summary: Soft-archive lesson (never hard-delete; progress preserved)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: lessonId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Archived
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [lesson, hadProgress]
+                properties:
+                  lesson:
+                    $ref: '#/components/schemas/LessonSummary'
+                  hadProgress:
+                    type: boolean
+
+  /api/v1/manage/modules/{moduleId}/archive:
+    post:
+      tags: [manage]
+      operationId: postApiV1ManageModulesModuleIdArchive
+      summary: Soft-archive module and its lessons
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: moduleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Archived
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModuleCurriculum'
+
+  /api/v1/manage/courses/{courseId}/archive:
+    post:
+      tags: [manage]
+      operationId: postApiV1ManageCoursesCourseIdArchive
+      summary: Soft-archive course
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Archived
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseDetail'
+
+  /api/v1/manage/courses/{courseId}/quizzes:
+    get:
+      tags: [manage]
+      operationId: getApiV1ManageCoursesCourseIdQuizzes
+      summary: List quizzes for course (staff; may include draft)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Quiz list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizSummaryList'
+    post:
+      tags: [manage]
+      operationId: postApiV1ManageCoursesCourseIdQuizzes
+      summary: Create draft quiz
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageQuizCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizSummary'
+
+  /api/v1/manage/quizzes/{quizId}:
+    get:
+      tags: [manage]
+      operationId: getApiV1ManageQuizzesQuizId
+      summary: Quiz detail with correct answers (staff)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Staff quiz
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizStaff'
+
+  /api/v1/manage/quizzes/{quizId}/questions:
+    post:
+      tags: [manage]
+      operationId: postApiV1ManageQuizzesQuizIdQuestions
+      summary: Add question (correctAnswer stored server-side)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageQuestionCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionStaff'
+
+  /api/v1/manage/quizzes/{quizId}/publish:
+    post:
+      tags: [manage]
+      operationId: postApiV1ManageQuizzesQuizIdPublish
+      summary: Publish quiz (requires ≥1 question)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Published
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizSummary'
+
+  /api/v1/manage/courses/{courseId}/assignments:
+    post:
+      tags: [manage]
+      operationId: postApiV1ManageCoursesCourseIdAssignments
+      summary: Create draft assignment
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageAssignmentCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+
+  /api/v1/manage/assignments/{assignmentId}/publish:
+    post:
+      tags: [manage]
+      operationId: postApiV1ManageAssignmentsAssignmentIdPublish
+      summary: Publish assignment
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: assignmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Published
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+
+  /api/v1/manage/assignments/{assignmentId}/submissions:
+    get:
+      tags: [manage]
+      operationId: getApiV1ManageAssignmentsAssignmentIdSubmissions
+      summary: List submissions for assignment
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: assignmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Submissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmissionList'
+
+  /api/v1/manage/submissions/{submissionId}/grade:
+    post:
+      tags: [manage]
+      operationId: postApiV1ManageSubmissionsSubmissionIdGrade
+      summary: Grade assignment submission
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: submissionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GradeSubmissionBody'
+      responses:
+        '200':
+          description: Graded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Submission'
+
+  /api/v1/courses/{courseId}/quizzes:
+    get:
+      tags: [quizzes]
+      operationId: getApiV1CoursesCourseIdQuizzes
+      summary: List published quizzes for enrolled student
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Published quizzes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizSummaryList'
+
+  /api/v1/quizzes/{quizId}:
+    get:
+      tags: [quizzes]
+      operationId: getApiV1QuizzesQuizId
+      summary: Quiz take payload (no correct answers)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Quiz for taking
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizTake'
+
+  /api/v1/quizzes/{quizId}/attempts:
+    post:
+      tags: [quizzes]
+      operationId: postApiV1QuizzesQuizIdAttempts
+      summary: Start quiz attempt (server timer; attempt limit)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartAttemptBody'
+      responses:
+        '201':
+          description: Attempt started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttemptStarted'
+        '409':
+          description: Attempt limit or conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/attempts/{attemptId}/submit:
+    post:
+      tags: [quizzes]
+      operationId: postApiV1AttemptsAttemptIdSubmit
+      summary: Submit answers (server grading; idempotent; rejects after expiry)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: attemptId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitAttemptBody'
+      responses:
+        '200':
+          description: Graded result (includes correct answers + explanations)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttemptResult'
+        '409':
+          description: Expired or conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/attempts/{attemptId}/result:
+    get:
+      tags: [quizzes]
+      operationId: getApiV1AttemptsAttemptIdResult
+      summary: Fetch graded attempt result
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: attemptId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttemptResult'
+
+  /api/v1/courses/{courseId}/assignments:
+    get:
+      tags: [quizzes]
+      operationId: getApiV1CoursesCourseIdAssignments
+      summary: List published assignments
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Assignments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignmentList'
+
+  /api/v1/assignments/{assignmentId}/submissions:
+    post:
+      tags: [quizzes]
+      operationId: postApiV1AssignmentsAssignmentIdSubmissions
+      summary: Submit assignment (idempotent)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: assignmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitAssignmentBody'
+      responses:
+        '201':
+          description: Submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Submission'
+
+  /api/v1/assignments/{assignmentId}/submissions/me:
+    get:
+      tags: [quizzes]
+      operationId: getApiV1AssignmentsAssignmentIdSubmissionsMe
+      summary: My latest submission
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: assignmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Submission or null
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MySubmissionResponse'
+
+  /api/v1/me/dashboard:
+    get:
+      tags: [dashboard]
+      operationId: getApiV1MeDashboard
+      summary: Student dashboard stats from real enrollments/progress
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Dashboard
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dashboard'
+
+  /api/v1/me/notifications:
+    get:
+      tags: [dashboard]
+      operationId: getApiV1MeNotifications
+      summary: List notifications (newest first)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Notifications
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationList'
+
+  /api/v1/me/notifications/read-all:
+    post:
+      tags: [dashboard]
+      operationId: postApiV1MeNotificationsReadAll
+      summary: Mark all notifications read
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Updated count
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [updated]
+                properties:
+                  updated: { type: integer }
+
+  /api/v1/me/notifications/{id}/read:
+    post:
+      tags: [dashboard]
+      operationId: postApiV1MeNotificationsIdRead
+      summary: Mark one notification read
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Notification
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+
+  /api/v1/me/bookmarks:
+    get:
+      tags: [dashboard]
+      operationId: getApiV1MeBookmarks
+      summary: List bookmarked courses
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Bookmarks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookmarkList'
+
+  /api/v1/me/bookmarks/{courseId}:
+    post:
+      tags: [dashboard]
+      operationId: postApiV1MeBookmarksCourseId
+      summary: Bookmark a published course (idempotent)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '201':
+          description: Bookmark
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bookmark'
+    delete:
+      tags: [dashboard]
+      operationId: deleteApiV1MeBookmarksCourseId
+      summary: Remove bookmark
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: Removed
+
+  /api/v1/me/certificates:
+    get:
+      tags: [dashboard]
+      operationId: getApiV1MeCertificates
+      summary: List my certificates
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Certificates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CertificateList'
+
+  /api/v1/courses/{courseId}/certificate:
+    post:
+      tags: [dashboard]
+      operationId: postApiV1CoursesCourseIdCertificate
+      summary: Issue certificate when completion criteria met (idempotent)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '201':
+          description: Certificate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Certificate'
+        '409':
+          description: Not complete
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/certificates/verify/{code}:
+    get:
+      tags: [dashboard]
+      operationId: getApiV1CertificatesVerifyCode
+      summary: Public certificate verification
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Valid certificate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Certificate'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/manage/analytics:
+    get:
+      tags: [manage]
+      operationId: getApiV1ManageAnalytics
+      summary: Course analytics (scoped by role/org/owner)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Analytics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Analytics'
+
+  /api/v1/orgs:
+    get:
+      tags: [orgs]
+      operationId: getApiV1Orgs
+      summary: List organizations (superAdmin)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Org list
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Organization'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+    post:
+      tags: [orgs]
+      operationId: postApiV1Orgs
+      summary: Create organization (superAdmin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                slug:
+                  type: string
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+  /api/v1/orgs/{orgId}:
+    patch:
+      tags: [orgs]
+      operationId: patchApiV1OrgsOrgId
+      summary: Update organization name/status (superAdmin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                status:
+                  type: string
+                  enum: [active, disabled]
+      responses:
+        '200':
+          description: Updated organization
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+    get:
+      tags: [orgs]
+      operationId: getApiV1OrgsOrgId
+      summary: Get organization by id (superAdmin or active member)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/v1/me/organizations:
+    get:
+      tags: [orgs]
+      operationId: getApiV1MeOrganizations
+      summary: List organizations the current user belongs to
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Membership list
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MeOrganization'
+  /api/v1/me/active-organization:
+    post:
+      tags: [orgs]
+      operationId: postApiV1MeActiveOrganization
+      summary: Switch active organization (returns new token pair)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [orgId]
+              properties:
+                orgId:
+                  type: string
+      responses:
+        '200':
+          description: Switched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActiveOrganizationResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/v1/orgs/{orgId}/members:
+    get:
+      tags: [orgs]
+      operationId: getApiV1OrgsOrgIdMembers
+      summary: List organization members
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Members
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OrgMembership'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/v1/orgs/{orgId}/members/{userId}:
+    patch:
+      tags: [orgs]
+      operationId: patchApiV1OrgsOrgIdMembersUserId
+      summary: Update member role or status
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  enum: [orgAdmin, instructor, student, guest]
+                status:
+                  type: string
+                  enum: [active, disabled, revoked]
+      responses:
+        '200':
+          description: Updated membership
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrgMembership'
+    delete:
+      tags: [orgs]
+      operationId: deleteApiV1OrgsOrgIdMembersUserId
+      summary: Revoke membership
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Revoked membership
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrgMembership'
+  /api/v1/orgs/{orgId}/invitations:
+    get:
+      tags: [orgs]
+      operationId: getApiV1OrgsOrgIdInvitations
+      summary: List organization invitations
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Invitations
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OrgInvitation'
+    post:
+      tags: [orgs]
+      operationId: postApiV1OrgsOrgIdInvitations
+      summary: Create organization invitation (token returned once)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, role]
+              properties:
+                email:
+                  type: string
+                  format: email
+                role:
+                  type: string
+                  enum: [orgAdmin, instructor, student]
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrgInvitationCreated'
+  /api/v1/orgs/{orgId}/profile:
+    patch:
+      tags: [orgs]
+      operationId: patchApiV1OrgsOrgIdProfile
+      summary: Update organization profile (OrgAdmin own org or superAdmin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+  /api/v1/invitations/accept:
+    post:
+      tags: [orgs]
+      operationId: postApiV1InvitationsAccept
+      summary: Accept organization invitation (public)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, password]
+              properties:
+                token:
+                  type: string
+                password:
+                  type: string
+                  minLength: 8
+                username:
+                  type: string
+                  minLength: 3
+      responses:
+        '201':
+          description: Accepted — session tokens issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvitationAcceptResponse'
+  /api/v1/org-admins:
+    get:
+      tags: [orgs]
+      operationId: getApiV1OrgAdmins
+      summary: List OrgAdmins (superAdmin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OrgAdmin list
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OrgAdmin'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+    post:
+      tags: [orgs]
+      operationId: postApiV1OrgAdmins
+      summary: Create OrgAdmin and bind to organization
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password, orgId]
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                orgId:
+                  type: string
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrgAdminCreated'
+        '409':
+          description: Username conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/v1/org-admins/{userId}:
+    patch:
+      tags: [orgs]
+      operationId: patchApiV1OrgAdminsUserId
+      summary: Enable/disable OrgAdmin
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [active, disabled]
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrgAdmin'
+  /api/v1/manage/platform-overview:
+    get:
+      tags: [dashboard]
+      operationId: getApiV1ManagePlatformOverview
+      summary: Platform KPI overview (superAdmin)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Platform counts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlatformOverview'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/v1/tracks:
+    get:
+      tags: [orgs]
+      operationId: getApiV1Tracks
+      summary: List tracks (Tədris proqramları); org-scoped, or all orgs for superAdmin when orgId omitted
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: query
+          description: Required unless JWT orgId is set, or caller has org.manage_all (platform-wide list)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Track list
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Track'
+    post:
+      tags: [orgs]
+      operationId: postApiV1Tracks
+      summary: Create track (instructor / orgAdmin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                slug:
+                  type: string
+                description:
+                  type: string
+                  nullable: true
+                orgId:
+                  type: string
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Track'
+  /api/v1/me/tracks:
+    get:
+      tags: [orgs]
+      operationId: getApiV1MeTracks
+      summary: Active tracks for current student
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Active tracks
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Track'
+
+  /api/v1/tracks/{trackId}/courses:
+    put:
+      tags: [orgs]
+      operationId: putApiV1TracksTrackIdCourses
+      summary: Set courses linked to a track
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: trackId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [courseIds]
+              properties:
+                courseIds:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok]
+                properties:
+                  ok:
+                    type: boolean
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/users/{userId}/tracks:
+    put:
+      tags: [orgs]
+      operationId: putApiV1UsersUserIdTracks
+      summary: Assign tracks (Tədris proqramları) to a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [trackIds]
+              properties:
+                trackIds:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Assigned
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok]
+                properties:
+                  ok:
+                    type: boolean
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/auth/login:
+    post:
+      tags: [auth]
+      operationId: postApiV1AuthLogin
+      summary: Login with username and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthLoginRequest'
+      responses:
+        '200':
+          description: Token pair
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTokenPair'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '403':
+          description: Account disabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '429':
+          description: Rate limited
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds until the client may retry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/v1/auth/refresh:
+    post:
+      tags: [auth]
+      operationId: postApiV1AuthRefresh
+      summary: Rotate refresh token and issue new access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRefreshRequest'
+      responses:
+        '200':
+          description: Token pair
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTokenPair'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '401':
+          description: Token revoked or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '403':
+          description: Account disabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '429':
+          description: Rate limited
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds until the client may retry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/v1/auth/logout:
+    post:
+      tags: [auth]
+      operationId: postApiV1AuthLogout
+      summary: Revoke refresh session (refresh body or Bearer access)
+      security:
+        - bearerAuth: []
+        - {}
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthLogoutRequest'
+      responses:
+        '200':
+          description: Logout acknowledged
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthLogoutResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/v1/menus:
+    get:
+      tags: [menus]
+      operationId: getApiV1Menus
+      summary: List Admin menu catalog (superAdmin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: app
+          in: query
+          schema:
+            type: string
+            default: admin
+      responses:
+        '200':
+          description: Menu catalog
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuListResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/v1/roles:
+    get:
+      tags: [menus]
+      operationId: getApiV1Roles
+      summary: List assignable LMS roles for menu binding
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Role list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleListResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/v1/roles/{role}/menus:
+    get:
+      tags: [menus]
+      operationId: getApiV1RolesRoleMenus
+      summary: List menu ids bound to a role
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: role
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Role menu binding
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleMenusResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '404':
+          description: Role not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+    put:
+      tags: [menus]
+      operationId: putApiV1RolesRoleMenus
+      summary: Replace menu ids bound to a role (not superAdmin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: role
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutRoleMenusRequest'
+      responses:
+        '200':
+          description: Updated binding
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleMenusResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    AuthLoginRequest:
+      type: object
+      required: [username, password, deviceId, userAgent, platform, language]
+      properties:
+        username:
+          type: string
+          minLength: 1
+        password:
+          type: string
+          minLength: 1
+        deviceId:
+          type: string
+          minLength: 1
+        userAgent:
+          type: string
+          minLength: 1
+        platform:
+          type: string
+          minLength: 1
+        language:
+          type: string
+          minLength: 1
+    AuthRefreshRequest:
+      type: object
+      required: [refreshToken, deviceId]
+      properties:
+        refreshToken:
+          type: string
+          minLength: 1
+        deviceId:
+          type: string
+          minLength: 1
+    AuthLogoutRequest:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+          minLength: 1
+    AuthTokenPair:
+      type: object
+      required: [accessToken, refreshToken, expiresIn, tokenType]
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        expiresIn:
+          type: integer
+          example: 900
+        tokenType:
+          type: string
+          enum: [Bearer]
+    AuthLogoutResponse:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+    AuthNavItem:
+      type: object
+      required: [id, path, i18nKey]
+      properties:
+        id:
+          type: string
+          description: Stable nav identity (e.g. home, organizations)
+        path:
+          type: string
+          description: Locale-free Admin path (e.g. /organizations)
+        i18nKey:
+          type: string
+          description: Admin i18n key (e.g. nav.organizations)
+        iconKey:
+          type: string
+          nullable: true
+          description: Optional icon map key (home, business, people, security)
+    AuthMeResponse:
+      type: object
+      required: [userId, username, roles, role, orgId, permissions, nav, activeTracks, status]
+      properties:
+        userId:
+          type: string
+        username:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        role:
+          type: string
+          description: Primary role (highest privilege)
+        orgId:
+          type: string
+          nullable: true
+        permissions:
+          type: array
+          items:
+            type: string
+        nav:
+          type: array
+          description: Role-filtered Academy primary navigation
+          items:
+            $ref: '#/components/schemas/AuthNavItem'
+        activeTracks:
+          type: array
+          items:
+            type: object
+            required: [id, name, slug]
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              slug:
+                type: string
+        status:
+          type: string
+          enum: [active, disabled, pending]
+    Organization:
+      type: object
+      required: [id, name, slug, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        status:
+          type: string
+          enum: [active, disabled]
+        createdBy:
+          type: string
+          nullable: true
+        createdAt:
+          type: integer
+        updatedAt:
+          type: integer
+        orgAdminCount:
+          type: integer
+        memberCount:
+          type: integer
+    MeOrganization:
+      type: object
+      required: [orgId, name, slug, status, role, membershipStatus, isActive]
+      properties:
+        orgId:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        status:
+          type: string
+          enum: [active, disabled]
+        role:
+          type: string
+          enum: [orgAdmin, instructor, student, guest]
+        membershipStatus:
+          type: string
+          enum: [active, disabled, revoked]
+        isActive:
+          type: boolean
+    OrgMembership:
+      type: object
+      required:
+        - id
+        - orgId
+        - orgName
+        - orgSlug
+        - orgStatus
+        - userId
+        - username
+        - role
+        - status
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+        orgId:
+          type: string
+        orgName:
+          type: string
+        orgSlug:
+          type: string
+        orgStatus:
+          type: string
+          enum: [active, disabled]
+        userId:
+          type: string
+        username:
+          type: string
+        role:
+          type: string
+          enum: [orgAdmin, instructor, student, guest]
+        status:
+          type: string
+          enum: [active, disabled, revoked]
+        createdAt:
+          type: integer
+        updatedAt:
+          type: integer
+    OrgInvitation:
+      type: object
+      required:
+        - id
+        - orgId
+        - email
+        - role
+        - status
+        - expiresAt
+        - createdBy
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+        orgId:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [orgAdmin, instructor, student]
+        status:
+          type: string
+          enum: [pending, accepted, revoked, expired]
+        expiresAt:
+          type: integer
+        acceptedAt:
+          type: integer
+          nullable: true
+        createdBy:
+          type: string
+        createdAt:
+          type: integer
+        updatedAt:
+          type: integer
+    OrgInvitationCreated:
+      allOf:
+        - $ref: '#/components/schemas/OrgInvitation'
+        - type: object
+          required: [token]
+          properties:
+            token:
+              type: string
+              description: Plaintext invite token — returned once
+    ActiveOrganizationResponse:
+      allOf:
+        - $ref: '#/components/schemas/AuthTokenPair'
+        - type: object
+          required: [orgId, role]
+          properties:
+            orgId:
+              type: string
+            role:
+              type: string
+    InvitationAcceptResponse:
+      allOf:
+        - $ref: '#/components/schemas/AuthTokenPair'
+        - type: object
+          required: [orgId, userId]
+          properties:
+            orgId:
+              type: string
+            userId:
+              type: string
+    MenuItem:
+      type: object
+      required: [id, app, code, path, i18nKey, sortOrder, status]
+      properties:
+        id:
+          type: string
+        app:
+          type: string
+        code:
+          type: string
+        path:
+          type: string
+        i18nKey:
+          type: string
+        iconKey:
+          type: string
+          nullable: true
+        sortOrder:
+          type: integer
+        status:
+          type: string
+          enum: [active, disabled]
+        permissionCodes:
+          type: array
+          items:
+            type: string
+    MenuListResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuItem'
+    RoleListItem:
+      type: object
+      required: [name, assignable]
+      properties:
+        name:
+          type: string
+        assignable:
+          type: boolean
+    RoleListResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RoleListItem'
+    RoleMenusResponse:
+      type: object
+      required: [role, menuIds]
+      properties:
+        role:
+          type: string
+        menuIds:
+          type: array
+          items:
+            type: string
+    PutRoleMenusRequest:
+      type: object
+      required: [menuIds]
+      properties:
+        menuIds:
+          type: array
+          items:
+            type: string
+    OrgAdmin:
+      type: object
+      required: [id, username, orgId, orgName, status, createdAt]
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        orgId:
+          type: string
+        orgName:
+          type: string
+        status:
+          type: string
+          enum: [active, disabled, pending]
+        createdAt:
+          type: integer
+    OrgAdminCreated:
+      allOf:
+        - $ref: '#/components/schemas/OrgAdmin'
+        - type: object
+          required: [temporaryPassword]
+          properties:
+            temporaryPassword:
+              type: string
+    PlatformOverview:
+      type: object
+      required:
+        - organizationCount
+        - activeOrganizationCount
+        - userCount
+        - instructorCount
+        - studentCount
+        - orgAdminCount
+        - publishedCourseCount
+        - trackCount
+      properties:
+        organizationCount:
+          type: integer
+        activeOrganizationCount:
+          type: integer
+        userCount:
+          type: integer
+        instructorCount:
+          type: integer
+        studentCount:
+          type: integer
+        orgAdminCount:
+          type: integer
+        publishedCourseCount:
+          type: integer
+        trackCount:
+          type: integer
+    Track:
+      type: object
+      required: [id, orgId, name, slug, status, createdBy, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        orgId:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [active, inactive]
+        createdBy:
+          type: string
+        createdAt:
+          type: integer
+        updatedAt:
+          type: integer
+    ApiErrorEnvelope:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+    Category:
+      type: object
+      required: [id, name, slug]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+    CategoryListResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+    CourseListItem:
+      type: object
+      required: [id, title, slug, level, status, accessType, ownerId]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+          nullable: true
+        categoryId:
+          type: string
+          nullable: true
+        level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        status:
+          type: string
+          enum: [draft, published, archived]
+        accessType:
+          type: string
+          enum: [free, invite, paid]
+        ownerId:
+          type: string
+        publishedAt:
+          type: integer
+          nullable: true
+    CourseDetail:
+      allOf:
+        - $ref: '#/components/schemas/CourseListItem'
+        - type: object
+          required: [createdAt, updatedAt]
+          properties:
+            createdAt:
+              type: integer
+            updatedAt:
+              type: integer
+    CourseListResponse:
+      type: object
+      required: [items, page, pageSize, total]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseListItem'
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        total:
+          type: integer
+    LessonSummary:
+      type: object
+      required: [id, title, type, position, isRequired, status]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+          enum: [text, video, file]
+        position:
+          type: integer
+        durationMin:
+          type: number
+          nullable: true
+        isRequired:
+          type: boolean
+        status:
+          type: string
+          enum: [draft, published, archived]
+    ModuleCurriculum:
+      type: object
+      required: [id, title, position, status, lessons]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        position:
+          type: integer
+        status:
+          type: string
+          enum: [draft, published, archived]
+        lessons:
+          type: array
+          items:
+            $ref: '#/components/schemas/LessonSummary'
+    CurriculumResponse:
+      type: object
+      required: [courseId, modules]
+      properties:
+        courseId:
+          type: string
+        modules:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModuleCurriculum'
+    Enrollment:
+      type: object
+      required: [id, courseId, status, enrolledAt]
+      properties:
+        id:
+          type: string
+        courseId:
+          type: string
+        status:
+          type: string
+          enum: [active, completed, cancelled]
+        enrolledAt:
+          type: integer
+        completedAt:
+          type: integer
+          nullable: true
+        course:
+          allOf:
+            - $ref: '#/components/schemas/CourseListItem'
+          nullable: true
+    EnrollmentListResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Enrollment'
+    LessonMaterial:
+      type: object
+      required: [fileId, mime, size, signedUrl, expiresAt]
+      properties:
+        fileId:
+          type: string
+        mime:
+          type: string
+        size:
+          type: integer
+        signedUrl:
+          type: string
+        expiresAt:
+          type: integer
+    LessonDetail:
+      type: object
+      required:
+        - id
+        - courseId
+        - moduleId
+        - title
+        - type
+        - position
+        - isRequired
+        - status
+        - progressStatus
+      properties:
+        id:
+          type: string
+        courseId:
+          type: string
+        moduleId:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+          enum: [text, video, file]
+        content:
+          type: string
+          nullable: true
+        videoUrl:
+          type: string
+          nullable: true
+        durationMin:
+          type: number
+          nullable: true
+        position:
+          type: integer
+        isRequired:
+          type: boolean
+        status:
+          type: string
+          enum: [draft, published, archived]
+        progressStatus:
+          type: string
+          enum: [not_started, in_progress, completed]
+        completedAt:
+          type: integer
+          nullable: true
+        prevLessonId:
+          type: string
+          nullable: true
+        nextLessonId:
+          type: string
+          nullable: true
+        material:
+          allOf:
+            - $ref: '#/components/schemas/LessonMaterial'
+          nullable: true
+    LessonProgress:
+      type: object
+      required: [lessonId, enrollmentId, status]
+      properties:
+        lessonId:
+          type: string
+        enrollmentId:
+          type: string
+        status:
+          type: string
+          enum: [not_started, in_progress, completed]
+        completedAt:
+          type: integer
+          nullable: true
+        lastPositionSec:
+          type: integer
+          nullable: true
+    CourseProgress:
+      type: object
+      required:
+        - courseId
+        - enrollmentId
+        - completedRequired
+        - totalRequired
+        - percent
+        - lessons
+      properties:
+        courseId:
+          type: string
+        enrollmentId:
+          type: string
+        completedRequired:
+          type: integer
+        totalRequired:
+          type: integer
+        percent:
+          type: integer
+        nextLessonId:
+          type: string
+          nullable: true
+        lessons:
+          type: array
+          items:
+            type: object
+            required: [lessonId, status]
+            properties:
+              lessonId:
+                type: string
+              status:
+                type: string
+                enum: [not_started, in_progress, completed]
+              completedAt:
+                type: integer
+                nullable: true
+    LearningItem:
+      type: object
+      required:
+        - enrollmentId
+        - courseId
+        - courseTitle
+        - courseSlug
+        - status
+        - percent
+        - completedRequired
+        - totalRequired
+      properties:
+        enrollmentId:
+          type: string
+        courseId:
+          type: string
+        courseTitle:
+          type: string
+        courseSlug:
+          type: string
+        status:
+          type: string
+          enum: [active, completed, cancelled]
+        percent:
+          type: integer
+        completedRequired:
+          type: integer
+        totalRequired:
+          type: integer
+        nextLessonId:
+          type: string
+          nullable: true
+    LearningListResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LearningItem'
+    ManageReorderIds:
+      type: object
+      required: [ids]
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+          minItems: 1
+    ManageCourseCreate:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+          minLength: 1
+        slug:
+          type: string
+        description:
+          type: string
+          nullable: true
+        categoryId:
+          type: string
+          nullable: true
+        level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        accessType:
+          type: string
+          enum: [free, invite, paid]
+    ManageCoursePatch:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        categoryId:
+          type: string
+          nullable: true
+        level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        accessType:
+          type: string
+          enum: [free, invite, paid]
+        coverFileId:
+          type: string
+          nullable: true
+    ManageModuleCreate:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        position:
+          type: integer
+    ManageLessonCreate:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        type:
+          type: string
+          enum: [text, video, file]
+        content:
+          type: string
+          nullable: true
+        videoUrl:
+          type: string
+          nullable: true
+        durationMin:
+          type: number
+          nullable: true
+        position:
+          type: integer
+        isRequired:
+          type: boolean
+    ManageFileAsset:
+      type: object
+      required: [id, ownerId, storageKey, mime, size, purpose, createdAt]
+      properties:
+        id:
+          type: string
+        ownerId:
+          type: string
+        storageKey:
+          type: string
+        mime:
+          type: string
+        size:
+          type: integer
+        purpose:
+          type: string
+        createdAt:
+          type: integer
+        updatedAt:
+          type: integer
+    QuizSummary:
+      type: object
+      required:
+        [id, courseId, title, maxAttempts, passScore, status, questionCount, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        courseId: { type: string }
+        lessonId: { type: string, nullable: true }
+        title: { type: string }
+        timeLimitSec: { type: integer, nullable: true }
+        maxAttempts: { type: integer }
+        passScore: { type: integer }
+        status: { type: string, enum: [draft, published, archived] }
+        questionCount: { type: integer }
+        createdAt: { type: integer }
+        updatedAt: { type: integer }
+    QuizSummaryList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuizSummary'
+    ManageQuizCreate:
+      type: object
+      required: [title]
+      properties:
+        title: { type: string }
+        lessonId: { type: string, nullable: true }
+        timeLimitSec: { type: integer, nullable: true }
+        maxAttempts: { type: integer }
+        passScore: { type: integer }
+    QuestionOption:
+      type: object
+      required: [id, label]
+      properties:
+        id: { type: string }
+        label: { type: string }
+    QuestionPublic:
+      type: object
+      required: [id, type, text, points, position]
+      properties:
+        id: { type: string }
+        type: { type: string, enum: [single_choice, multiple_choice, short_text] }
+        text: { type: string }
+        options:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/QuestionOption'
+        points: { type: integer }
+        position: { type: integer }
+    QuestionStaff:
+      allOf:
+        - $ref: '#/components/schemas/QuestionPublic'
+        - type: object
+          required: [correctAnswer]
+          properties:
+            correctAnswer: {}
+            explanation: { type: string, nullable: true }
+    ManageQuestionCreate:
+      type: object
+      required: [type, text, correctAnswer]
+      properties:
+        type: { type: string, enum: [single_choice, multiple_choice, short_text] }
+        text: { type: string }
+        options:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/QuestionOption'
+        correctAnswer: {}
+        explanation: { type: string, nullable: true }
+        points: { type: integer }
+        position: { type: integer }
+    QuizStaff:
+      type: object
+      required: [id, courseId, title, maxAttempts, passScore, status, questions]
+      properties:
+        id: { type: string }
+        courseId: { type: string }
+        lessonId: { type: string, nullable: true }
+        title: { type: string }
+        timeLimitSec: { type: integer, nullable: true }
+        maxAttempts: { type: integer }
+        passScore: { type: integer }
+        status: { type: string, enum: [draft, published, archived] }
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionStaff'
+    QuizTake:
+      type: object
+      required: [id, courseId, title, maxAttempts, passScore, status, questions]
+      properties:
+        id: { type: string }
+        courseId: { type: string }
+        title: { type: string }
+        timeLimitSec: { type: integer, nullable: true }
+        maxAttempts: { type: integer }
+        passScore: { type: integer }
+        status: { type: string, enum: [draft, published, archived] }
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionPublic'
+    StartAttemptBody:
+      type: object
+      properties:
+        idempotencyKey: { type: string }
+    AttemptStarted:
+      type: object
+      required: [id, quizId, userId, startedAt, status, questions]
+      properties:
+        id: { type: string }
+        quizId: { type: string }
+        userId: { type: string }
+        startedAt: { type: integer }
+        expiresAt: { type: integer, nullable: true }
+        submittedAt: { type: integer, nullable: true }
+        score: { type: integer, nullable: true }
+        status: { type: string, enum: [in_progress, submitted, expired] }
+        passed: { type: boolean, nullable: true }
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionPublic'
+    SubmitAttemptBody:
+      type: object
+      required: [answers]
+      properties:
+        answers:
+          type: object
+          additionalProperties: true
+        idempotencyKey: { type: string }
+    AttemptResultItem:
+      type: object
+      required: [questionId, correct, pointsEarned, pointsMax]
+      properties:
+        questionId: { type: string }
+        correct: { type: boolean }
+        pointsEarned: { type: integer }
+        pointsMax: { type: integer }
+        explanation: { type: string, nullable: true }
+        correctAnswer: {}
+        givenAnswer: {}
+    AttemptResult:
+      type: object
+      required: [id, quizId, userId, startedAt, status, items]
+      properties:
+        id: { type: string }
+        quizId: { type: string }
+        userId: { type: string }
+        startedAt: { type: integer }
+        expiresAt: { type: integer, nullable: true }
+        submittedAt: { type: integer, nullable: true }
+        score: { type: integer, nullable: true }
+        status: { type: string, enum: [in_progress, submitted, expired] }
+        passed: { type: boolean, nullable: true }
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttemptResultItem'
+    Assignment:
+      type: object
+      required: [id, courseId, title, status, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        courseId: { type: string }
+        lessonId: { type: string, nullable: true }
+        title: { type: string }
+        description: { type: string, nullable: true }
+        dueAt: { type: integer, nullable: true }
+        status: { type: string, enum: [draft, published, archived] }
+        createdAt: { type: integer }
+        updatedAt: { type: integer }
+    AssignmentList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Assignment'
+    ManageAssignmentCreate:
+      type: object
+      required: [title]
+      properties:
+        title: { type: string }
+        description: { type: string, nullable: true }
+        lessonId: { type: string, nullable: true }
+        dueAt: { type: integer, nullable: true }
+    SubmitAssignmentBody:
+      type: object
+      properties:
+        content: { type: string, nullable: true }
+        fileId: { type: string, nullable: true }
+        idempotencyKey: { type: string }
+    Submission:
+      type: object
+      required: [id, assignmentId, userId, status, submittedAt]
+      properties:
+        id: { type: string }
+        assignmentId: { type: string }
+        userId: { type: string }
+        content: { type: string, nullable: true }
+        fileId: { type: string, nullable: true }
+        status: { type: string, enum: [submitted, graded] }
+        score: { type: integer, nullable: true }
+        feedback: { type: string, nullable: true }
+        gradedBy: { type: string, nullable: true }
+        gradedAt: { type: integer, nullable: true }
+        submittedAt: { type: integer }
+    SubmissionList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Submission'
+    MySubmissionResponse:
+      type: object
+      required: [submission]
+      properties:
+        submission:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/Submission'
+    GradeSubmissionBody:
+      type: object
+      required: [score]
+      properties:
+        score: { type: integer, minimum: 0, maximum: 100 }
+        feedback: { type: string, nullable: true }
+    DashboardStats:
+      type: object
+      required:
+        [
+          activeCourses,
+          completedCourses,
+          completedLessons,
+          averagePercent,
+          unreadNotifications,
+          certificateCount,
+        ]
+      properties:
+        activeCourses: { type: integer }
+        completedCourses: { type: integer }
+        completedLessons: { type: integer }
+        averagePercent: { type: integer }
+        unreadNotifications: { type: integer }
+        certificateCount: { type: integer }
+    DashboardContinue:
+      type: object
+      nullable: true
+      properties:
+        courseId: { type: string }
+        courseTitle: { type: string }
+        nextLessonId: { type: string, nullable: true }
+        percent: { type: integer }
+    DashboardCourse:
+      type: object
+      required: [courseId, courseTitle, courseSlug, percent, status]
+      properties:
+        courseId: { type: string }
+        courseTitle: { type: string }
+        courseSlug: { type: string }
+        percent: { type: integer }
+        status: { type: string }
+    Dashboard:
+      type: object
+      required: [stats, continueLearning, courses]
+      properties:
+        stats:
+          $ref: '#/components/schemas/DashboardStats'
+        continueLearning:
+          $ref: '#/components/schemas/DashboardContinue'
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/DashboardCourse'
+    Notification:
+      type: object
+      required: [id, type, title, createdAt]
+      properties:
+        id: { type: string }
+        type: { type: string }
+        title: { type: string }
+        body: { type: string, nullable: true }
+        link: { type: string, nullable: true }
+        readAt: { type: integer, nullable: true }
+        createdAt: { type: integer }
+    NotificationList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+    Bookmark:
+      type: object
+      required: [courseId, courseTitle, courseSlug, createdAt]
+      properties:
+        courseId: { type: string }
+        courseTitle: { type: string }
+        courseSlug: { type: string }
+        createdAt: { type: integer }
+    BookmarkList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bookmark'
+    Certificate:
+      type: object
+      required: [id, userId, courseId, courseTitle, code, issuedAt, verifyPath]
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        courseId: { type: string }
+        courseTitle: { type: string }
+        code: { type: string }
+        issuedAt: { type: integer }
+        verifyPath: { type: string }
+    CertificateList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Certificate'
+    AnalyticsCourse:
+      type: object
+      required:
+        [courseId, courseTitle, enrolledCount, completedCount, averagePercent, activeStudents]
+      properties:
+        courseId: { type: string }
+        courseTitle: { type: string }
+        enrolledCount: { type: integer }
+        completedCount: { type: integer }
+        averagePercent: { type: integer }
+        activeStudents: { type: integer }
+    Analytics:
+      type: object
+      required: [courses, totals]
+      properties:
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnalyticsCourse'
+        totals:
+          type: object
+          required: [courses, enrollments, completedEnrollments, averagePercent]
+          properties:
+            courses: { type: integer }
+            enrollments: { type: integer }
+            completedEnrollments: { type: integer }
+            averagePercent: { type: integer }

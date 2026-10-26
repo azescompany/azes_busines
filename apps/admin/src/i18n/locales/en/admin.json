@@ -1,0 +1,129 @@
+{
+  "language": "Language",
+  "nav": {
+    "home": "Home",
+    "homeCaption": "Overview",
+    "organizations": "Organizations",
+    "organizationsCaption": "Tenants",
+    "users": "Users",
+    "usersCaption": "Members",
+    "roleMenus": "Role menus",
+    "roleMenusCaption": "Bindings",
+    "customers": "Customers",
+    "customersCaption": "CRM"
+  },
+  "shell": {
+    "primaryNav": "Primary navigation",
+    "hideMenus": "Hide menus",
+    "showMenus": "Show menus",
+    "prevMenus": "Previous menus",
+    "nextMenus": "Next menus",
+    "scrollToTop": "Scroll to top",
+    "openNav": "Open navigation",
+    "skipToContent": "Skip to content",
+    "openSettings": "Open settings",
+    "signingIn": "Signing you in…",
+    "redirectLogin": "Redirecting to Account login…"
+  },
+  "account": {
+    "menu": "Account",
+    "logout": "Log out"
+  },
+  "home": {
+    "title": "Home",
+    "subtitle": "AZES Admin — signed in via Account SSO",
+    "welcome": "Welcome"
+  },
+  "brand": {
+    "homeAria": "AZES COMPANY — home"
+  },
+  "orgs": {
+    "title": "Organizations",
+    "subtitle": "Create and manage tenant organizations",
+    "subtitleMember": "Organizations you belong to",
+    "detailTitle": "Organization",
+    "createTitle": "Create organization",
+    "create": "Create",
+    "creating": "Creating…",
+    "createError": "Could not create organization",
+    "loadError": "Could not load organizations",
+    "fields": {
+      "name": "Name",
+      "slug": "Slug (optional)"
+    },
+    "columns": {
+      "name": "Name",
+      "slug": "Slug",
+      "status": "Status"
+    },
+    "validation": {
+      "nameRequired": "Name is required",
+      "emailInvalid": "Enter a valid email"
+    },
+    "switcher": {
+      "label": "Organization"
+    },
+    "members": {
+      "title": "Members",
+      "loadError": "Could not load members",
+      "columns": {
+        "user": "User",
+        "role": "Role",
+        "status": "Status"
+      }
+    },
+    "invite": {
+      "title": "Invite member",
+      "email": "Email",
+      "role": "Role (orgAdmin | instructor | student)",
+      "send": "Send invite",
+      "sending": "Sending…",
+      "error": "Could not create invitation",
+      "tokenOnce": "Invite token (copy once)",
+      "pending": "Pending invitations"
+    }
+  },
+  "users": {
+    "title": "Users",
+    "subtitle": "Members of your active organization",
+    "noActiveOrg": "Select an active organization to view members"
+  },
+  "customers": {
+    "title": "Customers",
+    "subtitle": "CRM customers in your active organization",
+    "forbidden": "You do not have permission to view customers.",
+    "create": "Create",
+    "creating": "Creating…",
+    "createError": "Could not create customer",
+    "fields": {
+      "name": "Name",
+      "email": "Email"
+    },
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "status": "Status"
+    },
+    "validation": {
+      "nameRequired": "Name is required",
+      "emailInvalid": "Enter a valid email"
+    }
+  },
+  "roleMenus": {
+    "title": "Role menus",
+    "subtitle": "Assign Admin menus to roles. Menu permissions update API access automatically.",
+    "forbidden": "Only SuperAdmin can manage role menus.",
+    "menusFor": "Menus for {{role}}",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved. Affected users need a fresh login for JWT permissions.",
+    "saveError": "Could not save role menus",
+    "hint": "Unassigning a menu removes its permission codes from the role (unless shared by another assigned menu).",
+    "roles": {
+      "orgAdmin": "Org admin",
+      "instructor": "Instructor",
+      "student": "Student",
+      "guest": "Guest"
+    }
+  }
+}

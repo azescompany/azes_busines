@@ -1,0 +1,65 @@
+---
+description: AZES monorepo core architecture principles and non-negotiable rules
+alwaysApply: true
+---
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║ AZES COMPANY
+║ File: architecture.mdc
+║ Author: AZES_COMPANY
+║ Created: 2026-08-22
+║ Updated: 2026-10-11
+║ Purpose: Core architecture principles enforced across the monorepo
+║ Layer: tooling
+╚══════════════════════════════════════════════════════════════╝
+-->
+
+# AZES Architecture Rules
+
+- Shared, stable capabilities live in `packages/`. Product/business logic lives in `apps/`
+  and their `features/`. Do not create a shared-code dumping ground.
+- Never abstract a feature into `packages/` until multiple products genuinely need it.
+- Server state = TanStack Query. Client/global state = Redux Toolkit. Do not put API
+  response data into Redux without a documented reason.
+- `design-tokens` is the single design source of truth and must not depend on React.
+- Web UI (`ui-web`) and Native UI (`ui-native`) are separate; do not build one universal UI.
+- Applications consume `@azes/ui-web` / `@azes/ui-native`, never third-party UI directly.
+- Generated OpenAPI code is never hand-edited.
+- Build the smallest architecture that safely supports multi-year growth. Avoid micro-packages,
+  duplicate providers, and premature domain packages.
+
+## UI / style / theme changes
+
+When changing `design-tokens`, `ui-web`, `ui-native`, theme/settings/layout/nav, or style
+architecture: follow `.cursor/rules/uiDesignAgent.mdc` and update
+`docs/styles/CURRENT-STATE.md` (what changed, when, how it works now). Do not treat this file
+as the UI changelog.
+
+## API / Query / auth-bridge changes
+
+When changing `@azes/api`, OpenAPI consumers, QueryClient defaults, mutator/auth bridge, or
+app API wiring: follow `.cursor/rules/apiMenecerAgent.mdc` and update
+`docs/api/CURRENT-STATE.md`. Do not treat this file as the API changelog. Never hand-edit
+`packages/api/generated/**`.
+
+## App pages / features
+
+New product screens: `.cursor/rules/page-architecture.mdc` (thin `pages/` + `features/`,
+TanStack Query, RHF+zod). See `docs/architecture/pages-and-features.md` and ADR-018.
+
+## Agent behavior
+
+1. Inspect before modifying. Read the relevant files and `docs/ops/WORKER.md` first.
+2. Respect the active phase; do not start a new phase without user approval.
+3. Do not modify unrelated files. No scope creep.
+4. Preserve existing behavior unless the task explicitly changes it.
+5. If you discover an unrelated problem, record it in `docs/ops/WORKER.md` Backlog — do not
+   silently fix it.
+6. Do not introduce unnecessary dependencies.
+7. Never skip validation for the active phase.
+8. Roster: **Agent Memar** plans only (`memarAgent.mdc`); **Dizayner** / **Worker** implement +
+   scoped `--filter`; **Coordinator** full build/git/deploy; **İcraçı** Academy LMS
+   (`icraciAgent.mdc`, `docs/ops/WORKER.md` §4b). See `docs/ops/WORKER.md` §4a.
+
+See `docs/architecture/overview.md` for full rationale.

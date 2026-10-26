@@ -1,0 +1,56 @@
+---
+description: OpenAPI/Orval generation rules and generated-file policy
+globs: packages/api/**
+alwaysApply: false
+---
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║ AZES COMPANY
+║ File: api-generation.mdc
+║ Author: AZES_COMPANY
+║ Created: 2026-08-22
+║ Updated: 2026-10-09
+║ Purpose: Enforce Orval/OpenAPI generation and generated-file policy
+║ Layer: tooling
+╚══════════════════════════════════════════════════════════════╝
+-->
+
+# API Generation Rules
+
+For runtime consumption (mutator, QueryClient, auth bridge, app wiring, performance):
+use `.cursor/rules/apiMenecerAgent.mdc` and keep `docs/api/CURRENT-STATE.md` current.
+This file owns **codegen / generated-file** policy only.
+
+## Pipeline
+
+```text
+Backend OpenAPI/Swagger -> Orval -> packages/api/generated -> TanStack Query hooks -> apps
+```
+
+## Hard rules
+
+- **Never manually edit** files under `packages/api/generated/` (or any Orval output).
+- Regenerate with `pnpm api:generate` after OpenAPI/spec changes.
+- Generated code must stay clearly separated from manually maintained code
+  (`client/`, `query/`, `mutations/`, `config/`).
+- Apps import typed hooks/clients from `@azes/api`, not raw `fetch` or deep generated paths.
+- Auth headers and error normalization belong in the shared HTTP client/mutator — not scattered
+  across apps.
+
+## Generated-file policy (also applies repo-wide)
+
+Do not hand-edit:
+
+- OpenAPI-generated TypeScript
+- Lockfiles
+- Build output (`dist/`, `.next/`, coverage, Turbo caches)
+- Other machine-generated artifacts
+
+Ownership: generators own the files; humans own the generator config and wrappers.
+
+## CI expectation (Phase 6+)
+
+A drift check regenerates and fails if `generated/` is out of date.
+
+See `docs/architecture/api-architecture.md` and `docs/decisions/ADR-003-api-generation.md`.

@@ -1,0 +1,12 @@
+# AZES COMPANY
+# File: pnpm-workspace.yaml
+# Author: AZES_COMPANY
+# Created: 2026-08-22
+# Updated: 2026-08-22
+# Purpose: pnpm workspace package globs for apps, packages, and tooling
+# Layer: tooling
+
+packages:
+  - 'apps/*'
+  - 'packages/*'
+  - 'tooling/*'

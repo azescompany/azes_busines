@@ -1,0 +1,58 @@
+{
+  "name": "azes-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "description": "AZES Company enterprise frontend monorepo (Turborepo + pnpm)",
+  "type": "module",
+  "packageManager": "pnpm@10.30.3",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  },
+  "scripts": {
+    "prepare": "husky",
+    "build": "turbo run build",
+    "dev": "turbo run dev --filter=./apps/*",
+    "lint": "eslint . --max-warnings 0 && turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:coverage": "turbo run test:coverage",
+    "test:e2e": "node e2e/run-smoke.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "api:generate": "pnpm --filter @azes/api generate",
+    "api:generate:check": "pnpm --filter @azes/api generate:check",
+    "architecture:verify": "node scripts/architecture-audit/run.mjs",
+    "color:report": "node scripts/print-color-report.mjs"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,mjs,cjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml,css,scss,html}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@azes/eslint-config": "workspace:*",
+    "@azes/prettier-config": "workspace:*",
+    "@azes/typescript-config": "workspace:*",
+    "@azes/vitest-config": "workspace:*",
+    "@playwright/test": "^1.54.2",
+    "@vitest/coverage-v8": "^3.2.4",
+    "eslint": "^9.33.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.5",
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.4",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "^19.1.9",
+      "@types/react-dom": "^19.1.7"
+    }
+  }
+}

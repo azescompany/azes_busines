@@ -1,0 +1,109 @@
+---
+description: Pages/Features architecture — thin pages, feature folders, Query + RHF/zod
+globs: apps/**/src/**/*
+alwaysApply: true
+---
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║ AZES COMPANY
+║ File: page-architecture.mdc
+║ Author: AZES_COMPANY
+║ Created: 2026-10-10
+║ Updated: 2026-10-11
+║ Purpose: Mandatory page/feature structure for AZES apps
+║ Layer: tooling
+╚══════════════════════════════════════════════════════════════╝
+-->
+
+# Page / Feature Architecture
+
+Hər yeni səhifə bu quruluşda yazılır. Kanonik nümunə: `apps/admin/src/features/users`.
+
+## Məcburi struktur
+
+```text
+pages/<ad>/index.tsx          # NAZİK — yalnız feature View render
+features/<ad>/
+  index.ts                    # public API (View, paths, lazım olan tip/hook)
+  components/
+    <Name>/<Name>.tsx + index.ts
+    components/index.ts
+  columns/                    # cədvəl sütunları (lazım olsa)
+  hooks/
+  service/                    # *Api.ts + *Queries.ts
+  models/                     # types, schema (zod), mappers, normalize*
+  slice/                      # YALNIZ həqiqi client state — boş yaratma
+```
+
+- `pages` biznes məntiqi, Query, form state saxlamır.
+- Barrel yalnız: feature `index.ts`, `components/index.ts`, komponent qovluğu `index.ts`.
+- `models/index.ts`, `hooks/index.ts` YARATMA.
+- Komponent faylı: `UserForm/UserForm.tsx` — `index.tsx` adlı komponent YOX (istisna: `pages/<ad>/index.tsx`).
+- `features/index.ts` (bütün feature barrel) YARATMA.
+
+## Qat istiqaməti
+
+```text
+pages → features → shared → packages/*
+```
+
+1. `pages/*` yalnız `@/features/<ad>` (public) + `shared` / `app` import edir.
+2. Feature başqa feature daxilinə girmir; yalnız `@/features/<other>` public API.
+3. `shared/` heç bir feature/pages import etmir.
+4. `packages/ui-web` biznes tipi bilmir.
+5. Dərin import qadağan: `@/features/users/components/...` digər qatlardan.
+6. Feature `index.ts` yalnız lazım olanı export edir.
+7. Bütün feature-ları bir barrel-də toplama.
+
+## Server state
+
+- Yalnız TanStack Query: `service/*Api.ts` (saf fetch) + `service/*Queries.ts` (keys, queryOptions, hooks).
+- Key factory: `usersKeys.all | list(params) | detail(id)`.
+- Mutation → dəqiq invalidation; pagination üçün `placeholderData` / keepPreviousData uyğun yerdə.
+- Redux `slice`: server data, filter, pagination YOX. Yalnız cross-route client UI state.
+
+## Formlar
+
+- `react-hook-form` + `zod` (`models/schema.ts`, tip = `z.infer`).
+- Validation mesajları i18n açarıdır (hardcoded user text yox).
+- DTO ↔ UI: `models/mappers.ts`. Komponent xam DTO ilə işləmir.
+- Create/edit bir form: `intent: 'create' | 'edit'`.
+
+## UI
+
+- Cədvəl: yalnız `AzesTable` (`@azes/ui-web/table`). Boş state globaldır
+  (`AzesTableLabelsProvider` / `table.empty*`) — feature-də ayrıca empty label yazma.
+- Filter/CRUD: `AzesAccordion` (search / crud).
+- Təsdiq: `useAzesDialog`. Bildiriş: snackbar.
+- Qalereya: `AzesCarousel`.
+- Qadağan: `window.confirm`, birbaşa `@mui/x-data-grid`, birbaşa `@tanstack/react-table`, hardcoded UI mətn, sərbəst hex/rgba/px (token/theme istifadə et).
+
+## Yeni səhifə checklist
+
+1. `features/<ad>/` qovluğu  
+2. `models` + `schema`  
+3. `service` Api + Queries  
+4. `hooks`  
+5. `components` (View, Filters, Form, Table…)
+5b. `XxxViewSkeleton` (layout-matched; `@azes/ui-web/skeleton` + `useSkeletonGate`)
+6. public `index.ts`
+7. `pages/<ad>/index.tsx`  
+8. route + `PATHS`  
+9. i18n **en + az + ru** (eyni açar ağacı; hər `t()` üçün üç locale; eyni tapşırıqda)  
+10. testlər  
+11. sənəd / CURRENT-STATE delta (API dəyişibsə)
+
+## Routing (admin data mode)
+
+- Yeni səhifə üçün route `apps/admin/src/app/router/routes.tsx`-də **`PATHS`** ilə və route-level **`lazy`** ilə qeyd olunur.
+- Yollar hardcoded string deyil — yalnız `PATHS` / `pathTo` / `useLocalizedPath`.
+- Brauzer URL: `/{en|az|ru}/…` (məs. `/az/users`); logical `PATHS` locale-siz qalır.
+- Naviqasiya `Link` / `useNavigate` (`react-router`). Search params yalnız `useQueryState` / `useQueryPatch`.
+- `window.location.hash` / `window.location.href` / `location.assign` ilə in-app naviqasiya **qadağandır** (auth handoff / account redirect istisna).
+- `react-router-dom` import etmə — yalnız `react-router` (+ `RouterProvider` üçün `react-router/dom`).
+- Ətraflı: `docs/architecture/routing.md`, ADR-019.
+
+API/runtime detalları: `.cursor/rules/apiMenecerAgent.mdc` + `docs/api/CURRENT-STATE.md`.  
+UI theme: `.cursor/rules/uiDesignAgent.mdc`.  
+Uzun izah: `docs/architecture/pages-and-features.md`.

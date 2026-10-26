@@ -1,0 +1,97 @@
+{
+  "name": "@azes/api",
+  "version": "0.0.0",
+  "private": true,
+  "description": "AZES OpenAPI-generated API client and TanStack Query integration",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./admin": {
+      "types": "./src/admin/index.ts",
+      "import": "./src/admin/index.ts",
+      "default": "./src/admin/index.ts"
+    },
+    "./azes": {
+      "types": "./src/azes/index.ts",
+      "import": "./src/azes/index.ts",
+      "default": "./src/azes/index.ts"
+    },
+    "./azes/models": {
+      "types": "./src/azes/models/index.ts",
+      "import": "./src/azes/models/index.ts",
+      "default": "./src/azes/models/index.ts"
+    },
+    "./azes/auth": {
+      "types": "./src/azes/auth/index.ts",
+      "import": "./src/azes/auth/index.ts",
+      "default": "./src/azes/auth/index.ts"
+    },
+    "./azes/courses": {
+      "types": "./src/azes/courses/index.ts",
+      "import": "./src/azes/courses/index.ts",
+      "default": "./src/azes/courses/index.ts"
+    },
+    "./azes/manage": {
+      "types": "./src/azes/manage/index.ts",
+      "import": "./src/azes/manage/index.ts",
+      "default": "./src/azes/manage/index.ts"
+    },
+    "./azes/orgs": {
+      "types": "./src/azes/orgs/index.ts",
+      "import": "./src/azes/orgs/index.ts",
+      "default": "./src/azes/orgs/index.ts"
+    },
+    "./azes/menus": {
+      "types": "./src/azes/menus/index.ts",
+      "import": "./src/azes/menus/index.ts",
+      "default": "./src/azes/menus/index.ts"
+    },
+    "./azes/quizzes": {
+      "types": "./src/azes/quizzes/index.ts",
+      "import": "./src/azes/quizzes/index.ts",
+      "default": "./src/azes/quizzes/index.ts"
+    },
+    "./azes/dashboard": {
+      "types": "./src/azes/dashboard/index.ts",
+      "import": "./src/azes/dashboard/index.ts",
+      "default": "./src/azes/dashboard/index.ts"
+    }
+  },
+  "files": [
+    "src",
+    "dist",
+    "generated",
+    "openapi"
+  ],
+  "scripts": {
+    "generate": "orval --config ./orval.config.ts && node ./scripts/fix-orval-vite-generics.mjs && node ./scripts/build-admin-facade.mjs && node ./scripts/build-azes-facade.mjs",
+    "generate:facade": "node ./scripts/build-admin-facade.mjs && node ./scripts/build-azes-facade.mjs",
+    "generate:fix-generics": "node ./scripts/fix-orval-vite-generics.mjs",
+    "generate:check": "pnpm generate && node ./scripts/check-generated-drift.mjs",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "lint": "eslint ."
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.0.0",
+    "react": "^18.3.0 || ^19.0.0"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.84.1"
+  },
+  "devDependencies": {
+    "@azes/typescript-config": "workspace:*",
+    "@azes/vitest-config": "workspace:*",
+    "@types/react": "^19.1.9",
+    "orval": "^7.10.0",
+    "react": "^19.1.1",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

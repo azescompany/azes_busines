@@ -1,0 +1,348 @@
+{
+  "language": "Dil",
+  "catalog": "Kataloq",
+  "shell": {
+    "primaryNav": "Əsas naviqasiya",
+    "hideMenus": "Menyuları gizlət",
+    "showMenus": "Menyuları göstər",
+    "prevMenus": "Əvvəlki menyular",
+    "nextMenus": "Növbəti menyular",
+    "scrollToTop": "Yuxarı qayıt",
+    "openNav": "Naviqasiyanı aç",
+    "skipToContent": "Məzmuna keç",
+    "footer": "AZES UI — dizayn sistemi kataloqu",
+    "openSettings": "Parametrləri aç",
+    "ai": "AI",
+    "aiCaption": "Köməkçi",
+    "aiAria": "AI köməkçi"
+  },
+  "phase": {
+    "scrollHint": "KƏŞF ÜÇÜN SURÜŞDÜR",
+    "inThisPhase": "Bu fazada",
+    "demoCaption": "AZES dizayn sistemindən canlı demo.",
+    "snackSaved": "Vitrində yadda saxlanıldı",
+    "dialogTitle": "Dialoq",
+    "dialogBody": "Modal səth tema elevation və z-index tokenlərindən istifadə edir.",
+    "dialogClose": "Bağla",
+    "sectionNavAria": "Faza bölmələri",
+    "goToSection": "Bölməyə keç"
+  },
+  "phases": {
+    "foundations": {
+      "title": "Əsaslar",
+      "caption": "Tokenlər, tip, boşluq, hərəkət",
+      "body": "Hər səthin altındakı dil — rəng toxumları, tipografiya, boşluq, forma, elevation və motion.",
+      "lookFor": "Tokenlərin tək-tək hex olmadan kontrolara necə keçdiyinə baxın.",
+      "pullQuote": "Tokenlər axır — kontrolara gedən yolda tək-tək hex yoxdur."
+    },
+    "controls": {
+      "title": "Kontrollar",
+      "caption": "Düymələr, sahələr, səthlər",
+      "body": "Interaktiv bloklar — düymələr, mətn sahələri, seçimlər, kartlar və accordion.",
+      "lookFor": "Fokus halqaları, sıxlıq və primary vs outlined iyerarxiyası.",
+      "pullQuote": "İyerarxiya məhsuldur: fokus, sıxlıq, primary vs outlined."
+    },
+    "data": {
+      "title": "Data və geribildirim",
+      "caption": "Siyahılar, xəbərdarlıqlar, dialoqlar",
+      "body": "AZES datanı necə göstərir və cavab verir — cədvəllər, siyahılar, avatarlar, tooltip, alert, snackbar, dialoq.",
+      "lookFor": "Boş vəziyyətlər, şiddət tonları və modal vs snackbar vaxtı.",
+      "pullQuote": "Geribildirimin vaxtı var — boş, severity, modal vs snack."
+    },
+    "shell": {
+      "title": "Shell və naviqasiya",
+      "caption": "Layout, tablar, chrome",
+      "body": "Səhifə quruluşu və yol tapma — Container/Grid/Stack, app shell, responsive qaydalar, tablar, breadcrumb, menyular.",
+      "lookFor": "Chrome və məzmunun scoop scrollport-u necə paylaşdığı.",
+      "pullQuote": "Chrome və məzmun bir scoop paylaşır — iki scroll dünyası yox."
+    },
+    "platform": {
+      "title": "Platforma",
+      "caption": "Engine-lər, cədvəl, qrafiklər, səhifələr",
+      "body": "Məhsul engine-ləri və reseptlər — parametrlər, naviqasiya, form binding, AzesTable, qrafiklər və nümunə səhifələr.",
+      "lookFor": "Platform paketlərinin real ekranlara necə yığılması (auth toolbar-dan kənarda qalır).",
+      "pullQuote": "Paketlər ekrana yığılır — əvvəl engine, sonra one-off."
+    }
+  },
+  "ai": {
+    "title": "AI köməkçi",
+    "close": "Bağla",
+    "closeAria": "Bağla",
+    "empty": "azes-ui haqqında soruşun və ya “dark rejimə keç” yazın.",
+    "inputPlaceholder": "Soruşun və ya settings dəyişin…",
+    "send": "Göndər",
+    "sending": "…",
+    "toolRunning": "{{name}} tətbiq olunur…",
+    "error": "Xəta baş verdi. Yenidən cəhd edin.",
+    "errorNoKey": "AI konfiqurasiya olunmayıb (serverdə NVIDIA_API_KEY yoxdur).",
+    "errorRate": "Çox sorğu — bir az gözləyib yenidən cəhd edin.",
+    "errorOffline": "Şəbəkə xətası — showcase dev serverin işlədiyini yoxlayın."
+  },
+  "sections": {
+    "overview": {
+      "title": "Ümumi baxış",
+      "caption": "Sistem təqdimatı və canlı tema chip-ləri."
+    },
+    "colors": {
+      "title": "Rənglər",
+      "caption": "OKLCH toxumlar, status rəngləri və səth tonları."
+    },
+    "typography": {
+      "title": "Tipografiya",
+      "caption": "Token-mapped MUI tip şkalası — h1-dən overline-a."
+    },
+    "spacing": {
+      "title": "Boşluq",
+      "caption": "theme.spacing addımları — tək spacing mühərriki."
+    },
+    "radius": {
+      "title": "Forma",
+      "caption": "Dizayn tokenlərindən radius dəyərləri."
+    },
+    "shadows": {
+      "title": "Elevation",
+      "caption": "Kart və chrome üçün kölgə nərdivanı."
+    },
+    "motion": {
+      "title": "Hərəkət",
+      "caption": "UI keçidləri üçün duration və easing."
+    },
+    "buttons": {
+      "title": "Düymələr",
+      "caption": "Contained, outlined və text iyerarxiyası.",
+      "intro": "Contained / outlined / text iyerarxiyası, ölçülər, disabled, ButtonGroup, Chip və Link.",
+      "takeaway": "Hər görünüşdə bir primary əməliyyat; secondary yollar üçün outlined və text.",
+      "groups": {
+        "variants": "Variantlar",
+        "sizes": "Ölçülər",
+        "states": "Vəziyyətlər",
+        "grouped": "Düymə qrupu",
+        "chips": "Chip və link"
+      },
+      "labels": {
+        "contained": "Contained",
+        "outlined": "Outlined",
+        "text": "Text",
+        "disabled": "Disabled",
+        "small": "Kiçik",
+        "large": "Böyük",
+        "one": "Bir",
+        "two": "İki",
+        "three": "Üç",
+        "chipFilter": "Filter",
+        "chipClickable": "Kliklənən",
+        "chipDeletable": "Silinən",
+        "link": "Tema linki"
+      },
+      "aria": {
+        "iconExample": "Nümunə ikon düyməsi"
+      }
+    },
+    "inputs": {
+      "title": "Mətn sahələri",
+      "caption": "Label, helper və validation vəziyyətləri.",
+      "intro": "Outlined TextField vəziyyət matrisi — default, fokus, error, disabled və read-only.",
+      "takeaway": "Helper və error mətni problemi adlandırmalıdır; yalnız rəngə etibar etməyin.",
+      "groups": {
+        "states": "Vəziyyətlər",
+        "extra": "Multiline və autocomplete"
+      },
+      "fields": {
+        "default": "Ad",
+        "defaultHelper": "Outlined default — primary fokus",
+        "focused": "Fokus",
+        "focusedHelper": "Primary fokus halqasını görmək üçün Tab basın",
+        "error": "Xəta",
+        "errorHelper": "Xəta feedback.danger tokenindən istifadə edir",
+        "disabled": "Disabled",
+        "disabledValue": "Yalnız oxu",
+        "readonly": "Read-only",
+        "readonlyValue": "Redaktə olunmur",
+        "readonlyHelper": "InputProps readOnly — hələ də fokuslana bilir",
+        "multiline": "Çoxsətirli",
+        "multilinePlaceholder": "Qeydlər",
+        "autocomplete": "Autocomplete"
+      },
+      "options": {
+        "account": "Account",
+        "admin": "Admin",
+        "agent": "Agent",
+        "realestate": "Realestate"
+      }
+    },
+    "forms": {
+      "title": "Seçim kontrolları",
+      "caption": "Checkbox, radio, switch və sıx sətirlər.",
+      "intro": "Seçim kontrolları, Select, Slider və ToggleButton — primary rəng və density-aware.",
+      "takeaway": "Seçimləri sıx qruplaşdırın; Autocomplete üçün yer lazımdırsa dialoq açın.",
+      "groups": {
+        "toggles": "Keçidlər",
+        "plan": "Plan",
+        "select": "Select",
+        "slider": "Səs",
+        "align": "Hizalama",
+        "dialog": "Dialoq"
+      },
+      "labels": {
+        "subscribe": "Abunə ol",
+        "notifications": "Bildirişlər",
+        "starter": "Starter",
+        "pro": "Pro",
+        "role": "Rol",
+        "member": "Üzv",
+        "admin": "Admin",
+        "left": "Sol",
+        "center": "Mərkəz",
+        "right": "Sağ",
+        "openDialog": "Autocomplete dialoqunu aç"
+      },
+      "aria": {
+        "volume": "Səs",
+        "alignment": "Mətn hizası"
+      },
+      "dialog": {
+        "title": "Autocomplete dialoqu",
+        "body": "Kiçik modal: mətn sahəsi və Autocomplete — məhsul formalarının eyni pattern-i.",
+        "name": "Göstərilən ad",
+        "nameHelper": "Siyahıda görünür",
+        "workspace": "İş sahəsi",
+        "cancel": "Ləğv et",
+        "confirm": "Təsdiq et"
+      }
+    },
+    "cards": {
+      "title": "Kart",
+      "caption": "Outlined və elevated səth reseptləri yan-yana.",
+      "intro": "Outlined (default) və elevated kartlar — eyni məzmun, fərqli vurğu.",
+      "takeaway": "Sıx siyahılarda outlined; kart interaksiya odağındadırsa elevate edin.",
+      "groups": {
+        "recipes": "Reseptlər"
+      },
+      "outlined": "Outlined",
+      "elevated": "Elevated",
+      "surfaceTitle": "Səth",
+      "surfaceBody": "Kartlar semantic tokenlərdən background.paper istifadə edir.",
+      "chip": "Token",
+      "whenNote": "Outlined — sakit qruplaşdırma; elevated (customShadows.card) — kartdır canvasdan qalxmalıdırsa."
+    },
+    "accordion": {
+      "title": "Accordion",
+      "caption": "AzesAccordion search və CRUD panelləri — token padding.",
+      "intro": "Məhsul konvensiyası: AzesAccordion — bordered, elevation yox, density-aware header.",
+      "takeaway": "Cədvəl üstündə search; qısa create/edit üçün CRUD — uzun wizard deyil.",
+      "groups": {
+        "panels": "Panellər"
+      },
+      "open": {
+        "title": "Aktiv filterlər",
+        "subtitle": "Default açıq",
+        "body": "Search draft bağlananda da mounted qalır."
+      },
+      "closed": {
+        "title": "Əlavə filterlər",
+        "subtitle": "Bağlı",
+        "body": "Səhifəni tərk etmədən siyahını dəqiqləşdirin."
+      },
+      "disabled": {
+        "title": "Əlçatmaz panel",
+        "subtitle": "Disabled demo",
+        "body": "Yüklənir və ya kilidli — header açılmır."
+      },
+      "field": "Açar söz",
+      "submit": "Axtar",
+      "reset": "Sıfırla"
+    },
+    "tables": {
+      "title": "Cədvəl",
+      "caption": "Sıx tabular layout nümunələri."
+    },
+    "lists": {
+      "title": "Siyahı",
+      "caption": "Avatar sətirləri və secondary actions."
+    },
+    "avatars": {
+      "title": "Avatar və badge",
+      "caption": "Presence və say göstəriciləri."
+    },
+    "tooltips": {
+      "title": "Tooltip",
+      "caption": "Gecikmə, yerləşmə və sıx label-lər."
+    },
+    "alerts": {
+      "title": "Alert və progress",
+      "caption": "Şiddət tonları və inline progress."
+    },
+    "snackbar": {
+      "title": "Snackbar",
+      "caption": "Axını bloklamadan keçici bildiriş."
+    },
+    "dialogs": {
+      "title": "Dialoq",
+      "caption": "Modal elevation və fokus tələsi demosu."
+    },
+    "layout": {
+      "title": "Container, Grid, Stack",
+      "caption": "Struktur layout primitivləri."
+    },
+    "app-shell": {
+      "title": "App shell",
+      "caption": "Dashboard chrome kompozisiyası."
+    },
+    "responsive": {
+      "title": "Responsive",
+      "caption": "Breakpoint-ə uyğun stack qaydaları."
+    },
+    "navigation": {
+      "title": "Tablar və pagination",
+      "caption": "Səhifədaxili yol tapma."
+    },
+    "breadcrumbs": {
+      "title": "Breadcrumb",
+      "caption": "İkidən dərin iyerarxiya."
+    },
+    "menus": {
+      "title": "Menyular",
+      "caption": "AzesMenu trigger və paper radius."
+    },
+    "platform-settings": {
+      "title": "Settings engine",
+      "caption": "azes.settings.v1 açarları."
+    },
+    "platform-navigation": {
+      "title": "Navigation engine",
+      "caption": "Data-driven nav + access filter."
+    },
+    "form-binding": {
+      "title": "Form binding",
+      "caption": "RHF + zod field binding resepti."
+    },
+    "data-grid": {
+      "title": "Data grid",
+      "caption": "Köhnə MUI X community grid."
+    },
+    "azes-table": {
+      "title": "AzesTable",
+      "caption": "TanStack + MUI Table platform cədvəli."
+    },
+    "charts": {
+      "title": "Qrafiklər",
+      "caption": "Tema-aware chart palette demoları."
+    },
+    "pages-analytics": {
+      "title": "Analytics dashboard",
+      "caption": "Nümunə analytics səhifə."
+    },
+    "pages-list": {
+      "title": "List page",
+      "caption": "Siyahı + filter səhifə resepti."
+    },
+    "pages-form": {
+      "title": "Form page",
+      "caption": "Create/edit form səhifə resepti."
+    },
+    "accessibility": {
+      "title": "Fokus və kontrast",
+      "caption": "Fokus halqası, skip link, AA kontrast."
+    }
+  }
+}

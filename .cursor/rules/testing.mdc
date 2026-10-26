@@ -1,0 +1,47 @@
+---
+description: Testing conventions and quality-gate expectations
+globs: "**/*.{test,spec}.{ts,tsx},**/e2e/**,**/__tests__/**"
+alwaysApply: false
+---
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║ AZES COMPANY
+║ File: testing.mdc
+║ Author: AZES_COMPANY
+║ Created: 2026-08-22
+║ Updated: 2026-08-22
+║ Purpose: Testing strategy and minimum quality expectations
+║ Layer: tooling
+╚══════════════════════════════════════════════════════════════╝
+-->
+
+# Testing Rules
+
+## Stack
+
+- Unit: Vitest
+- Component (web): Testing Library
+- Component (native): React Native Testing Library
+- Web E2E: Playwright
+- Shared helpers: `packages/testing` / `tooling/vitest` (when created)
+
+## Ownership
+
+- Packages own their unit/component tests.
+- Apps own integration + E2E tests.
+- Do not skip validation for the active phase.
+
+## Minimum bar (when implementation phases begin)
+
+- New logic in `utils` / `validation` / `state` ships with unit tests.
+- New `ui-*` components ship with at least a render/interaction test.
+- App shells ship with a smoke E2E (web) or render test (native).
+
+## Agent rules
+
+- Prefer colocated `*.test.ts(x)` next to the unit under test unless a package convention differs.
+- Keep tests deterministic; no flaky sleeps or network without mocks.
+- Never mark a phase `COMPLETED` unless its declared quality gates pass.
+
+See `docs/architecture/testing.md`.

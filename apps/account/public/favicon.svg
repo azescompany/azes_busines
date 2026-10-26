@@ -1,0 +1,12 @@
+<!--
++--------------------------------------------------------------+
+| AZES COMPANY
+| File: apps/account/public/favicon.svg
+| Author: AZES_COMPANY
+| Created: 2026-10-11
+| Updated: 2026-10-11
+| Purpose: Home favicon (DEFAULT_PRIMARY; runtime tint via ui-web)
+| Layer: app
++--------------------------------------------------------------+
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#d33a3c"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>

@@ -1,0 +1,98 @@
+{
+  "brand": "AZES Academy",
+  "welcome": "AZES Academy-yə xoş gəlmisiniz",
+  "title": "Daxil ol",
+  "language": "Dil",
+  "footer": "© {{year}} AZES Academy",
+  "heroTitle": "Təhsil hesabınıza təhlükəsiz giriş",
+  "heroSubtitle": "Davam etmək üçün daxil olun. Uğurlu girişdən sonra Academy tətbiqinə yönləndiriləcəksiniz.",
+  "showcase": {
+    "title": "Kurslar, tələbələr və irəliləyiş — bir paneldə",
+    "subtitle": "Kurslarınızı, tələbələrinizi və tədris irəliləyişini bir paneldən idarə edin.",
+    "benefits": {
+      "listings": "Kurslar və proqram",
+      "stats": "Statistika və analitika",
+      "agents": "Müəllim və tələbə profilləri"
+    },
+    "listings": {
+      "title": "Kurslar",
+      "chip0": "Yayımlanıb",
+      "chip1": "Aktiv",
+      "p0": "12d",
+      "p1": "8m",
+      "p2": "94%",
+      "p3": "4.9"
+    },
+    "stats": {
+      "k0": "Tələbə",
+      "v0": "128",
+      "k1": "Tamamlanan",
+      "v1": "36",
+      "k2": "Sertifikat",
+      "v2": "12",
+      "s0": "Yeni",
+      "s1": "Davam",
+      "s2": "Bitmiş"
+    },
+    "agent": {
+      "role": "Baş müəllim",
+      "verified": "Təsdiqlənmiş",
+      "s0": "18",
+      "s1": "24",
+      "s2": "2s",
+      "contact": "Profil",
+      "message": "Mesaj"
+    },
+    "map": {
+      "title": "Tədris yolu",
+      "c0": "Video",
+      "c1": "Quiz",
+      "c2": "Tapşırıq"
+    },
+    "deals": {
+      "c0": "Yeni",
+      "c1": "Davam edir",
+      "c2": "Tamamlandı",
+      "p0": "3/5",
+      "p1": "8/10",
+      "p2": "12/12",
+      "p3": "5/8",
+      "p4": "10/10"
+    }
+  },
+  "slogans": {
+    "0": "Təhsil hesabınıza təhlükəsiz giriş",
+    "1": "Sessiya cihaz ID ilə qorunur",
+    "2": "Academy-yə təhlükəsiz keçid"
+  },
+  "subtitle": "Davam etmək üçün daxil olun",
+  "aside": "Uğurlu girişdən sonra Academy tətbiqinə yönləndiriləcəksiniz.",
+  "username": "İstifadəçi adı",
+  "password": "Şifrə",
+  "forgotPassword": "Şifrəni unutdunuz?",
+  "rememberDevice": "Cihazı yadda saxla",
+  "showPassword": "Şifrəni göstər",
+  "hidePassword": "Şifrəni gizlə",
+  "capsLock": "Caps Lock açıqdır",
+  "submit": "Daxil ol",
+  "submitting": "Daxil olunur…",
+  "success": "Giriş uğurlu oldu",
+  "redirectingAnnounce": "Giriş uğurlu oldu, yönləndirilirsiniz.",
+  "sessionEnded": "Sessiya bitdi",
+  "security": {
+    "title": "Təhlükəsizlik",
+    "body": "Sessiya cihaz ID ilə qorunur",
+    "details": "Bu cihaz üçün sabit identifikator sessiyanı digər cihazlardan ayırır. Yeni və ya naməlum cihazdan girişdə əlavə təsdiq tələb oluna bilər.",
+    "more": "Ətraflı",
+    "less": "Gizlət",
+    "deviceId": "ID",
+    "dismiss": "Bağla"
+  },
+  "errors": {
+    "invalidCredentials": "İstifadəçi adı və ya şifrə yanlışdır.",
+    "accountDisabled": "Bu hesab deaktivdir və ya hələ aktiv deyil.",
+    "rateLimited": "Çox sayda giriş cəhdi. Bir neçə dəqiqə gözləyib yenidən cəhd edin.",
+    "noToken": "Giriş uğurlu oldu, amma access token qayıtmadı.",
+    "generic": "Giriş alınmadı."
+  }
+}

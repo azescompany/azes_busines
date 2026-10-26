@@ -1,0 +1,66 @@
+# AZES COMPANY
+# File: .gitignore
+# Author: AZES_COMPANY
+# Created: 2026-08-22
+# Updated: 2026-08-22
+# Purpose: Git ignore rules for the AZES frontend monorepo
+# Layer: tooling
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Builds & caches
+dist/
+build/
+out/
+.next/
+.expo/
+.turbo/
+*.tsbuildinfo
+.cache/
+
+# Test / coverage reports (Vitest/Istanbul output — not packages/testing/src/coverage source)
+/coverage/
+packages/*/coverage/
+apps/*/coverage/
+playwright-report/
+test-results/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+.dev.vars
+!.dev.vars.example
+# Local demo credentials (never commit)
+USERS.MD
+**/USERS.MD
+# Local D1 seed dumps (password hashes / apply leftovers — never commit)
+apps/api/seed.sql
+apps/api/seed-role-users.sql
+apps/api/seed-lms.sql
+apps/api/seed.err
+
+# Cloudflare Wrangler local state
+.wrangler/
+**/wrangler.toml.bak
+
+# Logs & debug
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
+
+# Misc
+*.local
+.vercel

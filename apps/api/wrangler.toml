@@ -1,0 +1,35 @@
+# AZES COMPANY
+# File: apps/api/wrangler.toml
+# Author: AZES_COMPANY
+# Created: 2026-10-19
+# Updated: 2026-10-20
+# Purpose: Cloudflare Workers + local D1 + R2 for @azes/api-server
+# Layer: app
+#
+# Local foundation. Do not deploy production from LMS phases without approval.
+# database_id / bucket_name are local placeholders — replace before remote use.
+
+name = "azes-api"
+main = "src/index.ts"
+compatibility_date = "2025-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+API_NAME = "azes-api"
+API_VERSION = "v1"
+# development | test | production — production disables localhost CORS fallback.
+API_ENV = "development"
+# Exact origins only (no wildcards). Required in production (see README).
+CORS_ALLOWED_ORIGINS = "http://localhost:100,http://127.0.0.1:100,http://localhost:200,http://127.0.0.1:200"
+# Set to "false" only for emergency / special local debugging.
+AUTH_RATE_LIMIT_ENABLED = "true"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "azes-api"
+database_id = "00000000-0000-0000-0000-000000000001"
+migrations_dir = "drizzle/migrations"
+
+[[r2_buckets]]
+binding = "FILES"
+bucket_name = "azes-api-files"

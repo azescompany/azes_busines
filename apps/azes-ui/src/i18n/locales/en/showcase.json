@@ -1,0 +1,348 @@
+{
+  "language": "Language",
+  "catalog": "Catalog",
+  "shell": {
+    "primaryNav": "Primary navigation",
+    "hideMenus": "Hide menus",
+    "showMenus": "Show menus",
+    "prevMenus": "Previous menus",
+    "nextMenus": "Next menus",
+    "scrollToTop": "Scroll to top",
+    "openNav": "Open navigation",
+    "skipToContent": "Skip to content",
+    "footer": "AZES UI — design system catalog",
+    "openSettings": "Open settings",
+    "ai": "AI",
+    "aiCaption": "Assistant",
+    "aiAria": "AI Assistant"
+  },
+  "phase": {
+    "scrollHint": "SCROLL TO EXPLORE",
+    "inThisPhase": "In this phase",
+    "demoCaption": "Live demo from the AZES design system.",
+    "snackSaved": "Saved in the showcase",
+    "dialogTitle": "Dialog",
+    "dialogBody": "Modal surface uses theme elevation and z-index tokens.",
+    "dialogClose": "Close",
+    "sectionNavAria": "Phase sections",
+    "goToSection": "Go to section"
+  },
+  "phases": {
+    "foundations": {
+      "title": "Foundations",
+      "caption": "Tokens, type, space, motion",
+      "body": "The language under every surface — color seeds, typography, spacing, shape, elevation, and motion.",
+      "lookFor": "Watch how tokens cascade into controls without one-off hex values.",
+      "pullQuote": "Tokens cascade — no one-off hex on the path to controls."
+    },
+    "controls": {
+      "title": "Controls",
+      "caption": "Buttons, fields, surfaces",
+      "body": "Interactive building blocks — buttons, text fields, choice controls, cards, and accordion.",
+      "lookFor": "Focus rings, density, and primary vs outlined hierarchy.",
+      "pullQuote": "Hierarchy is the product: focus, density, primary vs outlined."
+    },
+    "data": {
+      "title": "Data & feedback",
+      "caption": "Lists, alerts, dialogs",
+      "body": "How AZES shows data and talks back — tables, lists, avatars, tooltips, alerts, snackbars, dialogs.",
+      "lookFor": "Empty states, severity tones, and modal vs snackbar timing.",
+      "pullQuote": "Feedback has timing — empty, severity, modal vs snack."
+    },
+    "shell": {
+      "title": "Shell & nav",
+      "caption": "Layout, tabs, chrome",
+      "body": "Page structure and wayfinding — Container/Grid/Stack, app shell, responsive rules, tabs, breadcrumbs, menus.",
+      "lookFor": "How chrome and content share the scoop scrollport.",
+      "pullQuote": "Chrome and content share one scoop — not two scroll worlds."
+    },
+    "platform": {
+      "title": "Platform",
+      "caption": "Engines, table, charts, pages",
+      "body": "Product engines and recipes — settings, navigation, form binding, AzesTable, charts, and sample pages.",
+      "lookFor": "How platform packages compose into real screens (auth page stays out of the toolbar).",
+      "pullQuote": "Packages compose into screens — engines before one-offs."
+    }
+  },
+  "ai": {
+    "title": "AI assistant",
+    "close": "Close",
+    "closeAria": "Close",
+    "empty": "Ask about azes-ui, or say “switch to dark mode”.",
+    "inputPlaceholder": "Ask or change settings…",
+    "send": "Send",
+    "sending": "…",
+    "toolRunning": "Applying {{name}}…",
+    "error": "Something went wrong. Try again.",
+    "errorNoKey": "AI is not configured (NVIDIA_API_KEY missing on the server).",
+    "errorRate": "Too many requests — wait a moment and retry.",
+    "errorOffline": "Network error — check that the showcase dev server is running."
+  },
+  "sections": {
+    "overview": {
+      "title": "Overview",
+      "caption": "Start here — system pitch and live theme chips."
+    },
+    "colors": {
+      "title": "Colors",
+      "caption": "OKLCH seeds, semantic status, and tinted surfaces."
+    },
+    "typography": {
+      "title": "Typography",
+      "caption": "Token-mapped MUI type scale from h1 to overline."
+    },
+    "spacing": {
+      "title": "Spacing",
+      "caption": "theme.spacing steps — one spacing engine only."
+    },
+    "radius": {
+      "title": "Shape",
+      "caption": "Corner radii from design-token shape primitives."
+    },
+    "shadows": {
+      "title": "Elevation",
+      "caption": "Custom shadow ladder for cards and chrome."
+    },
+    "motion": {
+      "title": "Motion",
+      "caption": "Duration and easing tokens for UI transitions."
+    },
+    "buttons": {
+      "title": "Buttons",
+      "caption": "Contained, outlined, and text hierarchies.",
+      "intro": "Contained / outlined / text hierarchy, sizes, disabled, ButtonGroup, Chip, and Link.",
+      "takeaway": "Pick one primary action per view; keep outlined and text for secondary paths.",
+      "groups": {
+        "variants": "Variants",
+        "sizes": "Sizes",
+        "states": "States",
+        "grouped": "Button group",
+        "chips": "Chips and link"
+      },
+      "labels": {
+        "contained": "Contained",
+        "outlined": "Outlined",
+        "text": "Text",
+        "disabled": "Disabled",
+        "small": "Small",
+        "large": "Large",
+        "one": "One",
+        "two": "Two",
+        "three": "Three",
+        "chipFilter": "Filter",
+        "chipClickable": "Clickable",
+        "chipDeletable": "Deletable",
+        "link": "Theme link"
+      },
+      "aria": {
+        "iconExample": "Example icon button"
+      }
+    },
+    "inputs": {
+      "title": "Text fields",
+      "caption": "Labels, helpers, and validation states.",
+      "intro": "Outlined TextField state matrix — default, focused hint, error, disabled, and read-only.",
+      "takeaway": "Helper and error copy must name the problem; never rely on color alone.",
+      "groups": {
+        "states": "States",
+        "extra": "Multiline and autocomplete"
+      },
+      "fields": {
+        "default": "Name",
+        "defaultHelper": "Outlined default with primary focus",
+        "focused": "Focused",
+        "focusedHelper": "Tab here to see the primary focus ring",
+        "error": "Error",
+        "errorHelper": "Error uses the feedback.danger token",
+        "disabled": "Disabled",
+        "disabledValue": "Read only",
+        "readonly": "Read-only",
+        "readonlyValue": "Cannot edit",
+        "readonlyHelper": "InputProps readOnly — still focusable",
+        "multiline": "Multiline",
+        "multilinePlaceholder": "Notes",
+        "autocomplete": "Autocomplete"
+      },
+      "options": {
+        "account": "Account",
+        "admin": "Admin",
+        "agent": "Agent",
+        "realestate": "Realestate"
+      }
+    },
+    "forms": {
+      "title": "Choice controls",
+      "caption": "Checkbox, radio, switch, and denser rows.",
+      "intro": "Choice controls, Select, Slider, and ToggleButton — primary color and density-aware.",
+      "takeaway": "Group choices tightly; open a dialog only when Autocomplete needs more space.",
+      "groups": {
+        "toggles": "Toggles",
+        "plan": "Plan",
+        "select": "Select",
+        "slider": "Volume",
+        "align": "Alignment",
+        "dialog": "Dialog"
+      },
+      "labels": {
+        "subscribe": "Subscribe",
+        "notifications": "Notifications",
+        "starter": "Starter",
+        "pro": "Pro",
+        "role": "Role",
+        "member": "Member",
+        "admin": "Admin",
+        "left": "Left",
+        "center": "Center",
+        "right": "Right",
+        "openDialog": "Open Autocomplete dialog"
+      },
+      "aria": {
+        "volume": "Volume",
+        "alignment": "Text alignment"
+      },
+      "dialog": {
+        "title": "Autocomplete dialog",
+        "body": "Small modal with a text field and Autocomplete — same pattern product forms use.",
+        "name": "Display name",
+        "nameHelper": "Shown on the roster",
+        "workspace": "Workspace",
+        "cancel": "Cancel",
+        "confirm": "Confirm"
+      }
+    },
+    "cards": {
+      "title": "Card",
+      "caption": "Outlined and elevated surface recipes side by side.",
+      "intro": "Outlined (default) versus elevated cards — same content, different emphasis.",
+      "takeaway": "Prefer outlined in dense lists; elevate only when the card is the interaction focus.",
+      "groups": {
+        "recipes": "Recipes"
+      },
+      "outlined": "Outlined",
+      "elevated": "Elevated",
+      "surfaceTitle": "Surface",
+      "surfaceBody": "Cards use background.paper from the semantic tokens.",
+      "chip": "Token",
+      "whenNote": "Outlined for quiet grouping; elevated (customShadows.card) when the card must lift from the canvas."
+    },
+    "accordion": {
+      "title": "Accordion",
+      "caption": "AzesAccordion search and CRUD panels with token padding.",
+      "intro": "Product convention: AzesAccordion — bordered, no elevation, density-aware header height.",
+      "takeaway": "Use search mode above tables; CRUD for short create/edit — not long wizards.",
+      "groups": {
+        "panels": "Panels"
+      },
+      "open": {
+        "title": "Active filters",
+        "subtitle": "Expanded by default",
+        "body": "Search draft stays mounted when collapsed."
+      },
+      "closed": {
+        "title": "More filters",
+        "subtitle": "Collapsed",
+        "body": "Open to refine the list without leaving the page."
+      },
+      "disabled": {
+        "title": "Unavailable panel",
+        "subtitle": "Disabled demo",
+        "body": "Loading or locked — header does not open."
+      },
+      "field": "Keyword",
+      "submit": "Search",
+      "reset": "Reset"
+    },
+    "tables": {
+      "title": "Table",
+      "caption": "Dense tabular layout patterns."
+    },
+    "lists": {
+      "title": "List",
+      "caption": "Avatar rows and secondary actions."
+    },
+    "avatars": {
+      "title": "Avatar and badge",
+      "caption": "Presence and count treatments."
+    },
+    "tooltips": {
+      "title": "Tooltip",
+      "caption": "Delay, placement, and dense labels."
+    },
+    "alerts": {
+      "title": "Alert and progress",
+      "caption": "Severity tones and inline progress."
+    },
+    "snackbar": {
+      "title": "Snackbar",
+      "caption": "Transient feedback without blocking flow."
+    },
+    "dialogs": {
+      "title": "Dialog",
+      "caption": "Modal elevation and focus trap demo."
+    },
+    "layout": {
+      "title": "Container, Grid, Stack",
+      "caption": "Structural layout primitives."
+    },
+    "app-shell": {
+      "title": "App shell",
+      "caption": "Dashboard chrome composition."
+    },
+    "responsive": {
+      "title": "Responsive",
+      "caption": "Breakpoint-aware stacking rules."
+    },
+    "navigation": {
+      "title": "Tabs and pagination",
+      "caption": "In-page wayfinding controls."
+    },
+    "breadcrumbs": {
+      "title": "Breadcrumbs",
+      "caption": "Hierarchy deeper than two levels."
+    },
+    "menus": {
+      "title": "Menus",
+      "caption": "AzesMenu triggers and paper radius."
+    },
+    "platform-settings": {
+      "title": "Settings engine",
+      "caption": "Persisted azes.settings.v1 keys."
+    },
+    "platform-navigation": {
+      "title": "Navigation engine",
+      "caption": "Data-driven nav + access filtering."
+    },
+    "form-binding": {
+      "title": "Form binding",
+      "caption": "RHF + zod field binding recipe."
+    },
+    "data-grid": {
+      "title": "Data grid",
+      "caption": "Legacy MUI X community grid."
+    },
+    "azes-table": {
+      "title": "AzesTable",
+      "caption": "TanStack + MUI Table platform table."
+    },
+    "charts": {
+      "title": "Charts",
+      "caption": "Theme-aware chart palette demos."
+    },
+    "pages-analytics": {
+      "title": "Analytics dashboard",
+      "caption": "Sample analytics page composition."
+    },
+    "pages-list": {
+      "title": "List page",
+      "caption": "List + filter page recipe."
+    },
+    "pages-form": {
+      "title": "Form page",
+      "caption": "Create/edit form page recipe."
+    },
+    "accessibility": {
+      "title": "Focus and contrast",
+      "caption": "Focus rings, skip link, AA contrast."
+    }
+  }
+}

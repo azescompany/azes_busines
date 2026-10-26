@@ -1,0 +1,129 @@
+{
+  "language": "Язык",
+  "nav": {
+    "home": "Главная",
+    "homeCaption": "Обзор",
+    "organizations": "Организации",
+    "organizationsCaption": "Тенанты",
+    "users": "Пользователи",
+    "usersCaption": "Участники",
+    "roleMenus": "Меню ролей",
+    "roleMenusCaption": "Привязки",
+    "customers": "Клиенты",
+    "customersCaption": "CRM"
+  },
+  "shell": {
+    "primaryNav": "Основная навигация",
+    "hideMenus": "Скрыть меню",
+    "showMenus": "Показать меню",
+    "prevMenus": "Предыдущие меню",
+    "nextMenus": "Следующие меню",
+    "scrollToTop": "Наверх",
+    "openNav": "Открыть навигацию",
+    "skipToContent": "К содержимому",
+    "openSettings": "Открыть настройки",
+    "signingIn": "Вход…",
+    "redirectLogin": "Перенаправление на вход Account…"
+  },
+  "account": {
+    "menu": "Аккаунт",
+    "logout": "Выйти"
+  },
+  "home": {
+    "title": "Главная",
+    "subtitle": "AZES Admin — вход через Account SSO",
+    "welcome": "Добро пожаловать"
+  },
+  "brand": {
+    "homeAria": "AZES COMPANY — главная"
+  },
+  "orgs": {
+    "title": "Организации",
+    "subtitle": "Создание и управление организациями-тенантами",
+    "subtitleMember": "Организации, в которых вы состоите",
+    "detailTitle": "Организация",
+    "createTitle": "Создать организацию",
+    "create": "Создать",
+    "creating": "Создание…",
+    "createError": "Не удалось создать организацию",
+    "loadError": "Не удалось загрузить организации",
+    "fields": {
+      "name": "Название",
+      "slug": "Slug (необязательно)"
+    },
+    "columns": {
+      "name": "Название",
+      "slug": "Slug",
+      "status": "Статус"
+    },
+    "validation": {
+      "nameRequired": "Название обязательно",
+      "emailInvalid": "Введите корректный email"
+    },
+    "switcher": {
+      "label": "Организация"
+    },
+    "members": {
+      "title": "Участники",
+      "loadError": "Не удалось загрузить участников",
+      "columns": {
+        "user": "Пользователь",
+        "role": "Роль",
+        "status": "Статус"
+      }
+    },
+    "invite": {
+      "title": "Пригласить участника",
+      "email": "Email",
+      "role": "Роль (orgAdmin | instructor | student)",
+      "send": "Отправить приглашение",
+      "sending": "Отправка…",
+      "error": "Не удалось создать приглашение",
+      "tokenOnce": "Токен приглашения (скопируйте один раз)",
+      "pending": "Ожидающие приглашения"
+    }
+  },
+  "users": {
+    "title": "Пользователи",
+    "subtitle": "Участники активной организации",
+    "noActiveOrg": "Выберите активную организацию, чтобы увидеть участников"
+  },
+  "customers": {
+    "title": "Клиенты",
+    "subtitle": "CRM-клиенты активной организации",
+    "forbidden": "Недостаточно прав для просмотра клиентов.",
+    "create": "Создать",
+    "creating": "Создание…",
+    "createError": "Не удалось создать клиента",
+    "fields": {
+      "name": "Имя",
+      "email": "Email"
+    },
+    "columns": {
+      "name": "Имя",
+      "email": "Email",
+      "status": "Статус"
+    },
+    "validation": {
+      "nameRequired": "Имя обязательно",
+      "emailInvalid": "Введите корректный email"
+    }
+  },
+  "roleMenus": {
+    "title": "Меню ролей",
+    "subtitle": "Назначьте меню Admin ролям. Права меню автоматически обновляют доступ к API.",
+    "forbidden": "Только SuperAdmin может управлять меню ролей.",
+    "menusFor": "Меню для {{role}}",
+    "save": "Сохранить",
+    "saving": "Сохранение…",
+    "saved": "Сохранено. Затронутым пользователям нужен повторный вход для JWT.",
+    "saveError": "Не удалось сохранить меню ролей",
+    "hint": "Отвязка меню удаляет его коды прав у роли (если они не нужны другому назначенному меню).",
+    "roles": {
+      "orgAdmin": "Org admin",
+      "instructor": "Инструктор",
+      "student": "Студент",
+      "guest": "Гость"
+    }
+  }
+}

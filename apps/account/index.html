@@ -1,0 +1,70 @@
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║ AZES COMPANY
+║ File: apps/account/index.html
+║ Author: AZES_COMPANY
+║ Created: 2026-08-22
+║ Updated: 2026-10-20
+║ Purpose: Account Vite HTML shell — favicon + color-scheme boot (AZES Academy)
+║ Layer: app
+╚══════════════════════════════════════════════════════════════╝
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" data-azes-favicon />
+    <link rel="apple-touch-icon" href="/favicon.svg" data-azes-favicon />
+    <title>AZES Academy</title>
+    <script>
+      (function () {
+        try {
+          function cookie(name) {
+            var prefix = name + '=';
+            var parts = document.cookie.split(';');
+            for (var i = 0; i < parts.length; i++) {
+              var p = parts[i].trim();
+              if (p.indexOf(prefix) === 0) {
+                try {
+                  return decodeURIComponent(p.slice(prefix.length));
+                } catch (e) {
+                  return p.slice(prefix.length);
+                }
+              }
+            }
+            return null;
+          }
+          // Compact azes-ui (1|primary|mode) then azes-mode — shared across ports.
+          var ui = cookie('azes-ui');
+          var uiMode = null;
+          if (ui) {
+            var uiParts = ui.split('|');
+            if (uiParts.length >= 3 && uiParts[2] && uiParts[2] !== '-') {
+              uiMode = uiParts[2];
+            }
+          }
+          var fromCookie = uiMode || cookie('azes-mode');
+          var fromLocal = localStorage.getItem('azes-mode');
+          var mode = fromCookie || fromLocal || 'system';
+          if (fromCookie && fromCookie !== fromLocal) {
+            try {
+              localStorage.setItem('azes-mode', fromCookie);
+            } catch (e) {}
+          }
+          var scheme =
+            mode === 'system'
+              ? window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+              : mode;
+          document.documentElement.setAttribute('data-azes-color-scheme', scheme);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

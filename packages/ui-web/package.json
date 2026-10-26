@@ -1,0 +1,138 @@
+{
+  "name": "@azes/ui-web",
+  "version": "0.0.0",
+  "private": true,
+  "description": "AZES web design system: design tokens mapped onto Material UI v9",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "development": "./src/index.ts",
+      "import": "./dist/index.js"
+    },
+    "./brand": {
+      "types": "./dist/theme/brand.d.ts",
+      "development": "./src/theme/brand.ts",
+      "import": "./dist/theme/brand.js"
+    },
+    "./settings": {
+      "types": "./dist/settings/index.d.ts",
+      "development": "./src/settings/index.ts",
+      "import": "./dist/settings/index.js"
+    },
+    "./settings/ssr": {
+      "types": "./dist/settings/ssrCookie.d.ts",
+      "development": "./src/settings/ssrCookie.ts",
+      "import": "./dist/settings/ssrCookie.js"
+    },
+    "./navigation": {
+      "types": "./dist/navigation/index.d.ts",
+      "development": "./src/navigation/index.ts",
+      "import": "./dist/navigation/index.js"
+    },
+    "./layout": {
+      "types": "./dist/layout/index.d.ts",
+      "development": "./src/layout/index.ts",
+      "import": "./dist/layout/index.js"
+    },
+    "./icons": {
+      "types": "./dist/icons/index.d.ts",
+      "development": "./src/icons/index.ts",
+      "import": "./dist/icons/index.js"
+    },
+    "./data-grid": {
+      "types": "./dist/data-grid/index.d.ts",
+      "development": "./src/data-grid/index.ts",
+      "import": "./dist/data-grid/index.js"
+    },
+    "./table": {
+      "types": "./dist/table/index.d.ts",
+      "development": "./src/table/index.ts",
+      "import": "./dist/table/index.js"
+    },
+    "./charts": {
+      "types": "./dist/charts/index.d.ts",
+      "development": "./src/charts/index.ts",
+      "import": "./dist/charts/index.js"
+    },
+    "./forms": {
+      "types": "./dist/forms/index.d.ts",
+      "development": "./src/forms/index.ts",
+      "import": "./dist/forms/index.js"
+    },
+    "./feedback": {
+      "types": "./dist/feedback/index.d.ts",
+      "development": "./src/feedback/index.ts",
+      "import": "./dist/feedback/index.js"
+    },
+    "./side-panel": {
+      "types": "./dist/side-panel/index.d.ts",
+      "development": "./src/side-panel/index.ts",
+      "import": "./dist/side-panel/index.js"
+    },
+    "./menu": {
+      "types": "./dist/menu/index.d.ts",
+      "development": "./src/menu/index.ts",
+      "import": "./dist/menu/index.js"
+    },
+    "./backdrop": {
+      "types": "./dist/backdrop/index.d.ts",
+      "development": "./src/backdrop/index.ts",
+      "import": "./dist/backdrop/index.js"
+    },
+    "./skeleton": {
+      "types": "./dist/skeleton/index.d.ts",
+      "development": "./src/skeleton/index.ts",
+      "import": "./dist/skeleton/index.js"
+    },
+    "./locale": {
+      "types": "./dist/locale/index.d.ts",
+      "development": "./src/locale/index.ts",
+      "import": "./dist/locale/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "lint": "eslint ."
+  },
+  "peerDependencies": {
+    "react": "^18.3.0 || ^19.0.0",
+    "react-dom": "^18.3.0 || ^19.0.0"
+  },
+  "dependencies": {
+    "@azes/design-tokens": "workspace:*",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/ibm-plex-sans": "^5.3.0",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/nunito": "^5.3.0",
+    "@fontsource-variable/source-serif-4": "^5.3.0",
+    "@mui/icons-material": "9.3.1",
+    "@mui/material": "9.3.1",
+    "@mui/x-charts": "^9.14.0",
+    "@mui/x-data-grid": "^9.14.0",
+    "@tanstack/react-table": "^8.21.3",
+    "react-hook-form": "^7.89.0"
+  },
+  "devDependencies": {
+    "@azes/typescript-config": "workspace:*",
+    "@azes/vitest-config": "workspace:*",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "jsdom": "^26.1.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

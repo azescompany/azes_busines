@@ -1,0 +1,20 @@
+/**
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║ AZES COMPANY
+ * ║ File: apps/azes-ui/src/styles.css
+ * ║ Author: AZES_COMPANY
+ * ║ Created: 2026-09-29
+ * ║ Updated: 2026-10-19
+ * ║ Purpose: Shell reset — document lock; scoop owns scroll
+ * ║ Layer: app
+ * ╚══════════════════════════════════════════════════════════════╝
+ */
+
+/* L-shell scoop is the only vertical scrollport — lock document chrome. */
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}

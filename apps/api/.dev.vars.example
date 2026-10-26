@@ -1,0 +1,21 @@
+# AZES COMPANY
+# File: apps/api/.dev.vars.example
+# Author: AZES_COMPANY
+# Created: 2026-10-19
+# Updated: 2026-10-19
+# Purpose: Example local Worker secrets (copy to .dev.vars — never commit)
+# Layer: app
+#
+# Phase 2B/2E: JWT_ACCESS_SECRET is required for /api/v1/auth/* (min 32 characters).
+# Copy this file to .dev.vars and set a long random secret for local wrangler dev.
+# Never put this secret in wrangler.toml [vars] or any VITE_* client env.
+
+JWT_ACCESS_SECRET=local-dev-only-change-me-32chars-min
+# Optional overrides (defaults live in wrangler.toml [vars]):
+# API_ENV=development
+# CORS_ALLOWED_ORIGINS=http://localhost:100,http://127.0.0.1:100,http://localhost:200,http://127.0.0.1:200
+# AUTH_RATE_LIMIT_ENABLED=true
+#
+# Production (never use localhost fallback):
+# API_ENV=production
+# CORS_ALLOWED_ORIGINS=https://account.example.com,https://academy.example.com

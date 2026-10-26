@@ -1,0 +1,22 @@
+{
+  "save": "Yadda saxla",
+  "cancel": "Ləğv et",
+  "brand": "Caspian Key",
+  "loading": {
+    "label": "Yüklənir…",
+    "subtitle": "Caspian Key hazırlanır",
+    "handoff": "İş sahəniz açılır…",
+    "handoffSubtitle": "Caspian Key Admin-ə təhlükəsiz keçid",
+    "goHome": "Ana səhifəyə keç"
+  },
+
+  "errorGeneric": "Xəta baş verdi.",
+  "language": "Dil",
+  "logout": "Çıxış",
+  "auth": {
+    "sessionOtherDevice": "Profilinizə başqa cihazdan giriş edildi. Əgər bu siz deyilsinizsə, təsisçilər və ya rəhbərliklə əlaqə saxlayın.",
+    "sessionUnauthorized": "Sessiyanız artıq etibarlı deyil. Zəhmət olmasa yenidən daxil olun.",
+    "sessionExpired": "Sessiyanızın müddəti bitib. Zəhmət olmasa yenidən daxil olun.",
+    "signedOut": "Sistemdən çıxış etdiniz."
+  }
+}

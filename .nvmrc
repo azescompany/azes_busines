@@ -1,0 +1,9 @@
+# AZES COMPANY
+# File: .nvmrc
+# Author: AZES_COMPANY
+# Created: 2026-08-22
+# Updated: 2026-08-22
+# Purpose: Pin Node.js major version for local and CI consistency
+# Layer: tooling
+
+24

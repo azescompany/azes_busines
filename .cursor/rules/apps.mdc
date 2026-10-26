@@ -1,0 +1,76 @@
+---
+description: Application shell conventions for web, Next.js, and Expo mobile apps
+globs: apps/**
+alwaysApply: false
+---
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║ AZES COMPANY
+║ File: apps.mdc
+║ Author: AZES_COMPANY
+║ Created: 2026-08-22
+║ Updated: 2026-10-13
+║ Purpose: Conventions for apps under apps/
+║ Layer: tooling
+╚══════════════════════════════════════════════════════════════╝
+-->
+
+# Application Conventions
+
+## UI / theme wiring
+
+App shells that compose `@azes/ui-web` (theme, layout, nav, settings): follow
+`.cursor/rules/uiDesignAgent.mdc` and update `docs/styles/CURRENT-STATE.md` when adoption or
+chrome wiring changes. Product business logic stays in the app.
+
+## API / Query wiring
+
+App providers (`configureApi`, `QueryClient`, auth→API bridge) and feature hooks that call
+`@azes/api` / `@azes/api/admin`: follow `.cursor/rules/apiMenecerAgent.mdc` and update
+`docs/api/CURRENT-STATE.md` when runtime wiring or cache policy changes.
+
+## Feature pages
+
+Mandatory structure: `.cursor/rules/page-architecture.mdc` and
+`docs/architecture/pages-and-features.md`. Thin `pages/<ad>/index.tsx` + fat
+`features/<ad>/` (components, columns, hooks, service, models). API runtime protocol:
+`.cursor/rules/apiMenecerAgent.mdc`. UI tokens/i18n: `.cursor/rules/ui-conventions.mdc`.
+Canonical examples: `apps/admin` Users and Ads.
+
+## Target apps
+
+- Vite SPA: `account`, `admin`, `agent-platform`
+- Next.js App Router: `realestate`, `agent-site` (dev :300), `real-estate-site` (dev :400)
+- Expo (expo-router): `mobile-account`, `mobile-agent`, `mobile-realestate`
+
+## Structure (create directories only when needed)
+
+```text
+apps/<app>/
+├── src/ (or app/ for Next.js)
+│   ├── components/
+│   ├── features/      # only when a feature exists
+│   ├── providers/
+│   ├── lib/
+│   └── config/
+├── public/            # web only, when needed
+└── package.json
+```
+
+Do not create empty placeholder directories.
+
+## Rules
+
+- Product-specific business logic stays in the app (`features/`). Do not move it to packages
+  until multiple products genuinely need it.
+- Apps may import `@azes/*` packages. Apps must NOT import other apps.
+- Consume UI only via `@azes/ui-web` or `@azes/ui-native` — never third-party UI libraries.
+- First-phase shells: Home page/screen only. No auth UI, dashboards, property/agent/admin
+  features, real API workflows, or complex navigation unless the approved phase explicitly
+  requires them.
+- Next.js-specific infra stays in `apps/realestate` — do not push App Router concerns into
+  generic packages.
+- Mobile apps use Expo patterns; do not force web abstractions onto Native.
+
+See `docs/architecture/application-architecture.md`.

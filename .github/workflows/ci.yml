@@ -1,0 +1,112 @@
+# AZES COMPANY
+# File: .github/workflows/ci.yml
+# Author: AZES_COMPANY
+# Created: 2026-08-22
+# Updated: 2026-08-22
+# Purpose: CI matrix — quality gates + Playwright web smoke E2E
+# Layer: tooling
+
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Quality gates (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [22]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.30.3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: OpenAPI generated-code drift check
+        run: pnpm api:generate:check
+
+      - name: Format check
+        run: pnpm format:check
+
+      - name: Lint (includes dependency boundaries)
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit + component tests
+        run: pnpm test
+
+      - name: Coverage baseline (opt-in packages)
+        run: pnpm test:coverage
+
+      - name: Build
+        run: pnpm build
+
+      - name: Architecture verification (Phase 12)
+        run: pnpm architecture:verify
+
+  e2e:
+    name: Web E2E smoke · ${{ matrix.app }} (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: quality
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [22]
+        app: [account]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.30.3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build workspace (incl. web shells)
+        run: pnpm build
+
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run Playwright smoke (${{ matrix.app }})
+        env:
+          PLAYWRIGHT_PROJECT: ${{ matrix.app }}
+          CI: true
+        run: pnpm exec playwright test --config=e2e/playwright.config.ts --project=${{ matrix.app }}

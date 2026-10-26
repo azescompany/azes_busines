@@ -1,0 +1,20 @@
+# AZES COMPANY
+# File: .prettierignore
+# Author: AZES_COMPANY
+# Created: 2026-08-22
+# Updated: 2026-08-22
+# Purpose: Paths excluded from Prettier formatting
+# Layer: tooling
+
+pnpm-lock.yaml
+node_modules
+dist
+build
+.next
+.expo
+.turbo
+coverage
+playwright-report
+test-results
+*.min.js
+packages/api/generated

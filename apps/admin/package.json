@@ -1,0 +1,40 @@
+{
+  "name": "@azes/admin",
+  "version": "0.0.0",
+  "private": true,
+  "description": "AZES Admin web SPA shell (Vite) — Account SSO consumer on :200",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 200 --strictPort",
+    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "preview": "vite preview --port 200 --strictPort",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@azes/api": "workspace:*",
+    "@azes/auth": "workspace:*",
+    "@azes/i18n": "workspace:*",
+    "@azes/ui-web": "workspace:*",
+    "@hookform/resolvers": "^5.9.1",
+    "@tanstack/react-query": "^5.84.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-hook-form": "^7.89.0",
+    "react-router": "^7.18.4",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@azes/typescript-config": "workspace:*",
+    "@azes/vitest-config": "workspace:*",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "jsdom": "^26.1.0",
+    "typescript": "^5.9.2",
+    "vite": "^7.0.6",
+    "vitest": "^3.2.4"
+  }
+}

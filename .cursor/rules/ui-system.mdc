@@ -1,0 +1,86 @@
+---
+description: Web and Native UI system rules and design-token consumption
+globs: packages/ui-web/**,packages/ui-native/**,packages/design-tokens/**
+alwaysApply: false
+---
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║ AZES COMPANY
+║ File: ui-system.mdc
+║ Author: AZES_COMPANY
+║ Created: 2026-08-22
+║ Updated: 2026-10-09
+║ Purpose: Enforce web/native UI separation and design-token rules
+║ Layer: tooling
+╚══════════════════════════════════════════════════════════════╝
+-->
+
+# UI System Rules
+
+## UI Design Agent
+
+For implementation and living “how it works now” state, attach
+`.cursor/rules/uiDesignAgent.mdc` and read `docs/styles/CURRENT-STATE.md` first. This file
+holds **hard boundaries**; CURRENT-STATE holds the **current mechanism snapshot** and delta log.
+When public exports, import graph, or style hierarchy change, update this file and CURRENT-STATE
+together.
+
+## Separation
+
+```text
+design-tokens (no React)
+      |
+  +---+---+
+  |       |
+ui-web  ui-native
+```
+
+- Do **not** build one universal UI package for web and native.
+- Web and native component implementations stay platform-specific.
+- Shared design language comes only from `design-tokens`.
+
+## design-tokens
+
+- Framework-agnostic. Forbidden dependencies: React, react-native, api, state, auth.
+- Emits TS token objects (for RN/JS) and CSS custom properties (for web/Next.js).
+
+## ui-web / ui-native
+
+- Allowed: design-tokens, platform runtime, headless/RN primitives, utils, constants, types.
+  `@azes/ui-web` may depend on `@mui/material` and Emotion (ADR-009). It must not depend on
+  `@mui/material-nextjs` (that package peers on Next.js).
+- Forbidden: api, Redux/state, auth, business domains. `design-tokens` must not depend on MUI.
+- Apps consume `@azes/ui-web` / `@azes/ui-native` only — never Radix/MUI/Ant/NativeBase
+  components directly. Exceptions are listed in ADR-009 (`InitColorSchemeScript` and
+  `@mui/material-nextjs` in `realestate`; deep icon imports in `azes-ui`).
+
+## ui-web subpaths (ADR-010)
+
+- Public entries: `@azes/ui-web` (core) plus `/settings`, `/navigation`, `/layout`, `/icons`,
+  `/data-grid`, `/charts`, `/forms`, `/feedback`, `/locale`.
+- Core (`src/theme`, `src/components`, `src/catalog.ts`) never imports a subpath folder.
+- `layout` may import `navigation` and `settings`. `icons`, `forms`, `data-grid`, `charts`,
+  `feedback`, `locale` import core only (settings may compose feedback for `AzesUiProvider`).
+- ui-web never imports a router, `@azes/permissions`, i18n, api, state or auth. Router and
+  access are injected (`AzesRouterAdapter`, `AzesAccessContext`).
+- MUI only: no Tailwind, Radix, styled-components, vanilla-extract, framer-motion, ApexCharts,
+  Iconify or other styling/design-system libraries (`docs/styles/19-dependencies.md`).
+
+## Style decision hierarchy
+
+```text
+Global decision -> tokens/theme -> theme.components overrides -> AZES component -> sx (local only)
+```
+
+Permanent design rules never live in `sx`. Colors from `theme.vars`; sizes from tokens; layout
+code uses `--azes-layout-*` variables, never px literals.
+
+## Agent rules
+
+- Prefer wrapping primitives inside the AZES design system over exposing third-party APIs.
+- Keep underlying primitive libraries replaceable without forcing app changes.
+- Do not add business/API logic to UI packages.
+- `docs/styles/legacy/` is frozen. Update the numbered files in `docs/styles/` instead.
+
+See `docs/styles/README.md`, `docs/architecture/ui-architecture.md` and ADRs 004 / 008–016.

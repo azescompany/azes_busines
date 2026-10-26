@@ -1,0 +1,46 @@
+{
+  "name": "@azes/ui-native",
+  "version": "0.0.0",
+  "private": true,
+  "description": "AZES React Native design system built on design-tokens and RN primitives",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint ."
+  },
+  "peerDependencies": {
+    "react": "^18.3.0 || ^19.0.0",
+    "react-native": ">=0.76.0"
+  },
+  "dependencies": {
+    "@azes/design-tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "@azes/testing": "workspace:*",
+    "@azes/typescript-config": "workspace:*",
+    "@azes/vitest-config": "workspace:*",
+    "@testing-library/react-native": "^13.2.0",
+    "@types/react": "^19.1.9",
+    "@vitest/coverage-v8": "^3.2.4",
+    "react": "^19.1.1",
+    "react-native": "^0.79.5",
+    "react-test-renderer": "^19.1.1",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

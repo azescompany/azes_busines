@@ -1,0 +1,80 @@
+[
+  {
+    "id": "azes-ui-role",
+    "title": "azes-ui role",
+    "source": "apps/azes-ui/strukture.md",
+    "text": "apps/azes-ui (@azes/azes-ui) is the AZES web design-system living showcase (laboratory), not a product dashboard. Other apps must not depend on @azes/azes-ui. UI comes from @azes/ui-web; icons from @azes/ui-web/icons. Dev port is 7777. Commands: pnpm --filter @azes/azes-ui dev|build|test|lint."
+  },
+  {
+    "id": "azes-ui-boot",
+    "title": "azes-ui boot and routing",
+    "source": "docs/styles/18-azes-ui.md",
+    "text": "Boot: index.html pre-paint color-scheme → AzesUiProvider → ShowcaseApp with hash router → AzesDashboardLayout → phase/section content. Routing uses hash (#/phase-foundations, etc.), not react-router. Auth pilot route keeps dashboard chrome off."
+  },
+  {
+    "id": "azes-ui-phases",
+    "title": "Five catalog phases",
+    "source": "apps/azes-ui/src/phases/phaseRegistry.ts",
+    "text": "Catalog phases: phase-foundations (colors, typography, spacing, radius, shadows, motion), phase-controls (buttons, inputs, forms, cards, accordion), phase-data (tables, lists, avatars, tooltips, alerts, snackbar, dialogs), phase-shell (layout, app-shell, responsive, navigation, breadcrumbs, menus), phase-platform (settings, navigation engine, form binding, data-grid, azes-table, charts, pilot pages, accessibility). Default phase is phase-foundations."
+  },
+  {
+    "id": "platform-stack",
+    "title": "UI platform stack",
+    "source": "docs/styles/00-overview.md",
+    "text": "@azes/design-tokens holds primitives with no React. @azes/ui-web provides theme, catalog, settings, navigation, layout, icons, table, data-grid, charts, forms, feedback, locale. apps/azes-ui is the pilot consumer and interactive showcase. There is no @azes/ui-mui package (ADR-010). UI packages never import business API, auth, or Redux."
+  },
+  {
+    "id": "package-graph",
+    "title": "Package graph and imports",
+    "source": "docs/styles/02-architecture.md",
+    "text": "design-tokens feeds ui-web and ui-native. ui-web subpaths: settings, navigation, layout, icons, table, data-grid, charts, forms, feedback, locale. Apps import @azes/ui-web public exports only — never @azes/ui-web/src/... Apps must not import @mui/* or @emotion/* except ADR-009 exceptions. UI never knows router, permissions, or i18n — apps inject them."
+  },
+  {
+    "id": "responsive",
+    "title": "Responsive breakpoints",
+    "source": "docs/styles/11-responsive.md",
+    "text": "Breakpoints: xs 0, sm 640, md 768, lg 1024, xl 1280, 2xl 1536 (token breakpointPx, not stock MUI defaults). layoutQuery default lg switches mobile drawer nav to desktop. Mobile-first sx patterns required. xs–md: header 64px + AzesMobileNav; lg+: header 72px with vertical/mini/horizontal nav."
+  },
+  {
+    "id": "tokens-theme",
+    "title": "Tokens and theme",
+    "source": "docs/styles/CURRENT-STATE.md",
+    "text": "Tokens live in @azes/design-tokens. Theme is createAzesTheme + AzesThemeProvider from CSS vars. AzesUiProvider wraps settings store (azes.settings.v1), theme, snackbar, dialog, side panel. Settings keys include primary, navLayout, navColor, density, direction, fontFamily, container, headerMode. Prefer theme.vars.palette and theme.azes.* — no free hex/rgba in product UI."
+  },
+  {
+    "id": "tables-feedback",
+    "title": "Tables and feedback",
+    "source": "docs/styles/CURRENT-STATE.md",
+    "text": "Default lists use AzesTable (@azes/ui-web/table). Confirmations use useAzesDialog. Notifications use snackbar via AzesUiProvider. Side panels use AzesSidePanel. Menus use AzesMenu. Empty table copy is global via AzesTableLabelsProvider."
+  },
+  {
+    "id": "page-architecture",
+    "title": "Page and feature architecture",
+    "source": "docs/architecture/pages-and-features.md",
+    "text": "Product apps use thin pages/<name>/index.tsx and fat features/<name>/ with components, hooks, service (*Api + *Queries), models (zod + mappers). Server state is TanStack Query; Redux only for justified client/global state. Showcase azes-ui is an exception — living catalog, not a full product CRUD app."
+  },
+  {
+    "id": "state-boundary",
+    "title": "State ownership",
+    "source": "docs/decisions/ADR-002-state-management.md",
+    "text": "SERVER STATE → TanStack Query (@azes/api). CLIENT/UI STATE → Redux Toolkit (@azes/state). Do not put API response caches into Redux. Ephemeral local UI can stay in React state. azes-ui AI chat uses local React state + Vite proxy, not Redux or Query."
+  },
+  {
+    "id": "dependency-boundaries",
+    "title": "Monorepo dependency boundaries",
+    "source": "docs/architecture/dependency-graph.md",
+    "text": "Allowed: apps → packages. Forbidden: apps → apps; ui-web/ui-native → api or state; utils → react. Shared stable capabilities live in packages/; product logic stays in apps/features."
+  },
+  {
+    "id": "ai-assistant-scope",
+    "title": "AI assistant scope",
+    "source": "apps/azes-ui AI knowledge pack",
+    "text": "The showcase AI assistant answers only about the AZES monorepo, @azes/ui-web design system, and apps/azes-ui showcase. It must not invent OpenAPI endpoints, invent token hex values, or answer off-topic general questions. If knowledge pack lacks an answer, say so. NVIDIA calls go through the local Vite proxy at POST /api/ai/chat; the API key never ships to the browser."
+  },
+  {
+    "id": "runbook",
+    "title": "azes-ui runbook",
+    "source": "apps/azes-ui/README.md",
+    "text": "Run showcase: pnpm --filter @azes/azes-ui dev on http://localhost:7777. Components from @azes/ui-web. For AI chat, copy .env.example to .env and set NVIDIA_API_KEY (server-only). Refresh knowledge chunks under server/knowledge when docs change."
+  }
+]

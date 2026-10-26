@@ -1,0 +1,348 @@
+{
+  "language": "Язык",
+  "catalog": "Каталог",
+  "shell": {
+    "primaryNav": "Основная навигация",
+    "hideMenus": "Скрыть меню",
+    "showMenus": "Показать меню",
+    "prevMenus": "Предыдущие меню",
+    "nextMenus": "Следующие меню",
+    "scrollToTop": "Наверх",
+    "openNav": "Открыть навигацию",
+    "skipToContent": "К содержимому",
+    "footer": "AZES UI — каталог дизайн-системы",
+    "openSettings": "Открыть настройки",
+    "ai": "AI",
+    "aiCaption": "Ассистент",
+    "aiAria": "AI ассистент"
+  },
+  "phase": {
+    "scrollHint": "ЛИСТАЙТЕ ДАЛЬШЕ",
+    "inThisPhase": "В этой фазе",
+    "demoCaption": "Живое демо из дизайн-системы AZES.",
+    "snackSaved": "Сохранено в витрине",
+    "dialogTitle": "Диалог",
+    "dialogBody": "Модальная поверхность использует elevation и z-index токены темы.",
+    "dialogClose": "Закрыть",
+    "sectionNavAria": "Разделы фазы",
+    "goToSection": "Перейти к разделу"
+  },
+  "phases": {
+    "foundations": {
+      "title": "Основы",
+      "caption": "Токены, тип, отступы, motion",
+      "body": "Язык под каждой поверхностью — цвета, типографика, отступы, форма, elevation и motion.",
+      "lookFor": "Как токены переходят в контролы без разовых hex-значений.",
+      "pullQuote": "Токены каскадом — без разового hex на пути к контролам."
+    },
+    "controls": {
+      "title": "Контролы",
+      "caption": "Кнопки, поля, поверхности",
+      "body": "Интерактивные блоки — кнопки, поля, выбор, карточки и accordion.",
+      "lookFor": "Фокус-кольца, плотность и иерархия primary vs outlined.",
+      "pullQuote": "Иерархия — продукт: фокус, плотность, primary vs outlined."
+    },
+    "data": {
+      "title": "Данные и обратная связь",
+      "caption": "Списки, алерты, диалоги",
+      "body": "Как AZES показывает данные и отвечает — таблицы, списки, аватары, tooltip, alert, snackbar, диалоги.",
+      "lookFor": "Пустые состояния, тона severity и timing modal vs snackbar.",
+      "pullQuote": "У feedback есть тайминг — empty, severity, modal vs snack."
+    },
+    "shell": {
+      "title": "Shell и навигация",
+      "caption": "Layout, вкладки, chrome",
+      "body": "Структура страницы и навигация — Container/Grid/Stack, app shell, responsive, вкладки, breadcrumbs, меню.",
+      "lookFor": "Как chrome и контент делят scoop scrollport.",
+      "pullQuote": "Chrome и контент делят один scoop — не два скролла."
+    },
+    "platform": {
+      "title": "Платформа",
+      "caption": "Движки, таблица, графики, страницы",
+      "body": "Продуктовые движки и рецепты — настройки, навигация, form binding, AzesTable, графики и примеры страниц.",
+      "lookFor": "Как пакеты платформы собираются в экраны (auth вне тулбара).",
+      "pullQuote": "Пакеты собираются в экраны — сначала engines."
+    }
+  },
+  "ai": {
+    "title": "AI ассистент",
+    "close": "Закрыть",
+    "closeAria": "Закрыть",
+    "empty": "Спросите про azes-ui или напишите «переключи на dark».",
+    "inputPlaceholder": "Спросите или измените настройки…",
+    "send": "Отправить",
+    "sending": "…",
+    "toolRunning": "Применяется {{name}}…",
+    "error": "Что-то пошло не так. Попробуйте ещё раз.",
+    "errorNoKey": "AI не настроен (на сервере нет NVIDIA_API_KEY).",
+    "errorRate": "Слишком много запросов — подождите и повторите.",
+    "errorOffline": "Ошибка сети — проверьте, что showcase dev server запущен."
+  },
+  "sections": {
+    "overview": {
+      "title": "Обзор",
+      "caption": "Презентация системы и живые chip темы."
+    },
+    "colors": {
+      "title": "Цвета",
+      "caption": "OKLCH seeds, статусные цвета и тона поверхностей."
+    },
+    "typography": {
+      "title": "Типографика",
+      "caption": "Шкала MUI из дизайн-токенов — от h1 до overline."
+    },
+    "spacing": {
+      "title": "Отступы",
+      "caption": "Шаги theme.spacing — один движок spacing."
+    },
+    "radius": {
+      "title": "Форма",
+      "caption": "Радиусы из shape-примитивов токенов."
+    },
+    "shadows": {
+      "title": "Elevation",
+      "caption": "Лестница теней для карточек и chrome."
+    },
+    "motion": {
+      "title": "Движение",
+      "caption": "Duration и easing для UI-переходов."
+    },
+    "buttons": {
+      "title": "Кнопки",
+      "caption": "Иерархия contained, outlined и text.",
+      "intro": "Иерархия contained / outlined / text, размеры, disabled, ButtonGroup, Chip и Link.",
+      "takeaway": "Одно primary-действие на экран; outlined и text — для вторичных путей.",
+      "groups": {
+        "variants": "Варианты",
+        "sizes": "Размеры",
+        "states": "Состояния",
+        "grouped": "Группа кнопок",
+        "chips": "Chip и ссылка"
+      },
+      "labels": {
+        "contained": "Contained",
+        "outlined": "Outlined",
+        "text": "Text",
+        "disabled": "Disabled",
+        "small": "Маленькая",
+        "large": "Большая",
+        "one": "Один",
+        "two": "Два",
+        "three": "Три",
+        "chipFilter": "Фильтр",
+        "chipClickable": "Кликабельный",
+        "chipDeletable": "Удаляемый",
+        "link": "Ссылка темы"
+      },
+      "aria": {
+        "iconExample": "Пример кнопки с иконкой"
+      }
+    },
+    "inputs": {
+      "title": "Текстовые поля",
+      "caption": "Label, helper и состояния валидации.",
+      "intro": "Матрица состояний Outlined TextField — default, фокус, error, disabled и read-only.",
+      "takeaway": "Helper и error должны называть проблему; нельзя полагаться только на цвет.",
+      "groups": {
+        "states": "Состояния",
+        "extra": "Multiline и autocomplete"
+      },
+      "fields": {
+        "default": "Имя",
+        "defaultHelper": "Outlined default с primary-фокусом",
+        "focused": "Фокус",
+        "focusedHelper": "Нажмите Tab, чтобы увидеть primary focus ring",
+        "error": "Ошибка",
+        "errorHelper": "Ошибка использует токен feedback.danger",
+        "disabled": "Disabled",
+        "disabledValue": "Только чтение",
+        "readonly": "Read-only",
+        "readonlyValue": "Нельзя изменить",
+        "readonlyHelper": "InputProps readOnly — всё ещё фокусируется",
+        "multiline": "Многострочное",
+        "multilinePlaceholder": "Заметки",
+        "autocomplete": "Autocomplete"
+      },
+      "options": {
+        "account": "Account",
+        "admin": "Admin",
+        "agent": "Agent",
+        "realestate": "Realestate"
+      }
+    },
+    "forms": {
+      "title": "Элементы выбора",
+      "caption": "Checkbox, radio, switch и плотные строки.",
+      "intro": "Элементы выбора, Select, Slider и ToggleButton — primary и density-aware.",
+      "takeaway": "Группируйте выбор плотно; диалог — когда Autocomplete нужно больше места.",
+      "groups": {
+        "toggles": "Переключатели",
+        "plan": "План",
+        "select": "Select",
+        "slider": "Громкость",
+        "align": "Выравнивание",
+        "dialog": "Диалог"
+      },
+      "labels": {
+        "subscribe": "Подписка",
+        "notifications": "Уведомления",
+        "starter": "Starter",
+        "pro": "Pro",
+        "role": "Роль",
+        "member": "Участник",
+        "admin": "Admin",
+        "left": "Слева",
+        "center": "По центру",
+        "right": "Справа",
+        "openDialog": "Открыть диалог Autocomplete"
+      },
+      "aria": {
+        "volume": "Громкость",
+        "alignment": "Выравнивание текста"
+      },
+      "dialog": {
+        "title": "Диалог Autocomplete",
+        "body": "Маленькая модалка с полем и Autocomplete — тот же паттерн продуктовых форм.",
+        "name": "Отображаемое имя",
+        "nameHelper": "Видно в списке",
+        "workspace": "Рабочая область",
+        "cancel": "Отмена",
+        "confirm": "Подтвердить"
+      }
+    },
+    "cards": {
+      "title": "Карточка",
+      "caption": "Outlined и elevated поверхности рядом.",
+      "intro": "Outlined (по умолчанию) и elevated — один контент, разный акцент.",
+      "takeaway": "Outlined в плотных списках; elevate только когда карточка — фокус взаимодействия.",
+      "groups": {
+        "recipes": "Рецепты"
+      },
+      "outlined": "Outlined",
+      "elevated": "Elevated",
+      "surfaceTitle": "Поверхность",
+      "surfaceBody": "Карточки берут background.paper из semantic-токенов.",
+      "chip": "Token",
+      "whenNote": "Outlined — тихое группирование; elevated (customShadows.card) — когда карточка должна оторваться от canvas."
+    },
+    "accordion": {
+      "title": "Accordion",
+      "caption": "Панели AzesAccordion search и CRUD с token padding.",
+      "intro": "Продуктовая конвенция: AzesAccordion — bordered, без elevation, density-aware header.",
+      "takeaway": "Search над таблицами; CRUD для короткого create/edit — не длинные wizard.",
+      "groups": {
+        "panels": "Панели"
+      },
+      "open": {
+        "title": "Активные фильтры",
+        "subtitle": "Открыта по умолчанию",
+        "body": "Черновик поиска остаётся mounted при закрытии."
+      },
+      "closed": {
+        "title": "Доп. фильтры",
+        "subtitle": "Свёрнута",
+        "body": "Уточните список, не покидая страницу."
+      },
+      "disabled": {
+        "title": "Недоступная панель",
+        "subtitle": "Disabled demo",
+        "body": "Загрузка или блокировка — header не открывается."
+      },
+      "field": "Ключевое слово",
+      "submit": "Найти",
+      "reset": "Сбросить"
+    },
+    "tables": {
+      "title": "Таблица",
+      "caption": "Плотные tabular-паттерны."
+    },
+    "lists": {
+      "title": "Список",
+      "caption": "Строки с avatar и secondary actions."
+    },
+    "avatars": {
+      "title": "Avatar и badge",
+      "caption": "Presence и счётчики."
+    },
+    "tooltips": {
+      "title": "Tooltip",
+      "caption": "Задержка, placement и плотные подписи."
+    },
+    "alerts": {
+      "title": "Alert и progress",
+      "caption": "Тона severity и inline progress."
+    },
+    "snackbar": {
+      "title": "Snackbar",
+      "caption": "Краткий feedback без блокировки потока."
+    },
+    "dialogs": {
+      "title": "Диалог",
+      "caption": "Elevation модалки и focus trap."
+    },
+    "layout": {
+      "title": "Container, Grid, Stack",
+      "caption": "Структурные layout-примитивы."
+    },
+    "app-shell": {
+      "title": "App shell",
+      "caption": "Композиция dashboard chrome."
+    },
+    "responsive": {
+      "title": "Responsive",
+      "caption": "Правила stacking по breakpoint."
+    },
+    "navigation": {
+      "title": "Вкладки и pagination",
+      "caption": "Навигация внутри страницы."
+    },
+    "breadcrumbs": {
+      "title": "Breadcrumbs",
+      "caption": "Иерархия глубже двух уровней."
+    },
+    "menus": {
+      "title": "Меню",
+      "caption": "AzesMenu trigger и radius paper."
+    },
+    "platform-settings": {
+      "title": "Settings engine",
+      "caption": "Ключи azes.settings.v1."
+    },
+    "platform-navigation": {
+      "title": "Navigation engine",
+      "caption": "Data-driven nav + access filter."
+    },
+    "form-binding": {
+      "title": "Form binding",
+      "caption": "Связка RHF + zod."
+    },
+    "data-grid": {
+      "title": "Data grid",
+      "caption": "Legacy MUI X community grid."
+    },
+    "azes-table": {
+      "title": "AzesTable",
+      "caption": "Платформенная таблица TanStack + MUI."
+    },
+    "charts": {
+      "title": "Графики",
+      "caption": "Демо палитры графиков из темы."
+    },
+    "pages-analytics": {
+      "title": "Analytics dashboard",
+      "caption": "Пример analytics-страницы."
+    },
+    "pages-list": {
+      "title": "List page",
+      "caption": "Рецепт списка с фильтрами."
+    },
+    "pages-form": {
+      "title": "Form page",
+      "caption": "Рецепт create/edit формы."
+    },
+    "accessibility": {
+      "title": "Фокус и контраст",
+      "caption": "Focus ring, skip link, контраст AA."
+    }
+  }
+}

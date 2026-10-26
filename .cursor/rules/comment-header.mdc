@@ -1,0 +1,70 @@
+---
+description: Mandatory AZES COMPANY file-header policy for all supported file types
+alwaysApply: true
+---
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║ AZES COMPANY
+║ File: comment-header.mdc
+║ Author: AZES_COMPANY
+║ Created: 2026-08-22
+║ Updated: 2026-08-22
+║ Purpose: Exact AZES file-header policy and format exceptions
+║ Layer: tooling
+╚══════════════════════════════════════════════════════════════╝
+-->
+
+# AZES Comment Header Policy
+
+Every source, configuration, and documentation file that supports comments must start with
+the AZES header. Never make a file syntactically invalid just to insert a header.
+
+## Required fields
+
+- `AZES COMPANY`
+- `File:` filename (path relative to repo root when helpful)
+- `Author:` `AZES_COMPANY`
+- `Created:` `YYYY-MM-DD` (set once)
+- `Updated:` `YYYY-MM-DD` (update on meaningful edits)
+- `Purpose:` short description
+- `Layer:` one of `app` | `package` | `tooling` | `docs`
+
+## Conceptual block
+
+```text
+╔══════════════════════════════════════════════════════════════╗
+║ AZES COMPANY
+║ File: <filename>
+║ Author: AZES_COMPANY
+║ Created: <YYYY-MM-DD>
+║ Updated: <YYYY-MM-DD>
+║ Purpose: <short description>
+║ Layer: <app|package|tooling|docs>
+╚══════════════════════════════════════════════════════════════╝
+```
+
+## Valid syntax by file type
+
+- TypeScript / TSX / JS / JSX / CSS / SCSS: block comment `/* ... */` at top of file.
+- Markdown: HTML comment `<!-- ... -->` at top of file.
+- YAML / shell / `.env.example`: `#` lines.
+- Cursor rules (`.mdc`): header goes **after** the required YAML frontmatter.
+- Strict JSON (e.g. `package.json`, `tsconfig.json`): **NO in-file comment**. Document purpose
+  in a sibling `*.md` or via an allowed `$schema` / documented `_meta` key only when the schema
+  permits it. Prefer sibling docs over inventing non-standard JSON keys.
+
+## Exempt (do not add headers)
+
+- Lockfiles (`pnpm-lock.yaml`, etc.)
+- Generated code (`packages/api/generated/**` and other Orval/codegen output)
+- Build output (`dist/`, `.next/`, `coverage/`, Turbo caches)
+- Binary assets (images, fonts, etc.)
+- Machine-generated artifacts listed in the generated-file policy
+
+## Agent rules
+
+- Add the header when creating a new comment-supporting file.
+- Update `Updated` when making meaningful edits.
+- Never break JSON validity for a header.
+- Never hand-edit generated files to add headers.

@@ -1,0 +1,9 @@
+# AZES COMPANY
+# File: .husky/pre-commit
+# Author: AZES_COMPANY
+# Created: 2026-08-22
+# Updated: 2026-08-22
+# Purpose: Run lint-staged on staged files before commit
+# Layer: tooling
+
+pnpm exec lint-staged

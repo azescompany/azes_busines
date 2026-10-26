@@ -1,0 +1,22 @@
+{
+  "save": "Save",
+  "cancel": "Cancel",
+  "brand": "Caspian Key",
+  "loading": {
+    "label": "Loading…",
+    "subtitle": "Preparing Caspian Key",
+    "handoff": "Opening your workspace…",
+    "handoffSubtitle": "Securely continuing to Caspian Key Admin",
+    "goHome": "Go to home"
+  },
+
+  "errorGeneric": "Something went wrong.",
+  "language": "Language",
+  "logout": "Log out",
+  "auth": {
+    "sessionOtherDevice": "Your profile was signed in from another device. If this was not you, please contact the founders or management.",
+    "sessionUnauthorized": "Your session is no longer valid. Please sign in again.",
+    "sessionExpired": "Your session has expired. Please sign in again.",
+    "signedOut": "You have been signed out."
+  }
+}

@@ -1,0 +1,72 @@
+---
+description: docs/ops/WORKER.md phase approval protocol — never auto-advance phases
+alwaysApply: true
+---
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║ AZES COMPANY
+║ File: worker-process.mdc
+║ Author: AZES_COMPANY
+║ Created: 2026-08-22
+║ Updated: 2026-10-20
+║ Purpose: Enforce phase approval protocol and WORKER.md updates
+║ Layer: tooling
+╚══════════════════════════════════════════════════════════════╝
+-->
+
+# Worker Process (Mandatory)
+
+`docs/ops/WORKER.md` is the operational execution contract. Read it before any
+implementation work.
+
+## Protocol
+
+```text
+READ docs/ops/WORKER.md
+ -> Understand current phase
+ -> Inspect relevant files
+ -> STOP
+ -> ASK USER FOR APPROVAL
+ -> Implement ONLY the approved phase
+ -> Run validation
+ -> Update docs/ops/WORKER.md
+ -> Report result
+ -> STOP
+```
+
+## Status model
+
+`PENDING` | `READY` | `IN_PROGRESS` | `BLOCKED` | `COMPLETED`
+
+- Only **one** phase may be `IN_PROGRESS`.
+- Never mark a phase `COMPLETED` unless its validation criteria pass.
+- Never silently begin the next phase. After completion: set next phase to `PENDING`/`READY`,
+  STOP, and ask for approval.
+
+## After completing a phase
+
+1. Update `docs/ops/WORKER.md` (tasks checked, changed files, validation results, issues,
+   decisions).
+2. Set the next phase appropriately.
+3. Report and STOP.
+
+## Scope control
+
+- Modify only the approved phase scope.
+- If an unrelated problem is found: document it in `docs/ops/WORKER.md` Backlog; do not
+  silently fix it.
+- Do not install dependencies, create apps/packages, or rewrite source unless the approved phase
+ explicitly requires it.
+
+## Agent roster (ad-hoc work)
+
+For Cursor chat roles (Coordinator / Dizayner / Worker / İcraçı), build/git/deploy ownership,
+and Agent Report format: see `coordinator-agent.mdc`, `icraciAgent.mdc`, and
+`docs/ops/WORKER.md` §4a–§4b. Phase protocol above still applies to numbered roadmap phases.
+Academy LMS track uses §4b checkpoint (İcraçı) and must not be mixed with numbered monorepo
+phases.
+
+## Current expectation until Phase 1 is approved
+
+Phase 1 (Monorepo Foundation) remains `PENDING` until the user explicitly approves it.

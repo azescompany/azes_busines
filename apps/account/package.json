@@ -1,0 +1,42 @@
+{
+  "name": "@azes/account",
+  "version": "0.0.0",
+  "private": true,
+  "description": "AZES Account web SPA shell (Vite)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 100 --strictPort",
+    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "preview": "vite preview --port 100",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@azes/api": "workspace:*",
+    "@azes/auth": "workspace:*",
+    "@azes/i18n": "workspace:*",
+    "@azes/state": "workspace:*",
+    "@azes/ui-web": "workspace:*",
+    "@azes/validation": "workspace:*",
+    "@hookform/resolvers": "^5.9.1",
+    "@tanstack/react-query": "^5.84.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@azes/testing": "workspace:*",
+    "@azes/typescript-config": "workspace:*",
+    "@azes/vitest-config": "workspace:*",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "jsdom": "^26.1.0",
+    "typescript": "^5.9.2",
+    "vite": "^7.0.6",
+    "vitest": "^3.2.4"
+  }
+}

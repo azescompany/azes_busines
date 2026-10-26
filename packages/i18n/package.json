@@ -1,0 +1,42 @@
+{
+  "name": "@azes/i18n",
+  "version": "0.0.0",
+  "private": true,
+  "description": "AZES i18next foundation for web, Next.js, and React Native",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "lint": "eslint ."
+  },
+  "peerDependencies": {
+    "i18next": "^25.0.0",
+    "react": "^18.3.0 || ^19.0.0",
+    "react-i18next": "^15.0.0"
+  },
+  "dependencies": {
+    "i18next": "^25.3.2",
+    "react-i18next": "^15.6.1"
+  },
+  "devDependencies": {
+    "@azes/typescript-config": "workspace:*",
+    "@azes/vitest-config": "workspace:*",
+    "@types/react": "^19.1.9",
+    "react": "^19.1.1",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

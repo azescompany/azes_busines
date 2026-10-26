@@ -1,0 +1,44 @@
+---
+description: Allowed and forbidden dependency directions between apps and packages
+alwaysApply: true
+---
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║ AZES COMPANY
+║ File: dependency-boundaries.mdc
+║ Author: AZES_COMPANY
+║ Created: 2026-08-22
+║ Updated: 2026-08-22
+║ Purpose: Enforce the monorepo dependency graph
+║ Layer: tooling
+╚══════════════════════════════════════════════════════════════╝
+-->
+
+# Dependency Boundaries
+
+## Allowed
+
+- `apps → packages`
+- `design-tokens → ui-web`, `design-tokens → ui-native`
+- `types → api | state | validation`
+- `api → state`, `auth → state`
+- `utils`, `constants`, `types` are leaf-ish and broadly consumable.
+
+## Forbidden
+
+- `apps → apps` (never).
+- `ui-web | ui-native → api` (UI must not know about API/business domain).
+- `ui-* → state` (Redux) or business domains.
+- `utils → react` (utils stays framework-agnostic).
+- `constants | types → react`.
+- `generated → manually maintained business logic`.
+- Deep imports into another package's internals. Use the package public entry point only
+  (`@azes/<pkg>` or controlled subpaths). Never `@azes/<pkg>/src/...`.
+
+## Rules for agents
+
+- Do not add a dependency that violates the graph above.
+- Do not introduce a new package to work around a boundary; fix the design.
+- When practical, enforce with ESLint import boundaries (`tooling/eslint`).
+- Consult `docs/architecture/dependency-graph.md` and `docs/development/dependency-rules.md`.

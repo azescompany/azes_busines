@@ -1,0 +1,129 @@
+{
+  "language": "Dil",
+  "nav": {
+    "home": "Ana səhifə",
+    "homeCaption": "İcmal",
+    "organizations": "Təşkilatlar",
+    "organizationsCaption": "Tenantlər",
+    "users": "İstifadəçilər",
+    "usersCaption": "Üzvlər",
+    "roleMenus": "Rol menyuları",
+    "roleMenusCaption": "Bağlantılar",
+    "customers": "Müştərilər",
+    "customersCaption": "CRM"
+  },
+  "shell": {
+    "primaryNav": "Əsas naviqasiya",
+    "hideMenus": "Menyuları gizlət",
+    "showMenus": "Menyuları göstər",
+    "prevMenus": "Əvvəlki menyular",
+    "nextMenus": "Növbəti menyular",
+    "scrollToTop": "Yuxarı qayıt",
+    "openNav": "Naviqasiyanı aç",
+    "skipToContent": "Məzmuna keç",
+    "openSettings": "Parametrləri aç",
+    "signingIn": "Daxil olunur…",
+    "redirectLogin": "Account girişinə yönləndirilir…"
+  },
+  "account": {
+    "menu": "Hesab",
+    "logout": "Çıxış"
+  },
+  "home": {
+    "title": "Ana səhifə",
+    "subtitle": "AZES Admin — Account SSO ilə daxil olmusunuz",
+    "welcome": "Xoş gəldiniz"
+  },
+  "brand": {
+    "homeAria": "AZES COMPANY — ana səhifə"
+  },
+  "orgs": {
+    "title": "Təşkilatlar",
+    "subtitle": "Tenant təşkilatlarını yaradın və idarə edin",
+    "subtitleMember": "Üzv olduğunuz təşkilatlar",
+    "detailTitle": "Təşkilat",
+    "createTitle": "Təşkilat yarat",
+    "create": "Yarat",
+    "creating": "Yaranır…",
+    "createError": "Təşkilat yaradıla bilmədi",
+    "loadError": "Təşkilatlar yüklənə bilmədi",
+    "fields": {
+      "name": "Ad",
+      "slug": "Slug (istəyə bağlı)"
+    },
+    "columns": {
+      "name": "Ad",
+      "slug": "Slug",
+      "status": "Status"
+    },
+    "validation": {
+      "nameRequired": "Ad tələb olunur",
+      "emailInvalid": "Düzgün e-poçt daxil edin"
+    },
+    "switcher": {
+      "label": "Təşkilat"
+    },
+    "members": {
+      "title": "Üzvlər",
+      "loadError": "Üzvlər yüklənə bilmədi",
+      "columns": {
+        "user": "İstifadəçi",
+        "role": "Rol",
+        "status": "Status"
+      }
+    },
+    "invite": {
+      "title": "Üzv dəvət et",
+      "email": "E-poçt",
+      "role": "Rol (orgAdmin | instructor | student)",
+      "send": "Dəvət göndər",
+      "sending": "Göndərilir…",
+      "error": "Dəvət yaradıla bilmədi",
+      "tokenOnce": "Dəvət tokeni (bir dəfə kopyalayın)",
+      "pending": "Gözləyən dəvətlər"
+    }
+  },
+  "users": {
+    "title": "İstifadəçilər",
+    "subtitle": "Aktiv təşkilatınızın üzvləri",
+    "noActiveOrg": "Üzvləri görmək üçün aktiv təşkilat seçin"
+  },
+  "customers": {
+    "title": "Müştərilər",
+    "subtitle": "Aktiv təşkilatınızdakı CRM müştəriləri",
+    "forbidden": "Müştəriləri görmək üçün icazəniz yoxdur.",
+    "create": "Yarat",
+    "creating": "Yaranır…",
+    "createError": "Müştəri yaradıla bilmədi",
+    "fields": {
+      "name": "Ad",
+      "email": "E-poçt"
+    },
+    "columns": {
+      "name": "Ad",
+      "email": "E-poçt",
+      "status": "Status"
+    },
+    "validation": {
+      "nameRequired": "Ad tələb olunur",
+      "emailInvalid": "Düzgün e-poçt daxil edin"
+    }
+  },
+  "roleMenus": {
+    "title": "Rol menyuları",
+    "subtitle": "Admin menyularını rollara bağlayın. Menyu icazələri API girişini avtomatik yeniləyir.",
+    "forbidden": "Yalnız SuperAdmin rol menyularını idarə edə bilər.",
+    "menusFor": "{{role}} üçün menyular",
+    "save": "Saxla",
+    "saving": "Saxlanılır…",
+    "saved": "Saxlanıldı. Təsir olunan istifadəçilər JWT üçün yenidən daxil olmalıdır.",
+    "saveError": "Rol menyuları saxlanıla bilmədi",
+    "hint": "Menyunu ayıranda onun icazə kodları roldan silinir (başqa bağlı menyuda paylaşılmayıbsa).",
+    "roles": {
+      "orgAdmin": "Org admin",
+      "instructor": "İnstruktor",
+      "student": "Tələbə",
+      "guest": "Qonaq"
+    }
+  }
+}

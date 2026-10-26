@@ -1,0 +1,76 @@
+---
+description: UI conventions — tokens, i18n, testing for app feature work
+globs: apps/**/src/**/*.{tsx,ts,css}
+alwaysApply: false
+---
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║ AZES COMPANY
+║ File: ui-conventions.mdc
+║ Author: AZES_COMPANY
+║ Created: 2026-10-10
+║ Updated: 2026-10-11
+║ Purpose: App-level UI/token/i18n/test conventions (not design-system ownership)
+║ Layer: tooling
+╚══════════════════════════════════════════════════════════════╝
+-->
+
+# UI Conventions (apps)
+
+Design-system ownership: `uiDesignAgent.mdc` + `docs/styles/CURRENT-STATE.md`.  
+Bu fayl app feature-lərində UI istifadəsi üçündür.
+
+## Token / style
+
+- Rəng: `theme.vars.palette.*` və ya `theme.azes.*` — sərbəst hex/rgba yox.
+- Tipografiya: `theme.typography` / variant props.
+- Layout spacing: theme spacing / layout CSS vars — hardcoded px yalnız lokal `sx` istisnası.
+- Qarışıq rəng: `color-mix` və ya theme utilities; yeni stil kitabı yox.
+
+## i18n
+
+- User-facing mətn: locale açarı (`t('users.table.empty')`). Hardcoded UI string qadağandır.
+- Yeni / dəyişən səhifə: **en + az + ru** eyni açar ağacı ilə **eyni tapşırıqda** yazılır
+  (yalnız en buraxmaq qadağandır). Agent Worker səhifə DoD-unun bir hissəsidir —
+  `apiMenecerAgent.mdc` + `page-architecture.mdc` checklist §9.
+- Hər `t('feature…')` açarı üç locale faylında mövcud olmalıdır; dilə uyğun təbii mətn.
+
+## Test
+
+- Vitest + Testing Library; co-located `*.test.ts(x)`.
+- Provider lazımdırsa mövcud app test setup / `renderWithProviders` pattern.
+- MSW və ya modul mock — real şəbəkə yox.
+- Assertion-ları miqrasiya zamanı zəiflətmə.
+
+## Component consumption
+
+- Yalnız `@azes/ui-web` (+ subpaths). MUI birbaşa import app-də yox (ADR-009 istisnaları xaric).
+- Cədvəl → `AzesTable`; dialoq → `useAzesDialog`; accordion → `AzesAccordion`.
+- Boş cədvəl → global `AzesTableLabelsProvider` (`table.emptyTitle` /
+  `table.emptyDescription`); `AzesEmptyState` Paper. Feature-də empty string təkrarlama.
+  Cədvəl daxilində kiçik “no rows” scrap yazma.
+- Sağdan açılan əlavə məzmun (filter, detallar, konfiqurasiya) → yalnız `AzesSidePanel`
+  (`@azes/ui-web/side-panel`) + `useSidePanel(id)`. Yeni MUI `Drawer` yazma.
+  Yeni panel: (1) `AzesSidePanelRegistry` augmentation ilə id, (2) feature-da `XxxPanel`
+  komponenti, (3) trigger `useSidePanel(id).toggle`.
+- Açılan menyu → yalnız `AzesMenu` (`@azes/ui-web/menu`, items + trigger render-prop).
+  Yeni `Menu` / `Popover` ilə əl ilə menyu yazma.
+- Backdrop: `MuiBackdrop` yalnız theme-dən (primary glass). Komponentdə backdrop stili
+  override etmə. Menu/Popover backdrop-u həmişə `invisible`-dır (glass yox).
+- Yeni dil əlavə etmək: `shared/config/languages.ts` (və ya `LOCALE_META`) + 3 translation faylı.
+
+## Logo / route loading (admin)
+
+- Boot/auth: `CaspianLoader` / `RouteLoader` fullscreen. Content Suspense: `RoutePageSkeleton`.
+- Brend logo yalnız `CaspianLogo` (`@/loading`). Birbaşa SVG fayl importu və ya hex fill yox.
+- Ətraflı: `docs/styles/25-logo-and-loading.md`.
+
+## Content skeleton
+
+- Data gözləyən hissə üçün yalnız `@azes/ui-web/skeleton` (`AzesSkeleton` / `AzesSkeletonGroup`)
+  və feature `XxxViewSkeleton`. Real layout tokenləri ilə qur (layout shift olmamalıdır).
+- İlk yükləmə (`isPending`, data yox): skeleton. Yenidən yükləmə (`keepPreviousData` / `isFetching`
+  + data var): köhnə data + nazik table progress — tam skeleton YOX.
+- Birbaşa MUI `Skeleton` və səhifə `CircularProgress` spinner-i qadağandır.
+- Ətraflı: `docs/styles/29-skeleton.md`.

@@ -1,0 +1,24 @@
+# AZES COMPANY
+# File: .gitattributes
+# Author: AZES_COMPANY
+# Created: 2026-08-22
+# Updated: 2026-08-22
+# Purpose: Normalize line endings and mark binary assets for Git
+# Layer: tooling
+
+* text=auto eol=lf
+
+*.{cmd,bat} text eol=crlf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.mp4 binary
+*.mov binary

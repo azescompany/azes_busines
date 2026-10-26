@@ -1,0 +1,59 @@
+---
+description: Package ownership, public API discipline, and anti-dumping-ground rules
+globs: packages/**
+alwaysApply: false
+---
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║ AZES COMPANY
+║ File: packages.mdc
+║ Author: AZES_COMPANY
+║ Created: 2026-08-22
+║ Updated: 2026-10-09
+║ Purpose: Conventions for packages under packages/
+║ Layer: tooling
+╚══════════════════════════════════════════════════════════════╝
+-->
+
+# Package Conventions
+
+## Ownership
+
+Each package has one responsibility. Consult `docs/architecture/package-architecture.md` for
+allowed/forbidden dependencies per package.
+
+## UI packages
+
+For `design-tokens`, `ui-web`, and `ui-native` (exports, theme, components, style architecture):
+use `.cursor/rules/uiDesignAgent.mdc` and keep `docs/styles/CURRENT-STATE.md` current.
+
+## API package
+
+For `@azes/api` (mutator, Query defaults, auth bridge, facades, OpenAPI consumers):
+use `.cursor/rules/apiMenecerAgent.mdc` and keep `docs/api/CURRENT-STATE.md` current.
+Codegen / generated-file policy remains `.cursor/rules/api-generation.mdc`.
+
+## Public API
+
+- Consumers import `@azes/<pkg>` or controlled subpaths only.
+- Define a package `exports` map. Internals are not importable.
+- Never encourage deep imports like `@azes/ui-web/src/components/button/Button`.
+
+## Anti-dumping-ground
+
+- `utils` and `constants` are not junk drawers. New entries need a clear reusable purpose.
+- If something is used by exactly one app, keep it in that app.
+- Do not create a package to work around a dependency boundary.
+- Do not create packages prematurely — only when a phase needs them (`docs/ops/WORKER.md`).
+
+## Framework-agnostic packages
+
+- `design-tokens`, `utils`, `constants`, `types` must not depend on React or React Native.
+- No framework-specific code may leak into these packages.
+
+## Before adding a package
+
+1. Confirm it is required by the active approved phase.
+2. Document purpose, allowed/forbidden deps, and public API.
+3. Prefer extending an existing package over inventing a new one.

@@ -1,0 +1,27 @@
+# AZES COMPANY
+# File: packages/api/openapi/openapi.placeholder.yaml
+# Author: AZES_COMPANY
+# Created: 2026-08-22
+# Updated: 2026-08-22
+# Purpose: Scaffolding OpenAPI document for Orval (NOT a production AZES contract)
+# Layer: package
+
+openapi: 3.0.3
+info:
+  title: AZES API Placeholder
+  version: 0.0.0-placeholder
+  description: |
+    PLACEHOLDER ONLY — not the production AZES backend contract.
+
+    This file exists so the Orval generation pipeline, mutator wiring, and CI drift
+    checks can be validated before a real OpenAPI/Swagger document is available.
+
+    Replace this file (or retarget orval.config.ts) with the authoritative backend
+    OpenAPI specification when it is published. Do not treat paths/schemas here as
+    product API surface.
+servers:
+  - url: https://api.example.invalid
+    description: Non-routable placeholder base URL
+paths: {}
+components:
+  schemas: {}

@@ -1,0 +1,43 @@
+---
+description: General coding standards, naming conventions, and TypeScript rules
+alwaysApply: true
+---
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║ AZES COMPANY
+║ File: coding-standards.mdc
+║ Author: AZES_COMPANY
+║ Created: 2026-08-22
+║ Updated: 2026-08-22
+║ Purpose: Baseline coding, naming, and TypeScript standards
+║ Layer: tooling
+╚══════════════════════════════════════════════════════════════╝
+-->
+
+# Coding Standards
+
+## TypeScript
+
+- `strict` mode everywhere. No implicit `any`. Prefer explicit public types on exports.
+- No `// @ts-ignore` without a justification comment; prefer `@ts-expect-error` with reason.
+
+## Naming
+
+- Packages: `@azes/<name>` (kebab-case), e.g. `@azes/ui-web`, `@azes/design-tokens`.
+- Apps: kebab-case directory names matching the target list.
+- Files: React components `PascalCase.tsx`; hooks `useX.ts`; utilities `camelCase.ts`;
+  test files `*.test.ts(x)`; config files as the tool expects.
+- Variables/functions `camelCase`; types/interfaces/enums `PascalCase`; constants `UPPER_SNAKE_CASE`.
+
+## Comments
+
+- Do not add comments that merely narrate code. Explain intent, trade-offs, or constraints.
+- Every comment-supporting file carries the AZES header — see `comment-header.mdc`.
+
+## Quality
+
+- After edits, ensure lint/typecheck pass for the touched scope. Fix lint errors you introduce.
+- No `console.log` in app/package source; use `@azes/logger` once that package exists.
+- Never commit secrets. Use environment configuration (see `docs/architecture/security.md`).
+- Do not introduce unnecessary dependencies. Justify bundle/runtime/maintenance impact.
