@@ -4,15 +4,20 @@
  * ║ File: apps/admin/src/auth/useSessionMe.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-26
- * ║ Updated: 2026-10-26
- * ║ Purpose: Shared GET /me bootstrap query (TAGET M1.6 — no per-route refetch)
+ * ║ Updated: 2026-10-27
+ * ║ Purpose: Shared GET /me bootstrap (nav, modules, accessVersion — Phase 07)
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
  */
 
 import { useGetApiV1Me } from '@azes/api/azes/auth';
 
-/** Session bootstrap — long staleTime; invalidate on org-switch / role-menus / logout. */
+/**
+ * Session bootstrap — long staleTime.
+ * Invalidate via `invalidateAccessQueries` on org-switch / role-menus /
+ * user-access / modules / logout. `accessVersion` changes trigger sibling
+ * cache drops in AdminShell.
+ */
 export function useSessionMe() {
   return useGetApiV1Me({
     query: {

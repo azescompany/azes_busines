@@ -4,7 +4,7 @@
  * ║ File: apps/api/src/env.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-19
- * ║ Updated: 2026-10-19
+ * ║ Updated: 2026-10-27
  * ║ Purpose: Cloudflare Worker bindings + Zod env validation
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
@@ -28,6 +28,11 @@ const varsSchema = z.object({
   CORS_ALLOWED_ORIGINS: z.string().optional(),
   /** When "false", skip D1 auth rate limits (tests / emergency). Default on. */
   AUTH_RATE_LIMIT_ENABLED: z.string().optional(),
+  /**
+   * Access resolver mode (Phase 06/08): `legacy` | `unified` (default unified).
+   * Rollback: ACCESS_RESOLVER_MODE=legacy (same deny/allow core through 2026-12-31).
+   */
+  ACCESS_RESOLVER_MODE: z.string().optional(),
 });
 
 export type ApiVars = z.infer<typeof varsSchema>;
@@ -41,6 +46,7 @@ export type ApiEnv = ApiVars & {
   JWT_ACCESS_SECRET?: string;
   CORS_ALLOWED_ORIGINS?: string;
   AUTH_RATE_LIMIT_ENABLED?: string;
+  ACCESS_RESOLVER_MODE?: string;
 };
 
 export function parseApiVars(env: Record<string, unknown> | ApiEnv): ApiVars {
@@ -56,6 +62,8 @@ export function parseApiVars(env: Record<string, unknown> | ApiEnv): ApiVars {
       typeof env.CORS_ALLOWED_ORIGINS === 'string' ? env.CORS_ALLOWED_ORIGINS : undefined,
     AUTH_RATE_LIMIT_ENABLED:
       typeof env.AUTH_RATE_LIMIT_ENABLED === 'string' ? env.AUTH_RATE_LIMIT_ENABLED : undefined,
+    ACCESS_RESOLVER_MODE:
+      typeof env.ACCESS_RESOLVER_MODE === 'string' ? env.ACCESS_RESOLVER_MODE : undefined,
   });
 }
 

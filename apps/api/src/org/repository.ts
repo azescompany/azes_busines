@@ -4,8 +4,8 @@
  * ║ File: apps/api/src/org/repository.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-20
- * ║ Updated: 2026-10-20
- * ║ Purpose: Org + Track persistence (D1 + memory)
+ * ║ Updated: 2026-10-26
+ * ║ Purpose: Org + Track persistence (D1 + memory; M5.0-lite fields)
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
  */
@@ -16,6 +16,7 @@ import { newId, nowSec } from '../auth/tokens.js';
 import type { ApiDb } from '../db/client.js';
 import * as schema from '../db/schema.js';
 import { ApiHttpError } from '../errors.js';
+import { defaultTrialEndsAt, isAllowedOrgColor, pickOrgColor } from './orgColors.js';
 import type { OrganizationDto, TrackDto } from './types.js';
 
 function slugify(name: string): string {
@@ -34,6 +35,9 @@ export interface OrgRepository {
   createOrganization(input: {
     name: string;
     slug?: string;
+    description?: string | null;
+    colorCode?: string;
+    subscriptionStatus?: 'active' | 'blocked';
     createdBy: string;
     parentOrganizationId?: string | null;
   }): Promise<OrganizationDto>;
@@ -41,7 +45,15 @@ export interface OrgRepository {
   getOrganization(id: string): Promise<OrganizationDto | null>;
   updateOrganization(
     id: string,
-    patch: { name?: string; status?: 'active' | 'disabled' },
+    patch: {
+      name?: string;
+      description?: string | null;
+      colorCode?: string;
+      subscriptionStatus?: 'active' | 'blocked';
+      trialEndsAt?: number | null;
+      subscriptionReadOnly?: boolean;
+      status?: 'active' | 'disabled';
+    },
   ): Promise<OrganizationDto>;
   createTrack(input: {
     orgId: string;
@@ -70,6 +82,12 @@ function mapOrg(row: typeof schema.organizations.$inferSelect): OrganizationDto 
     id: row.id,
     name: row.name,
     slug: row.slug,
+    description: row.description ?? null,
+    colorCode: row.colorCode ?? '#2563EB',
+    subscriptionStatus:
+      (row.subscriptionStatus as OrganizationDto['subscriptionStatus']) ?? 'active',
+    trialEndsAt: row.trialEndsAt ?? null,
+    subscriptionReadOnly: Boolean(row.subscriptionReadOnly),
     status: row.status,
     parentOrganizationId: row.parentOrganizationId ?? null,
     createdBy: row.createdBy ?? null,
@@ -98,10 +116,17 @@ export function createDrizzleOrgRepository(db: ApiDb): OrgRepository {
       const ts = nowSec();
       const id = newId();
       const slug = input.slug?.trim() || slugify(input.name);
+      const colorCode =
+        input.colorCode && isAllowedOrgColor(input.colorCode) ? input.colorCode : pickOrgColor(ts);
+      const subscriptionStatus = input.subscriptionStatus ?? 'active';
       await db.insert(schema.organizations).values({
         id,
         name: input.name.trim(),
         slug,
+        description: input.description?.trim() || null,
+        colorCode,
+        subscriptionStatus,
+        trialEndsAt: defaultTrialEndsAt(ts),
         status: 'active',
         parentOrganizationId: input.parentOrganizationId ?? null,
         createdBy: input.createdBy,
@@ -131,10 +156,24 @@ export function createDrizzleOrgRepository(db: ApiDb): OrgRepository {
         throw new ApiHttpError(404, 'NOT_FOUND', 'Organization not found');
       }
       const ts = nowSec();
+      if (patch.colorCode !== undefined && !isAllowedOrgColor(patch.colorCode)) {
+        throw new ApiHttpError(400, 'VALIDATION_ERROR', 'colorCode is not in the allowed palette');
+      }
       await db
         .update(schema.organizations)
         .set({
           ...(patch.name !== undefined ? { name: patch.name.trim() } : {}),
+          ...(patch.description !== undefined
+            ? { description: patch.description?.trim() || null }
+            : {}),
+          ...(patch.colorCode !== undefined ? { colorCode: patch.colorCode } : {}),
+          ...(patch.subscriptionStatus !== undefined
+            ? { subscriptionStatus: patch.subscriptionStatus }
+            : {}),
+          ...(patch.trialEndsAt !== undefined ? { trialEndsAt: patch.trialEndsAt } : {}),
+          ...(patch.subscriptionReadOnly !== undefined
+            ? { subscriptionReadOnly: patch.subscriptionReadOnly }
+            : {}),
           ...(patch.status !== undefined ? { status: patch.status } : {}),
           updatedAt: ts,
         })
@@ -291,11 +330,22 @@ export function createDrizzleOrgRepository(db: ApiDb): OrgRepository {
   };
 }
 
+function normalizeMemoryOrg(o: OrganizationDto): OrganizationDto {
+  return {
+    ...o,
+    description: o.description ?? null,
+    colorCode: o.colorCode ?? '#2563EB',
+    subscriptionStatus: o.subscriptionStatus ?? 'active',
+    trialEndsAt: o.trialEndsAt ?? null,
+    subscriptionReadOnly: o.subscriptionReadOnly ?? false,
+  };
+}
+
 export function createMemoryOrgRepository(seed?: {
   organizations?: OrganizationDto[];
   tracks?: TrackDto[];
 }): OrgRepository {
-  const orgs = [...(seed?.organizations ?? [])];
+  const orgs = [...(seed?.organizations ?? [])].map(normalizeMemoryOrg);
   const tracks = [...(seed?.tracks ?? [])];
   const trackCourseMap = new Map<string, string[]>();
   const userTrackMap = new Map<string, Set<string>>();
@@ -303,10 +353,17 @@ export function createMemoryOrgRepository(seed?: {
   return {
     async createOrganization(input) {
       const ts = nowSec();
+      const colorCode =
+        input.colorCode && isAllowedOrgColor(input.colorCode) ? input.colorCode : pickOrgColor(ts);
       const dto: OrganizationDto = {
         id: newId(),
         name: input.name.trim(),
         slug: input.slug?.trim() || slugify(input.name),
+        description: input.description?.trim() || null,
+        colorCode,
+        subscriptionStatus: input.subscriptionStatus ?? 'active',
+        trialEndsAt: defaultTrialEndsAt(ts),
+        subscriptionReadOnly: false,
         status: 'active',
         parentOrganizationId: input.parentOrganizationId ?? null,
         createdBy: input.createdBy,
@@ -327,10 +384,24 @@ export function createMemoryOrgRepository(seed?: {
       if (idx < 0) {
         throw new ApiHttpError(404, 'NOT_FOUND', 'Organization not found');
       }
+      if (patch.colorCode !== undefined && !isAllowedOrgColor(patch.colorCode)) {
+        throw new ApiHttpError(400, 'VALIDATION_ERROR', 'colorCode is not in the allowed palette');
+      }
       const current = orgs[idx]!;
       const next: OrganizationDto = {
         ...current,
         ...(patch.name !== undefined ? { name: patch.name.trim() } : {}),
+        ...(patch.description !== undefined
+          ? { description: patch.description?.trim() || null }
+          : {}),
+        ...(patch.colorCode !== undefined ? { colorCode: patch.colorCode } : {}),
+        ...(patch.subscriptionStatus !== undefined
+          ? { subscriptionStatus: patch.subscriptionStatus }
+          : {}),
+        ...(patch.trialEndsAt !== undefined ? { trialEndsAt: patch.trialEndsAt } : {}),
+        ...(patch.subscriptionReadOnly !== undefined
+          ? { subscriptionReadOnly: patch.subscriptionReadOnly }
+          : {}),
         ...(patch.status !== undefined ? { status: patch.status } : {}),
         updatedAt: nowSec(),
       };

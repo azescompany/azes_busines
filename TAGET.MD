@@ -2,8 +2,8 @@
 
 **Status:** Implementation roadmap  
 **Approach:** Audit → Harden → Tenant Core → Module Registry → Business Modules  
-**Current priority:** M1.6–M4 ERP Authz batch — qəbul gözlənilir  
-**Next milestone:** M5+ ERP business modules (post-accept)  
+**Current priority:** M5.0-lite Tenant Console implementasiya tamam — qəbul gözlənilir; M1.6–M4 qəbul də açıq  
+**Next milestone:** M5+ ERP business modules (post M5.0-lite accept)  
 **Scope:** Existing AZES monorepo, Account, Admin, API and design system  
 **M1.5:** ACCEPTED (2026-10-26) — ERP Authz roadmap unlocked
 
@@ -28,7 +28,8 @@ Bu sənəd icra ardıcıllığını, arxitektura məhdudiyyətlərini, təhlük�
 7. M3 — User Access Profiles & CRUD
 8. M3.5 — Data Scope & Dashboard Authz
 9. M4 — Audit Log & CRM
-10. M5+ — Sales, Inventory, Finance və digər biznes modulları
+10. M5.0-lite — SuperAdmin Tenant Console (org/user/roles/subscription-lite)
+11. M5+ — Sales, Inventory, Finance və digər biznes modulları
 
 **Məcburi qayda:** Cari mərhələnin qəbul meyarları yerinə yetirilmədən növbəti mərhələyə keçmə.
 
@@ -596,7 +597,21 @@ Default permission profiles + user menu assignment + per-menu read/create/update
 - [x] `audit_logs` + `GET /api/v1/audit-logs`
 
 **M4 status:** implementasiya tamam — batch qəbul gözlənilir.  
-**STOP:** M4 qəbulundan sonra M5+ ERP.
+**STOP:** M4 qəbulundan sonra M5.0-lite / M5+ ERP.
+
+## 8b. M5.0-lite — SuperAdmin Tenant Console
+
+Subscription-lite (active/blocked + 35 günlük trial), org description/rəng, elastik rol kataloqu,
+SuperAdmin/orgAdmin user create + Admin user access UI. Fatura/aylıq xərc/grace **xaric**.
+
+- [x] Migration `0012` + org DTO/API fields
+- [x] `POST/GET /api/v1/users` (SuperAdmin rol seçimi; orgAdmin → forced `member` + default profile seed)
+- [x] `GET/POST/PATCH/DELETE /api/v1/platform-roles`
+- [x] Admin Orgs / Users / User access / Platform roles UI + i18n en/az/ru
+- [x] OpenAPI **0.17** + Orval + package exports
+- [x] api-server tests (tenantConsole) PASS
+
+**M5.0-lite status:** implementasiya tamam — qəbul gözlənilir.
 
 ## 9. M5+ — ERP və digər modullar
 

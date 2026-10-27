@@ -18,7 +18,9 @@ export const PATHS = {
   organizations: '/organizations',
   organizationDetail: '/organizations/:orgId',
   users: '/users',
+  userAccess: '/users/:userId/access',
   roleMenus: '/role-menus',
+  platformRoles: '/platform-roles',
   customers: '/customers',
 } as const;
 
@@ -26,6 +28,10 @@ export type AdminPath = (typeof PATHS)[keyof typeof PATHS];
 
 export function organizationDetailPath(orgId: string): string {
   return `/organizations/${encodeURIComponent(orgId)}`;
+}
+
+export function userAccessPath(userId: string): string {
+  return `/users/${encodeURIComponent(userId)}/access`;
 }
 
 /** Prefix a logical path with the active locale segment. */

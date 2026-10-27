@@ -2,18 +2,22 @@
 # File: packages/api/openapi/azes/openapi.yaml
 # Author: AZES_COMPANY
 # Created: 2026-10-19
-# Updated: 2026-10-26
+# Updated: 2026-10-27
 # Purpose: AZES OpenAPI — auth + LMS + tenant + menu RBAC (M1.5)
 # Layer: package
 
 openapi: 3.0.3
 info:
   title: AZES API
-  version: 0.16.0
+  version: 0.20.0
   description: |
-    AZES HTTP API client contract (auth + LMS + tenant + menu RBAC + ERP modules/CRM).
+    AZES HTTP API client contract (auth + LMS + tenant + menu RBAC + ERP + tenant console).
     Runtime behaviour is owned by apps/api (@azes/api-server).
-    GET /me is the Admin session bootstrap (nav + permissions).
+    GET /me is the Admin session bootstrap (nav + permissions + modules + scope + accessVersion).
+    M5.0-lite: org color/subscription, platform users/roles.
+    Phase 03: organization_units + unit_memberships (in-tenant; not parentOrganizationId).
+    Phase 04: module entitlement + subscription lite (blocked/trial/read-only).
+    Phase 06: Unified Effective Access Resolver (requirePermission + /me same policy); ACCESS_RESOLVER_MODE=legacy|unified.
 servers:
   - url: http://127.0.0.1:8787
     description: Local Wrangler Worker
@@ -30,8 +34,14 @@ tags:
     description: Me dashboard, notifications, bookmarks, certificates
   - name: orgs
     description: Organizations, Tracks, memberships and invitations (TAGET M1)
+  - name: modules
+    description: Platform modules + org module entitlement (Phase 04/06)
   - name: menus
     description: Admin menu catalog and role↔menu bindings (TAGET M1.5)
+  - name: users
+    description: Platform user create/list (SuperAdmin + orgAdmin)
+  - name: platform-roles
+    description: Elastic role catalog (SuperAdmin)
 paths:
   /api/v1/me:
     get:
@@ -1435,6 +1445,17 @@ paths:
                   type: string
                 slug:
                   type: string
+                description:
+                  type: string
+                  nullable: true
+                colorCode:
+                  type: string
+                subscriptionStatus:
+                  type: string
+                  enum: [active, blocked]
+                parentOrganizationId:
+                  type: string
+                  nullable: true
       responses:
         '201':
           description: Created
@@ -1446,7 +1467,7 @@ paths:
     patch:
       tags: [orgs]
       operationId: patchApiV1OrgsOrgId
-      summary: Update organization name/status (superAdmin)
+      summary: Update organization name/status/subscription (superAdmin)
       security:
         - bearerAuth: []
       parameters:
@@ -1464,6 +1485,19 @@ paths:
               properties:
                 name:
                   type: string
+                description:
+                  type: string
+                  nullable: true
+                colorCode:
+                  type: string
+                subscriptionStatus:
+                  type: string
+                  enum: [active, blocked]
+                trialEndsAt:
+                  type: integer
+                  nullable: true
+                subscriptionReadOnly:
+                  type: boolean
                 status:
                   type: string
                   enum: [active, disabled]
@@ -1513,6 +1547,99 @@ paths:
                 $ref: '#/components/schemas/ApiErrorEnvelope'
         '404':
           description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/v1/modules:
+    get:
+      tags: [modules]
+      operationId: getApiV1Modules
+      summary: List platform modules (org.manage_all)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Platform module registry
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PlatformModule'
+  /api/v1/orgs/{orgId}/modules:
+    get:
+      tags: [modules]
+      operationId: getApiV1OrgsOrgIdModules
+      summary: List active org module ids (org.manage_all)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Active module assignment
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [orgId, moduleIds]
+                properties:
+                  orgId:
+                    type: string
+                  moduleIds:
+                    type: array
+                    items:
+                      type: string
+    put:
+      tags: [modules]
+      operationId: putApiV1OrgsOrgIdModules
+      summary: Soft-set org modules (listed=active; omitted=disabled; no data delete)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [moduleIds]
+              properties:
+                moduleIds:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Updated assignment
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [orgId, moduleIds]
+                properties:
+                  orgId:
+                    type: string
+                  moduleIds:
+                    type: array
+                    items:
+                      type: string
+        '403':
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -1749,6 +1876,258 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Organization'
+  /api/v1/orgs/{orgId}/units:
+    get:
+      tags: [orgs]
+      operationId: getApiV1OrgsOrgIdUnits
+      summary: List in-tenant organization units (AC-D02)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Units
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OrganizationUnit'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+    post:
+      tags: [orgs]
+      operationId: postApiV1OrgsOrgIdUnits
+      summary: Create organization unit
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, code]
+              properties:
+                name:
+                  type: string
+                code:
+                  type: string
+                kind:
+                  type: string
+                  enum: [branch, department, team, other]
+                parentUnitId:
+                  type: string
+                  nullable: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationUnit'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/v1/orgs/{orgId}/units/{unitId}:
+    get:
+      tags: [orgs]
+      operationId: getApiV1OrgsOrgIdUnitsUnitId
+      summary: Get organization unit
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: unitId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Unit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationUnit'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+    patch:
+      tags: [orgs]
+      operationId: patchApiV1OrgsOrgIdUnitsUnitId
+      summary: Update organization unit
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: unitId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                code:
+                  type: string
+                kind:
+                  type: string
+                  enum: [branch, department, team, other]
+                status:
+                  type: string
+                  enum: [active, disabled]
+                parentUnitId:
+                  type: string
+                  nullable: true
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationUnit'
+  /api/v1/orgs/{orgId}/units/{unitId}/members:
+    get:
+      tags: [orgs]
+      operationId: getApiV1OrgsOrgIdUnitsUnitIdMembers
+      summary: List unit memberships
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: unitId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Unit members
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UnitMembership'
+    put:
+      tags: [orgs]
+      operationId: putApiV1OrgsOrgIdUnitsUnitIdMembers
+      summary: Upsert unit membership (user must be active org member)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: unitId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId]
+              properties:
+                userId:
+                  type: string
+                role:
+                  type: string
+                  enum: [manager, member]
+      responses:
+        '200':
+          description: Upserted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnitMembership'
+  /api/v1/orgs/{orgId}/units/{unitId}/members/{userId}:
+    delete:
+      tags: [orgs]
+      operationId: deleteApiV1OrgsOrgIdUnitsUnitIdMembersUserId
+      summary: Remove unit membership
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: unitId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Removed
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok]
+                properties:
+                  ok:
+                    type: boolean
   /api/v1/invitations/accept:
     post:
       tags: [orgs]
@@ -2291,6 +2670,161 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiErrorEnvelope'
+
+  /api/v1/users:
+    get:
+      tags: [users]
+      operationId: getApiV1Users
+      summary: List platform users (SuperAdmin all; orgAdmin own orgs)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orgId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User list
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PlatformUser'
+    post:
+      tags: [users]
+      operationId: postApiV1Users
+      summary: Create user bound to organization
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password, orgId]
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                orgId:
+                  type: string
+                roleName:
+                  type: string
+                  description: SuperAdmin only; orgAdmin forces member
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlatformUser'
+
+  /api/v1/platform-roles:
+    get:
+      tags: [platform-roles]
+      operationId: getApiV1PlatformRoles
+      summary: List platform roles (SuperAdmin)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Role catalog
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PlatformRole'
+    post:
+      tags: [platform-roles]
+      operationId: postApiV1PlatformRoles
+      summary: Create platform role (SuperAdmin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlatformRole'
+
+  /api/v1/platform-roles/{roleId}:
+    patch:
+      tags: [platform-roles]
+      operationId: patchApiV1PlatformRolesRoleId
+      summary: Rename platform role (SuperAdmin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: roleId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlatformRole'
+    delete:
+      tags: [platform-roles]
+      operationId: deleteApiV1PlatformRolesRoleId
+      summary: Delete non-system platform role (SuperAdmin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: roleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok]
+                properties:
+                  ok:
+                    type: boolean
 components:
   securitySchemes:
     bearerAuth:
@@ -2374,9 +2908,52 @@ components:
           type: string
           nullable: true
           description: Optional icon map key (home, business, people, security)
+    ModuleEntitlementSummary:
+      type: object
+      required: [code, name, enabled, subscriptionMode]
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        enabled:
+          type: boolean
+        subscriptionMode:
+          type: string
+          enum: [full, read_only, blocked]
+    ScopeSummary:
+      type: object
+      required: [dataScope]
+      properties:
+        dataScope:
+          type: string
+          description: Membership data_scope (Phase 05) — org | own | subtree
+          enum: [org, own, subtree]
+        unitIds:
+          type: array
+          items:
+            type: string
+        unitNames:
+          type: array
+          items:
+            type: string
     AuthMeResponse:
       type: object
-      required: [userId, username, roles, role, orgId, permissions, nav, activeTracks, status]
+      required:
+        [
+          userId,
+          username,
+          roles,
+          role,
+          orgId,
+          permissions,
+          nav,
+          activeTracks,
+          status,
+          modules,
+          scopeSummary,
+          accessVersion,
+        ]
       properties:
         userId:
           type: string
@@ -2416,6 +2993,18 @@ components:
         status:
           type: string
           enum: [active, disabled, pending]
+        modules:
+          type: array
+          description: Platform module entitlement + subscription summary (Phase 06 additive)
+          items:
+            $ref: '#/components/schemas/ModuleEntitlementSummary'
+        scopeSummary:
+          description: Scope summary for active membership (Phase 06 additive)
+          nullable: true
+          $ref: '#/components/schemas/ScopeSummary'
+        accessVersion:
+          type: integer
+          description: Incremented when access-relevant data changes (Phase 06 additive)
     Organization:
       type: object
       required: [id, name, slug, status, createdAt, updatedAt]
@@ -2426,9 +3015,25 @@ components:
           type: string
         slug:
           type: string
+        description:
+          type: string
+          nullable: true
+        colorCode:
+          type: string
+        subscriptionStatus:
+          type: string
+          enum: [active, blocked]
+        trialEndsAt:
+          type: integer
+          nullable: true
+        subscriptionReadOnly:
+          type: boolean
         status:
           type: string
           enum: [active, disabled]
+        parentOrganizationId:
+          type: string
+          nullable: true
         createdBy:
           type: string
           nullable: true
@@ -2440,6 +3045,55 @@ components:
           type: integer
         memberCount:
           type: integer
+    PlatformModule:
+      type: object
+      required: [id, code, name, version, status]
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        version:
+          type: string
+        status:
+          type: string
+    PlatformUser:
+      type: object
+      required: [id, username, orgId, orgName, orgColorCode, roleName, status, createdAt]
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        orgId:
+          type: string
+        orgName:
+          type: string
+        orgColorCode:
+          type: string
+        roleName:
+          type: string
+        status:
+          type: string
+          enum: [active, disabled, pending]
+        createdAt:
+          type: integer
+        temporaryPassword:
+          type: string
+    PlatformRole:
+      type: object
+      required: [id, name, createdAt, system]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        createdAt:
+          type: integer
+        system:
+          type: boolean
     MeOrganization:
       type: object
       required: [orgId, name, slug, status, role, membershipStatus, isActive]
@@ -2455,12 +3109,59 @@ components:
           enum: [active, disabled]
         role:
           type: string
-          enum: [orgAdmin, instructor, student, guest]
+          enum: [orgAdmin, instructor, student, guest, member]
         membershipStatus:
           type: string
           enum: [active, disabled, revoked]
         isActive:
           type: boolean
+    OrganizationUnit:
+      type: object
+      required: [id, orgId, parentUnitId, name, code, kind, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        orgId:
+          type: string
+        parentUnitId:
+          type: string
+          nullable: true
+        name:
+          type: string
+        code:
+          type: string
+        kind:
+          type: string
+          enum: [branch, department, team, other]
+        status:
+          type: string
+          enum: [active, disabled]
+        createdAt:
+          type: integer
+        updatedAt:
+          type: integer
+    UnitMembership:
+      type: object
+      required: [id, orgId, unitId, userId, role, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        orgId:
+          type: string
+        unitId:
+          type: string
+        userId:
+          type: string
+        role:
+          type: string
+          enum: [manager, member]
+        status:
+          type: string
+          enum: [active, disabled]
+        createdAt:
+          type: integer
+        updatedAt:
+          type: integer
     OrgMembership:
       type: object
       required:
@@ -2493,7 +3194,7 @@ components:
           type: string
         role:
           type: string
-          enum: [orgAdmin, instructor, student, guest]
+          enum: [orgAdmin, instructor, student, guest, member]
         status:
           type: string
           enum: [active, disabled, revoked]

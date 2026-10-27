@@ -23,7 +23,9 @@ const HomePage = lazy(() => import('../../pages/home/index.js'));
 const OrganizationsPage = lazy(() => import('../../pages/organizations/index.js'));
 const OrganizationDetailPage = lazy(() => import('../../pages/organizations/detail.js'));
 const UsersPage = lazy(() => import('../../pages/users/index.js'));
+const UserAccessPage = lazy(() => import('../../pages/users/access.js'));
 const RoleMenusPage = lazy(() => import('../../pages/role-menus/index.js'));
+const PlatformRolesPage = lazy(() => import('../../pages/platform-roles/index.js'));
 const CustomersPage = lazy(() => import('../../pages/customers/index.js'));
 
 function RouteFallback() {
@@ -88,10 +90,26 @@ export const adminRoutes: RouteObject[] = [
         ),
       },
       {
+        path: 'users/:userId/access',
+        element: (
+          <Suspense fallback={<RouteFallback />}>
+            <UserAccessPage />
+          </Suspense>
+        ),
+      },
+      {
         path: 'role-menus',
         element: (
           <Suspense fallback={<RouteFallback />}>
             <RoleMenusPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'platform-roles',
+        element: (
+          <Suspense fallback={<RouteFallback />}>
+            <PlatformRolesPage />
           </Suspense>
         ),
       },

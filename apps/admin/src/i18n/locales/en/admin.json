@@ -9,6 +9,8 @@
     "usersCaption": "Members",
     "roleMenus": "Role menus",
     "roleMenusCaption": "Bindings",
+    "platformRoles": "Roles",
+    "platformRolesCaption": "Catalog",
     "customers": "Customers",
     "customersCaption": "CRM"
   },
@@ -23,7 +25,16 @@
     "skipToContent": "Skip to content",
     "openSettings": "Open settings",
     "signingIn": "Signing you in…",
-    "redirectLogin": "Redirecting to Account login…"
+    "redirectLogin": "Redirecting to Account login…",
+    "meError": {
+      "title": "Could not load session",
+      "description": "Your access bootstrap failed. Retry or sign in again.",
+      "retry": "Retry"
+    },
+    "access": {
+      "modulesBlocked": "{{count}} module(s) unavailable for this organization.",
+      "readOnly": "Subscription is read-only — mutations may be denied."
+    }
   },
   "account": {
     "menu": "Account",
@@ -37,6 +48,29 @@
   "brand": {
     "homeAria": "AZES COMPANY — home"
   },
+  "chrome": {
+    "pageHeader": {
+      "actions": "Page actions"
+    },
+    "empty": {
+      "title": "Nothing here yet",
+      "forbiddenHint": "Ask an administrator if you need access."
+    },
+    "filters": {
+      "search": "Search",
+      "clear": "Clear filters"
+    },
+    "actions": {
+      "more": "More actions",
+      "cancel": "Cancel",
+      "create": "Create",
+      "save": "Save",
+      "discard": "Discard",
+      "back": "Back",
+      "discardDirty": "Discard changes?",
+      "discardDirtyDesc": "Unsaved changes will be lost."
+    }
+  },
   "orgs": {
     "title": "Organizations",
     "subtitle": "Create and manage tenant organizations",
@@ -47,21 +81,74 @@
     "creating": "Creating…",
     "createError": "Could not create organization",
     "loadError": "Could not load organizations",
+    "trialHint": "Trial end date is set automatically to 35 days after creation.",
+    "empty": {
+      "description": "Create your first organization to get started."
+    },
+    "filters": {
+      "all": "All"
+    },
+    "dialog": {
+      "title": "Create organization",
+      "created": "Organization created",
+      "blocked": "Organization blocked",
+      "unblocked": "Organization unblocked"
+    },
+    "confirmBlock": {
+      "title": "Block organization?",
+      "description": "{{name}} will lose subscription access until unblocked."
+    },
+    "confirmUnblock": {
+      "title": "Unblock organization?",
+      "description": "Restore subscription access for {{name}}."
+    },
+    "trialRelative": {
+      "expired": "Expired",
+      "today": "Ends today",
+      "days": "{{count}} days left"
+    },
     "fields": {
       "name": "Name",
+      "description": "Description",
+      "color": "Color",
       "slug": "Slug (optional)"
+    },
+    "subscription": {
+      "active": "Active",
+      "blocked": "Blocked",
+      "readOnly": "Read-only",
+      "readOnlyOn": "Organization set to read-only",
+      "readOnlyOff": "Read-only cleared"
     },
     "columns": {
       "name": "Name",
+      "description": "Description",
       "slug": "Slug",
-      "status": "Status"
+      "status": "Status",
+      "color": "Color",
+      "subscription": "Subscription",
+      "trialEnds": "Trial ends",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Active",
+      "disabled": "Disabled"
+    },
+    "actions": {
+      "block": "Block",
+      "unblock": "Unblock",
+      "users": "Users",
+      "setReadOnly": "Set read-only",
+      "clearReadOnly": "Clear read-only"
     },
     "validation": {
       "nameRequired": "Name is required",
       "emailInvalid": "Enter a valid email"
     },
     "switcher": {
-      "label": "Organization"
+      "label": "Organization",
+      "switched": "Organization switched",
+      "error": "Could not switch organization"
     },
     "members": {
       "title": "Members",
@@ -81,12 +168,180 @@
       "error": "Could not create invitation",
       "tokenOnce": "Invite token (copy once)",
       "pending": "Pending invitations"
+    },
+    "modules": {
+      "title": "Modules",
+      "hint": "Soft-assign platform modules. Unchecked modules stay disabled (data is kept).",
+      "save": "Save modules",
+      "saving": "Saving…",
+      "saved": "Modules updated",
+      "saveError": "Could not update modules"
+    },
+    "units": {
+      "title": "Organization units",
+      "hint": "Branches / departments inside this organization (not parent-org tree).",
+      "loadError": "Could not load units",
+      "createTitle": "Add unit",
+      "create": "Create unit",
+      "created": "Unit created",
+      "createError": "Could not create unit",
+      "membersTitle": "Unit members",
+      "noMembers": "No members in this unit yet.",
+      "assign": "Assign member",
+      "memberAssigned": "Member assigned to unit",
+      "assignError": "Could not assign member",
+      "fields": {
+        "name": "Name",
+        "code": "Code",
+        "userId": "User id"
+      },
+      "columns": {
+        "name": "Name",
+        "code": "Code",
+        "kind": "Kind",
+        "status": "Status"
+      }
     }
   },
   "users": {
     "title": "Users",
     "subtitle": "Members of your active organization",
-    "noActiveOrg": "Select an active organization to view members"
+    "subtitleSuper": "Create org admins or members and bind them to organizations",
+    "subtitleAdmin": "Create members in your organizations (role is always member)",
+    "noActiveOrg": "Select an active organization to view members",
+    "forbidden": "You do not have permission to manage users.",
+    "createTitle": "Add user",
+    "create": "Add",
+    "creating": "Adding…",
+    "createError": "Could not create user",
+    "createConflict": "This username already exists. Choose another name.",
+    "loadError": "Could not load users",
+    "roleForcedMember": "New users always receive the member role.",
+    "empty": {
+      "description": "Add a user and bind them to an organization."
+    },
+    "drawer": {
+      "title": "Add user",
+      "subtitle": "Create credentials and bind to an organization",
+      "created": "User created"
+    },
+    "filters": {
+      "org": "Organization",
+      "orgAll": "All organizations",
+      "role": "Role",
+      "roleAll": "All roles"
+    },
+    "fields": {
+      "username": "Username",
+      "password": "Password",
+      "org": "Organization",
+      "orgPlaceholder": "Select organization",
+      "role": "Role"
+    },
+    "roles": {
+      "member": "User (member)",
+      "orgAdmin": "Organization admin",
+      "instructor": "Instructor",
+      "student": "Student",
+      "guest": "Guest",
+      "superAdmin": "Super admin",
+      "agent": "Agent",
+      "teacher": "Teacher"
+    },
+    "status": {
+      "active": "Active",
+      "disabled": "Disabled",
+      "pending": "Pending"
+    },
+    "columns": {
+      "username": "Name",
+      "role": "Role",
+      "org": "Organization",
+      "color": "Color",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "actions": {
+      "access": "Menus"
+    },
+    "validation": {
+      "usernameRequired": "Username is required (min 3)",
+      "passwordRequired": "Password must be at least 8 characters",
+      "orgRequired": "Organization is required"
+    }
+  },
+  "userAccess": {
+    "title": "User access",
+    "subtitle": "Menus and permissions for user {{userId}}",
+    "forbidden": "You do not have permission to manage user access.",
+    "menusTitle": "Menus",
+    "flagsTitle": "Permissions",
+    "flagsHint": "CRUD flags map to {resource}.{action} codes (e.g. crm.customers.read).",
+    "selectAll": "Select all",
+    "clearAll": "Clear",
+    "noMenusSelected": "Select menus on the left to edit CRUD flags.",
+    "fields": {
+      "org": "Organization"
+    },
+    "flags": {
+      "read": "Read",
+      "create": "Create",
+      "update": "Update",
+      "delete": "Delete"
+    },
+    "sticky": {
+      "dirty": "Unsaved changes",
+      "clean": "All changes saved",
+      "save": "Save access"
+    },
+    "leaveDirty": {
+      "title": "Leave without saving?",
+      "description": "Your access changes will be lost."
+    },
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Access saved.",
+    "saveError": "Could not save access"
+  },
+  "platformRoles": {
+    "title": "Platform roles",
+    "subtitle": "Elastic role catalog. Assign menus on Role menus page.",
+    "forbidden": "Only SuperAdmin can manage platform roles.",
+    "createTitle": "Add role",
+    "create": "Add",
+    "creating": "Creating…",
+    "createError": "Could not create role",
+    "loadError": "Could not load roles",
+    "empty": {
+      "description": "Create a custom role, then assign menus."
+    },
+    "dialog": {
+      "title": "Add role",
+      "created": "Role created",
+      "deleted": "Role deleted"
+    },
+    "confirmDelete": {
+      "title": "Delete role?",
+      "description": "Delete {{name}}? This cannot be undone."
+    },
+    "systemTooltip": "System roles cannot be deleted.",
+    "fields": {
+      "name": "Role name"
+    },
+    "columns": {
+      "name": "Name",
+      "system": "System",
+      "actions": "Actions"
+    },
+    "systemYes": "Yes",
+    "systemNo": "No",
+    "actions": {
+      "menus": "Menus",
+      "delete": "Delete"
+    },
+    "validation": {
+      "nameRequired": "Role name is required (min 2)"
+    }
   },
   "customers": {
     "title": "Customers",

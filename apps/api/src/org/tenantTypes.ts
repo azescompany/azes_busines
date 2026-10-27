@@ -10,7 +10,7 @@
  * ╚══════════════════════════════════════════════════════════════╝
  */
 
-export type MembershipRole = 'orgAdmin' | 'instructor' | 'student' | 'guest';
+export type MembershipRole = 'orgAdmin' | 'instructor' | 'student' | 'guest' | 'member';
 export type InviteRole = 'orgAdmin' | 'instructor' | 'student';
 export type MembershipStatus = 'active' | 'disabled' | 'revoked';
 export type InvitationStatus = 'pending' | 'accepted' | 'revoked' | 'expired';

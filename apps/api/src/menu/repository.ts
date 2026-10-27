@@ -4,19 +4,28 @@
  * ║ File: apps/api/src/menu/repository.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-26
- * ║ Updated: 2026-10-26
- * ║ Purpose: Menu + role_menus persistence (D1 + memory)
+ * ║ Updated: 2026-10-27
+ * ║ Purpose: Menu + role_menus + user override persistence (D1 + memory)
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
  */
 
 import { and, asc, eq, inArray } from 'drizzle-orm';
 
+import { mapCrudFlagsToPermissionCodes } from '../access/permissionMapper.js';
 import { nowSec } from '../auth/tokens.js';
 import type { ApiDb } from '../db/client.js';
 import * as schema from '../db/schema.js';
 import { ApiHttpError } from '../errors.js';
 import type { MenuDto, MenuNavItem } from './types.js';
+
+export type UserOverrideCrud = {
+  menuId: string;
+  canRead: boolean;
+  canCreate: boolean;
+  canUpdate: boolean;
+  canDelete: boolean;
+};
 
 export interface MenuRepository {
   listMenus(app?: string): Promise<MenuDto[]>;
@@ -27,6 +36,18 @@ export interface MenuRepository {
   listAllMenuGatedPermissionCodes(): Promise<string[]>;
   listRoleMenus(roleName: string): Promise<string[]>;
   setRoleMenus(roleName: string, menuIds: string[]): Promise<string[]>;
+  /** Permission codes from `user_menu_permissions` CRUD flags (AC-D03 mapper). */
+  listUserOverridePermissionCodes(userId: string, orgId: string): Promise<string[]>;
+  /** Extra menu ids from `user_menus` for nav merge. */
+  listUserOverrideMenuIds(userId: string, orgId: string): Promise<string[]>;
+  /** Optional memory seed / test helper. */
+  setUserAccess?(
+    userId: string,
+    orgId: string,
+    menuIds: string[],
+    permissions: UserOverrideCrud[],
+  ): Promise<void>;
+  listPermissionCodesForMenuIds(menuIds: readonly string[]): Promise<string[]>;
 }
 
 function mapMenu(row: typeof schema.menus.$inferSelect, permissionCodes: string[]): MenuDto {
@@ -139,18 +160,81 @@ export function createDrizzleMenuRepository(db: ApiDb): MenuRepository {
       }
       return unique;
     },
+
+    async listPermissionCodesForMenuIds(menuIds) {
+      if (menuIds.length === 0) return [];
+      const rows = await db
+        .select({ code: schema.menuPermissions.permissionCode })
+        .from(schema.menuPermissions)
+        .where(inArray(schema.menuPermissions.menuId, [...menuIds]));
+      return [...new Set(rows.map((r) => r.code))];
+    },
+
+    async listUserOverrideMenuIds(userId, orgId) {
+      const rows = await db
+        .select({ menuId: schema.userMenus.menuId })
+        .from(schema.userMenus)
+        .where(and(eq(schema.userMenus.userId, userId), eq(schema.userMenus.orgId, orgId)));
+      return rows.map((r) => r.menuId);
+    },
+
+    async listUserOverridePermissionCodes(userId, orgId) {
+      const crudRows = await db
+        .select()
+        .from(schema.userMenuPermissions)
+        .where(
+          and(
+            eq(schema.userMenuPermissions.userId, userId),
+            eq(schema.userMenuPermissions.orgId, orgId),
+          ),
+        );
+      const menuOnly = await this.listUserOverrideMenuIds(userId, orgId);
+      const codes = new Set<string>();
+      const menusWithCrud = new Set(crudRows.map((r) => r.menuId));
+
+      for (const row of crudRows) {
+        const menuCodes = await this.listPermissionCodesForMenuIds([row.menuId]);
+        for (const c of mapCrudFlagsToPermissionCodes(menuCodes, {
+          canRead: Boolean(row.canRead),
+          canCreate: Boolean(row.canCreate),
+          canUpdate: Boolean(row.canUpdate),
+          canDelete: Boolean(row.canDelete),
+        })) {
+          codes.add(c);
+        }
+      }
+      // user_menus without CRUD row → read-only codes for that menu
+      for (const menuId of menuOnly) {
+        if (menusWithCrud.has(menuId)) continue;
+        const menuCodes = await this.listPermissionCodesForMenuIds([menuId]);
+        for (const c of mapCrudFlagsToPermissionCodes(menuCodes, {
+          canRead: true,
+          canCreate: false,
+          canUpdate: false,
+          canDelete: false,
+        })) {
+          codes.add(c);
+        }
+      }
+      return [...codes];
+    },
   };
 }
 
 export function createMemoryMenuRepository(seed?: {
   menus?: MenuDto[];
   roleMenus?: Record<string, string[]>;
+  userAccess?: Record<string, { menuIds: string[]; permissions: UserOverrideCrud[] }>;
 }): MenuRepository {
   const menus = [...(seed?.menus ?? defaultAdminMenus())];
   const roleMenus = new Map<string, Set<string>>();
   for (const [role, ids] of Object.entries(seed?.roleMenus ?? defaultRoleMenus())) {
     roleMenus.set(role, new Set(ids));
   }
+  const userAccess = new Map<string, { menuIds: string[]; permissions: UserOverrideCrud[] }>(
+    Object.entries(seed?.userAccess ?? {}),
+  );
+  const accessKey = (userId: string, orgId: string) => `${userId}::${orgId}`;
 
   return {
     async listMenus(app = 'admin') {
@@ -213,6 +297,51 @@ export function createMemoryMenuRepository(seed?: {
       roleMenus.set(roleName, new Set(unique));
       return unique;
     },
+
+    async listPermissionCodesForMenuIds(menuIds) {
+      const codes = new Set<string>();
+      for (const m of menus) {
+        if (menuIds.includes(m.id)) {
+          for (const c of m.permissionCodes) codes.add(c);
+        }
+      }
+      return [...codes];
+    },
+
+    async listUserOverrideMenuIds(userId, orgId) {
+      return userAccess.get(accessKey(userId, orgId))?.menuIds ?? [];
+    },
+
+    async listUserOverridePermissionCodes(userId, orgId) {
+      const row = userAccess.get(accessKey(userId, orgId));
+      if (!row) return [];
+      const codes = new Set<string>();
+      const menusWithCrud = new Set(row.permissions.map((p) => p.menuId));
+      for (const p of row.permissions) {
+        const menuCodes = await this.listPermissionCodesForMenuIds([p.menuId]);
+        for (const c of mapCrudFlagsToPermissionCodes(menuCodes, p)) codes.add(c);
+      }
+      for (const menuId of row.menuIds) {
+        if (menusWithCrud.has(menuId)) continue;
+        const menuCodes = await this.listPermissionCodesForMenuIds([menuId]);
+        for (const c of mapCrudFlagsToPermissionCodes(menuCodes, {
+          canRead: true,
+          canCreate: false,
+          canUpdate: false,
+          canDelete: false,
+        })) {
+          codes.add(c);
+        }
+      }
+      return [...codes];
+    },
+
+    async setUserAccess(userId, orgId, menuIds, permissions) {
+      userAccess.set(accessKey(userId, orgId), {
+        menuIds: [...menuIds],
+        permissions: [...permissions],
+      });
+    },
   };
 }
 
@@ -263,6 +392,17 @@ function defaultAdminMenus(): MenuDto[] {
       permissionCodes: ['org.manage_all'],
     },
     {
+      id: 'menu-admin-platform-roles',
+      app: 'admin',
+      code: 'platform-roles',
+      path: '/platform-roles',
+      i18nKey: 'nav.platformRoles',
+      iconKey: 'security',
+      sortOrder: 45,
+      status: 'active',
+      permissionCodes: ['org.manage_all'],
+    },
+    {
       id: 'menu-admin-customers',
       app: 'admin',
       code: 'customers',
@@ -288,6 +428,7 @@ function defaultRoleMenus(): Record<string, string[]> {
       'menu-admin-orgs',
       'menu-admin-users',
       'menu-admin-role-menus',
+      'menu-admin-platform-roles',
       'menu-admin-customers',
     ],
     orgAdmin: ['menu-admin-home', 'menu-admin-orgs', 'menu-admin-users', 'menu-admin-customers'],

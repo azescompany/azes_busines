@@ -4,7 +4,7 @@
  * ║ File: apps/api/src/auth/permissions.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-20
- * ║ Updated: 2026-10-20
+ * ║ Updated: 2026-10-27
  * ║ Purpose: Role → permission map (M1b RBAC; CLAUDE_DELTA)
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
@@ -139,14 +139,23 @@ export function can(roles: readonly string[], permission: Permission): boolean {
   return permissionsForRoles(roles).includes(permission);
 }
 
-/** Prefer JWT effective permissions when present (TAGET M1.5 menu RBAC). */
+/**
+ * Static fallback authz from **roles only** (AC-D05).
+ *
+ * JWT `permissions[]` may still be present for client compat —
+ * it is **not** authoritative and is ignored here. Prefer `requirePermission` →
+ * `effectiveCan` (live menuRepo) for protected routes.
+ *
+ * **Deprecation (Phase 08 / 2026-10-27):** stop treating claim as authz (already).
+ * Emission of `permissions[]` in access JWT may be removed after **2026-12-31**
+ * once Admin/Account clients rely only on `/me` (AC-D04). Owner: Backend Worker +
+ * Coordinator release notes.
+ */
 export function claimHasPermission(
   user: { roles: readonly string[]; permissions?: readonly string[] },
   permission: Permission,
 ): boolean {
-  if (user.permissions && user.permissions.length > 0) {
-    return user.permissions.includes(permission);
-  }
+  void user.permissions;
   return can(user.roles, permission);
 }
 

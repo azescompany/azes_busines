@@ -174,7 +174,21 @@ export {
 } from './menus';
 export type * from './menus';
 export {
+  getApiV1Modules,
+  getApiV1OrgsOrgIdModules,
+  getGetApiV1ModulesQueryKey,
+  getGetApiV1ModulesQueryOptions,
+  getGetApiV1OrgsOrgIdModulesQueryKey,
+  getGetApiV1OrgsOrgIdModulesQueryOptions,
+  putApiV1OrgsOrgIdModules,
+  useGetApiV1Modules,
+  useGetApiV1OrgsOrgIdModules,
+  usePutApiV1OrgsOrgIdModules,
+} from './modules';
+export type * from './modules';
+export {
   deleteApiV1OrgsOrgIdMembersUserId,
+  deleteApiV1OrgsOrgIdUnitsUnitIdMembersUserId,
   getApiV1MeOrganizations,
   getApiV1MeTracks,
   getApiV1OrgAdmins,
@@ -182,6 +196,9 @@ export {
   getApiV1OrgsOrgId,
   getApiV1OrgsOrgIdInvitations,
   getApiV1OrgsOrgIdMembers,
+  getApiV1OrgsOrgIdUnits,
+  getApiV1OrgsOrgIdUnitsUnitId,
+  getApiV1OrgsOrgIdUnitsUnitIdMembers,
   getApiV1Tracks,
   getGetApiV1MeOrganizationsQueryKey,
   getGetApiV1MeOrganizationsQueryOptions,
@@ -195,6 +212,12 @@ export {
   getGetApiV1OrgsOrgIdMembersQueryOptions,
   getGetApiV1OrgsOrgIdQueryKey,
   getGetApiV1OrgsOrgIdQueryOptions,
+  getGetApiV1OrgsOrgIdUnitsQueryKey,
+  getGetApiV1OrgsOrgIdUnitsQueryOptions,
+  getGetApiV1OrgsOrgIdUnitsUnitIdMembersQueryKey,
+  getGetApiV1OrgsOrgIdUnitsUnitIdMembersQueryOptions,
+  getGetApiV1OrgsOrgIdUnitsUnitIdQueryKey,
+  getGetApiV1OrgsOrgIdUnitsUnitIdQueryOptions,
   getGetApiV1OrgsQueryKey,
   getGetApiV1OrgsQueryOptions,
   getGetApiV1TracksQueryKey,
@@ -203,15 +226,19 @@ export {
   patchApiV1OrgsOrgId,
   patchApiV1OrgsOrgIdMembersUserId,
   patchApiV1OrgsOrgIdProfile,
+  patchApiV1OrgsOrgIdUnitsUnitId,
   postApiV1InvitationsAccept,
   postApiV1MeActiveOrganization,
   postApiV1OrgAdmins,
   postApiV1Orgs,
   postApiV1OrgsOrgIdInvitations,
+  postApiV1OrgsOrgIdUnits,
   postApiV1Tracks,
+  putApiV1OrgsOrgIdUnitsUnitIdMembers,
   putApiV1TracksTrackIdCourses,
   putApiV1UsersUserIdTracks,
   useDeleteApiV1OrgsOrgIdMembersUserId,
+  useDeleteApiV1OrgsOrgIdUnitsUnitIdMembersUserId,
   useGetApiV1MeOrganizations,
   useGetApiV1MeTracks,
   useGetApiV1OrgAdmins,
@@ -219,21 +246,40 @@ export {
   useGetApiV1OrgsOrgId,
   useGetApiV1OrgsOrgIdInvitations,
   useGetApiV1OrgsOrgIdMembers,
+  useGetApiV1OrgsOrgIdUnits,
+  useGetApiV1OrgsOrgIdUnitsUnitId,
+  useGetApiV1OrgsOrgIdUnitsUnitIdMembers,
   useGetApiV1Tracks,
   usePatchApiV1OrgAdminsUserId,
   usePatchApiV1OrgsOrgId,
   usePatchApiV1OrgsOrgIdMembersUserId,
   usePatchApiV1OrgsOrgIdProfile,
+  usePatchApiV1OrgsOrgIdUnitsUnitId,
   usePostApiV1InvitationsAccept,
   usePostApiV1MeActiveOrganization,
   usePostApiV1OrgAdmins,
   usePostApiV1Orgs,
   usePostApiV1OrgsOrgIdInvitations,
+  usePostApiV1OrgsOrgIdUnits,
   usePostApiV1Tracks,
+  usePutApiV1OrgsOrgIdUnitsUnitIdMembers,
   usePutApiV1TracksTrackIdCourses,
   usePutApiV1UsersUserIdTracks,
 } from './orgs';
 export type * from './orgs';
+export {
+  deleteApiV1PlatformRolesRoleId,
+  getApiV1PlatformRoles,
+  getGetApiV1PlatformRolesQueryKey,
+  getGetApiV1PlatformRolesQueryOptions,
+  patchApiV1PlatformRolesRoleId,
+  postApiV1PlatformRoles,
+  useDeleteApiV1PlatformRolesRoleId,
+  useGetApiV1PlatformRoles,
+  usePatchApiV1PlatformRolesRoleId,
+  usePostApiV1PlatformRoles,
+} from './platform-roles';
+export type * from './platform-roles';
 export {
   getApiV1AssignmentsAssignmentIdSubmissionsMe,
   getApiV1AttemptsAttemptIdResult,
@@ -263,5 +309,14 @@ export {
   usePostApiV1QuizzesQuizIdAttempts,
 } from './quizzes';
 export type * from './quizzes';
+export {
+  getApiV1Users,
+  getGetApiV1UsersQueryKey,
+  getGetApiV1UsersQueryOptions,
+  postApiV1Users,
+  useGetApiV1Users,
+  usePostApiV1Users,
+} from './users';
+export type * from './users';
 export * as azesModels from './models';
 export type * from './models';

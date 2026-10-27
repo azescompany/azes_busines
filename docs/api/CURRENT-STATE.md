@@ -4,7 +4,7 @@
 ║ File: docs/api/CURRENT-STATE.md
 ║ Author: AZES_COMPANY
 ║ Created: 2026-10-09
-║ Updated: 2026-10-26
+║ Updated: 2026-10-27
 ║ Purpose: Living snapshot of AZES API / Query / auth-bridge for Agent Worker
 ║ Layer: docs
 ╚══════════════════════════════════════════════════════════════╝
@@ -29,7 +29,7 @@ Codegen hard rules: `.cursor/rules/api-generation.mdc`.
 | Layer          | Package / entry                           | Role                                                                    |
 | -------------- | ----------------------------------------- | ----------------------------------------------------------------------- |
 | HTTP runtime   | `apps/api` (`@azes/api-server`)           | Hono + Workers + D1 (+ R2 FILES) — auth + LMS read/manage               |
-| Spec (AZES)    | `packages/api/openapi/azes/openapi.yaml`  | Auth + LMS + quiz + dashboard/certs/analytics (v0.12)                   |
+| Spec (AZES)    | `packages/api/openapi/azes/openapi.yaml`  | Auth + LMS + tenant + units + modules + ERP + /me access (v0.20)        |
 | Spec (ADMIN)   | `packages/api/openapi/admin/swagger.json` | Legacy Caspian ADMIN OpenAPI (non-auth leftovers)                       |
 | Generate       | Orval → `generated/azes/**` + `admin/**`  | Hooks + models — **never hand-edit**                                    |
 | Facade         | `@azes/api/azes` + `@azes/api/admin`      | Tag barrels; Academy uses `@azes/api/azes` (+ `/courses                 | /manage`) |
@@ -379,3 +379,43 @@ siteEnv.apiBaseUrl })` + `NEXT_PUBLIC_API_BASE_URL`; when set,
   `requirePermission`→`effectiveCan`; migrations `0008`–`0011` (platform_modules, hierarchy,
   user access, audit+crm); Admin `useSessionMe` + `checkPermission` + Customers page;
   routes `/modules`, `/permission-profiles`, `/users/:id/access`, `/audit-logs`, `/crm/customers`.
+- 2026-10-26 — **TAGET M5.0-lite SuperAdmin Tenant Console**: OpenAPI **0.17**; migration
+  `0012_org_subscription_color` (org `description`/`color_code`/`subscription_status`/`trial_ends_at`,
+  `member` role + `member-default` profile, `platform-roles` menu); `POST/GET /api/v1/users`,
+  `GET/POST/PATCH/DELETE /api/v1/platform-roles`; Admin Orgs/Users CRUD + User access + Platform
+  roles UI; `@azes/api/azes/users` + `@azes/api/azes/platform-roles` exports; api-server 93 tests.
+- 2026-10-27 — **Access Control Phase 02 (AC-D05 A):** trusted request context
+  (`trustedRequestContext` / `getTrustedRequestContext` from JWT `sub`/`sid`/`orgId`/`roles`);
+  JWT `permissions[]` still emitted (compat) but **not** authoritative —
+  `claimHasPermission` roles-only; live `requirePermission`→`effectiveCan` unchanged;
+  XSS note for JS-readable `accessToken` cookie in `PHASE-2B-AUTH-CONTRACT.md`;
+  no OpenAPI/Orval change; SSO HttpOnly redesign out of scope.
+- 2026-10-27 — **Access Control Phase 03 (AC-D02 A):** `organization_units` +
+  `unit_memberships` (migration `0013`); `/api/v1/orgs/:orgId/units*` CRUD + unit
+  members; `users.org_id` documented as active pointer; active-org switch requires
+  active membership; cross-tenant IDOR + AC-D07 LMS invite≠ERP admin tests;
+  OpenAPI **0.18** + Orval; unit UI deferred to Phase 07.
+- 2026-10-27 — **Access Control Phase 04 (AC-D08 A):** entitlement helper
+  (`access/entitlementPolicy` + repository); soft-disable org modules (no data delete);
+  CRM gated by module entitlement + subscription (blocked / read-only / trial expired);
+  `/me` nav+perm dual-read filter; migration `0014_subscription_read_only`;
+  OpenAPI **0.19** (`/modules`, org modules); full plans deferred; UI → Phase 07.
+- 2026-10-27 — **Access Control Phase 05 (AC-D01/D03/D07 A):** CRUD→code
+  `permissionMapper`; `user_menus`/`user_menu_permissions` in `effectiveAccess` dual-read;
+  delegation ceiling (`delegation.ts`) on user-access grants; SuperAdmin not
+  ordinary-assignable (platform-roles / role-menus / invite); `data_scope.subtree` =
+  unit tree (sync fails closed); LMS invite ≠ ERP `org.manage_all`; audit on sensitive
+  grants; OpenAPI unchanged **0.19**; full Access Resolver → Phase 06.
+- 2026-10-27 — **Access Control Phase 06 (AC-D04/D06 A):** central
+  `access/effectiveAccess.resolveEffectiveAccess` for `requirePermission` + `GET /me`;
+  `menu/effectiveAccess` thin wrap (no parallel truth); additive `/me`
+  `modules` + `scopeSummary` (`org|own|subtree`) + stable `accessVersion`;
+  `ACCESS_RESOLVER_MODE=legacy|unified` (default unified); OpenAPI **0.20** + Orval;
+  no `/me/access`; UI → Phase 07.
+- 2026-10-27 — **Orval facade fix:** platform `/modules` + org module entitlement
+  moved to OpenAPI tag `modules` → `@azes/api/azes/modules` (was under `orgs`,
+  Vite named-export drift after regen). Admin Vite cache clear + `pnpm dev` restart.
+- 2026-10-27 — **Access Control Phase 07 (Admin UI):** consume `/me`
+  `nav`/`modules`/`accessVersion`; org-switch + role-menu + user-access invalidate;
+  UserAccess CRUD→code labels; org detail modules + units (OpenAPI); subscriptionReadOnly
+  chip/toggle; i18n en+az+ru. No OpenAPI bump.

@@ -4,8 +4,8 @@
  * ║ File: apps/api/src/db/schema.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-19
- * ║ Updated: 2026-10-26
- * ║ Purpose: Auth + LMS + Tenant + Menu RBAC + ERP modules/access (M1–M4)
+ * ║ Updated: 2026-10-27
+ * ║ Purpose: Auth + LMS + Tenant + Menu RBAC + ERP + organization units
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
  */
@@ -18,6 +18,16 @@ export const organizations = sqliteTable(
     id: text('id').primaryKey(),
     name: text('name').notNull(),
     slug: text('slug').notNull(),
+    description: text('description'),
+    colorCode: text('color_code').notNull().default('#2563EB'),
+    subscriptionStatus: text('subscription_status', { enum: ['active', 'blocked'] })
+      .notNull()
+      .default('active'),
+    trialEndsAt: integer('trial_ends_at', { mode: 'number' }),
+    /** AC-D08 lite — when true, module-bound writes are denied (reads may remain). */
+    subscriptionReadOnly: integer('subscription_read_only', { mode: 'boolean' })
+      .notNull()
+      .default(false),
     status: text('status', { enum: ['active', 'disabled'] })
       .notNull()
       .default('active'),
@@ -32,7 +42,13 @@ export const organizations = sqliteTable(
   ],
 );
 
-/** Platform user — password hash only; never store plaintext. */
+/**
+ * Platform user — password hash only; never store plaintext.
+ *
+ * `org_id` is the **active organization pointer** for session/JWT bootstrap
+ * (AC-D02 / Phase 03). It is NOT sole membership proof — real membership lives
+ * in `organization_memberships`. Switch via `POST /api/v1/me/active-organization`.
+ */
 export const users = sqliteTable(
   'users',
   {
@@ -97,7 +113,10 @@ export const authRateLimits = sqliteTable('auth_rate_limits', {
   hitCount: integer('hit_count', { mode: 'number' }).notNull(),
 });
 
-/** Multi-org membership — users.org_id remains the active organization pointer. */
+/**
+ * Multi-org membership — authoritative User↔Org link.
+ * `users.org_id` remains only the active pointer (not a substitute for this table).
+ */
 export const organizationMemberships = sqliteTable(
   'organization_memberships',
   {
@@ -108,7 +127,9 @@ export const organizationMemberships = sqliteTable(
     userId: text('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
-    role: text('role', { enum: ['orgAdmin', 'instructor', 'student', 'guest'] }).notNull(),
+    role: text('role', {
+      enum: ['orgAdmin', 'instructor', 'student', 'guest', 'member'],
+    }).notNull(),
     status: text('status', { enum: ['active', 'disabled', 'revoked'] })
       .notNull()
       .default('active'),
@@ -123,6 +144,66 @@ export const organizationMemberships = sqliteTable(
     uniqueIndex('organization_memberships_org_user_uidx').on(t.orgId, t.userId),
     index('organization_memberships_user_idx').on(t.userId),
     index('organization_memberships_org_idx').on(t.orgId),
+  ],
+);
+
+/**
+ * In-tenant hierarchy (branch / department / team). AC-D02 A —
+ * do NOT reuse `organizations.parentOrganizationId` as a branch.
+ */
+export const organizationUnits = sqliteTable(
+  'organization_units',
+  {
+    id: text('id').primaryKey(),
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    parentUnitId: text('parent_unit_id'),
+    name: text('name').notNull(),
+    code: text('code').notNull(),
+    kind: text('kind', { enum: ['branch', 'department', 'team', 'other'] })
+      .notNull()
+      .default('other'),
+    status: text('status', { enum: ['active', 'disabled'] })
+      .notNull()
+      .default('active'),
+    createdAt: integer('created_at', { mode: 'number' }).notNull(),
+    updatedAt: integer('updated_at', { mode: 'number' }).notNull(),
+  },
+  (t) => [
+    uniqueIndex('organization_units_org_code_uidx').on(t.orgId, t.code),
+    index('organization_units_org_idx').on(t.orgId),
+    index('organization_units_parent_idx').on(t.parentUnitId),
+  ],
+);
+
+/** User ↔ unit link inside one org (separate from organization_memberships). */
+export const unitMemberships = sqliteTable(
+  'unit_memberships',
+  {
+    id: text('id').primaryKey(),
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    unitId: text('unit_id')
+      .notNull()
+      .references(() => organizationUnits.id, { onDelete: 'cascade' }),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    role: text('role', { enum: ['manager', 'member'] })
+      .notNull()
+      .default('member'),
+    status: text('status', { enum: ['active', 'disabled'] })
+      .notNull()
+      .default('active'),
+    createdAt: integer('created_at', { mode: 'number' }).notNull(),
+    updatedAt: integer('updated_at', { mode: 'number' }).notNull(),
+  },
+  (t) => [
+    uniqueIndex('unit_memberships_unit_user_uidx').on(t.unitId, t.userId),
+    index('unit_memberships_org_idx').on(t.orgId),
+    index('unit_memberships_user_idx').on(t.userId),
   ],
 );
 

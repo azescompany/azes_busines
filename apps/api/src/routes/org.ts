@@ -4,8 +4,8 @@
  * ║ File: apps/api/src/routes/org.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-20
- * ║ Updated: 2026-10-20
- * ║ Purpose: Organization + Track + OrgAdmin HTTP APIs
+ * ║ Updated: 2026-10-26
+ * ║ Purpose: Organization + Track + OrgAdmin HTTP APIs (M5.0-lite fields)
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
  */
@@ -63,11 +63,19 @@ function parseBody<T>(schema: z.ZodType<T>, raw: unknown): T {
 const orgBodySchema = z.object({
   name: z.string().min(1),
   slug: z.string().optional(),
+  description: z.string().nullable().optional(),
+  colorCode: z.string().optional(),
+  subscriptionStatus: z.enum(['active', 'blocked']).optional(),
   parentOrganizationId: z.string().min(1).optional().nullable(),
 });
 
 const orgPatchSchema = z.object({
   name: z.string().min(1).optional(),
+  description: z.string().nullable().optional(),
+  colorCode: z.string().optional(),
+  subscriptionStatus: z.enum(['active', 'blocked']).optional(),
+  trialEndsAt: z.number().int().nullable().optional(),
+  subscriptionReadOnly: z.boolean().optional(),
   status: z.enum(['active', 'disabled']).optional(),
 });
 
@@ -139,6 +147,9 @@ export function createOrgRoutes(options: CreateOrgRoutesOptions = {}) {
     const org = await repo.createOrganization({
       name: body.name,
       slug: body.slug,
+      description: body.description,
+      colorCode: body.colorCode,
+      subscriptionStatus: body.subscriptionStatus,
       createdBy: user.sub,
       parentOrganizationId: body.parentOrganizationId ?? null,
     });
@@ -151,7 +162,15 @@ export function createOrgRoutes(options: CreateOrgRoutesOptions = {}) {
     requirePermission('org.manage_all'),
     async (c) => {
       const body = parseBody(orgPatchSchema, await c.req.json());
-      if (body.name === undefined && body.status === undefined) {
+      if (
+        body.name === undefined &&
+        body.status === undefined &&
+        body.description === undefined &&
+        body.colorCode === undefined &&
+        body.subscriptionStatus === undefined &&
+        body.trialEndsAt === undefined &&
+        body.subscriptionReadOnly === undefined
+      ) {
         throw new ApiHttpError(400, 'VALIDATION_ERROR', 'No fields to update');
       }
       const repo = resolveOrgRepo(c.env, options.orgRepo);

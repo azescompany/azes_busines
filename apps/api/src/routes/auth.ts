@@ -40,6 +40,7 @@ import {
   logoutSession,
   refreshTokens,
 } from '../auth/service.js';
+import type { EntitlementRepository } from '../access/entitlementRepository.js';
 import {
   createDrizzleMenuRepository,
   createMemoryMenuRepository,
@@ -50,6 +51,7 @@ export type AuthRouteEnv = {
   Bindings: ApiEnv;
   Variables: {
     authRepo: AuthRepository;
+    entitlementRepo?: EntitlementRepository | null;
   };
 };
 
@@ -124,7 +126,8 @@ export function createAuthRoutes(options?: {
     }
     const repo = options?.authRepo ?? resolveAuthRepo(c);
     const menuRepo = resolveMenuRepo(c.env, options?.menuRepo);
-    const result = await getMeFromAccessToken(repo, jwtSecret, bearer, menuRepo);
+    const entitlementRepo = c.get('entitlementRepo');
+    const result = await getMeFromAccessToken(repo, jwtSecret, bearer, menuRepo, entitlementRepo);
     return c.json(result, 200);
   });
 
@@ -146,7 +149,8 @@ export function createAuthRoutes(options?: {
 
     const repo = options?.authRepo ?? resolveAuthRepo(c);
     const menuRepo = resolveMenuRepo(c.env, options?.menuRepo);
-    const result = await loginWithPassword(repo, jwtSecret, body, menuRepo);
+    const entitlementRepo = c.get('entitlementRepo');
+    const result = await loginWithPassword(repo, jwtSecret, body, menuRepo, entitlementRepo);
     return c.json(result, 200);
   });
 
@@ -162,7 +166,8 @@ export function createAuthRoutes(options?: {
     const body = parseJsonBody(refreshBodySchema, await c.req.json());
     const repo = options?.authRepo ?? resolveAuthRepo(c);
     const menuRepo = resolveMenuRepo(c.env, options?.menuRepo);
-    const result = await refreshTokens(repo, jwtSecret, body, menuRepo);
+    const entitlementRepo = c.get('entitlementRepo');
+    const result = await refreshTokens(repo, jwtSecret, body, menuRepo, entitlementRepo);
     return c.json(result, 200);
   });
 

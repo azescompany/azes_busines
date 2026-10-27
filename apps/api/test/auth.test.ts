@@ -4,7 +4,7 @@
  * ║ File: apps/api/test/auth.test.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-19
- * ║ Updated: 2026-10-26
+ * ║ Updated: 2026-10-27
  * ║ Purpose: Phase 2B/2E auth route tests (memory AuthRepository)
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
@@ -15,7 +15,14 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { createApp } from '../src/app.js';
 import { hashPassword } from '../src/auth/password.js';
 import { createMemoryAuthRepository } from '../src/auth/repository.js';
-import { createRefreshSecret, hashRefreshToken, newId, nowSec } from '../src/auth/tokens.js';
+import {
+  createRefreshSecret,
+  hashRefreshToken,
+  newId,
+  nowSec,
+  signAccessToken,
+  verifyAccessToken,
+} from '../src/auth/tokens.js';
 import type { ApiEnv } from '../src/env.js';
 import { ACCESS_TOKEN_TTL_SEC } from '../src/auth/types.js';
 
@@ -387,6 +394,10 @@ describe('auth routes', () => {
       nav: [],
       activeTracks: [],
       status: 'active',
+      // Phase 06 additive fields
+      modules: [],
+      scopeSummary: null,
+      accessVersion: 0,
     });
   });
 
@@ -452,5 +463,49 @@ describe('auth routes', () => {
 
     const winner = await refresh(app, rotated.refreshToken);
     expect(winner.status).toBe(401);
+  });
+
+  it('login access JWT carries identity claims; permissions claim may be present (compat)', async () => {
+    const app = appWithUser();
+    const { accessToken } = await login(app);
+    const claims = await verifyAccessToken(accessToken, JWT_SECRET);
+    expect(claims.sub).toBe('user-local-1');
+    expect(claims.sid.length).toBeGreaterThan(0);
+    expect(claims.roles).toEqual(['member']);
+    expect(claims.orgId).toBeNull();
+    // Compat emission: array present (may be empty for member without menu grants)
+    expect(Array.isArray(claims.permissions)).toBe(true);
+  });
+
+  it('wrong-signed access JWT is rejected on protected route', async () => {
+    const app = appWithUser();
+    const forged = await signAccessToken(
+      { sub: 'user-local-1', sid: 'sess-forged', roles: ['superAdmin'], orgId: null },
+      'other-secret-not-the-server-key!!!!!!',
+    );
+    const res = await app.request(
+      '/api/v1/me',
+      {
+        method: 'GET',
+        headers: { authorization: `Bearer ${forged}` },
+      },
+      testEnv,
+    );
+    expect(res.status).toBe(401);
+  });
+
+  it('requirePermission denies when live menu path lacks grant (stale JWT permissions irrelevant)', async () => {
+    const app = appWithUser();
+    const { accessToken } = await login(app);
+    // member + empty menu grants → org.manage_all protected surface
+    const res = await app.request(
+      '/api/v1/permission-profiles',
+      {
+        method: 'GET',
+        headers: { authorization: `Bearer ${accessToken}` },
+      },
+      testEnv,
+    );
+    expect(res.status).toBe(403);
   });
 });

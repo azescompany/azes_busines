@@ -9,6 +9,8 @@
     "usersCaption": "Üzvlər",
     "roleMenus": "Rol menyuları",
     "roleMenusCaption": "Bağlantılar",
+    "platformRoles": "Rollar",
+    "platformRolesCaption": "Kataloq",
     "customers": "Müştərilər",
     "customersCaption": "CRM"
   },
@@ -23,7 +25,16 @@
     "skipToContent": "Məzmuna keç",
     "openSettings": "Parametrləri aç",
     "signingIn": "Daxil olunur…",
-    "redirectLogin": "Account girişinə yönləndirilir…"
+    "redirectLogin": "Account girişinə yönləndirilir…",
+    "meError": {
+      "title": "Sessiya yüklənmədi",
+      "description": "Giriş bootstrap uğursuz oldu. Yenidən cəhd edin və ya yenidən daxil olun.",
+      "retry": "Yenidən"
+    },
+    "access": {
+      "modulesBlocked": "Bu təşkilat üçün {{count}} modul əlçatan deyil.",
+      "readOnly": "Abunəlik yalnız oxuma rejimindədir — yazma əməliyyatları rədd oluna bilər."
+    }
   },
   "account": {
     "menu": "Hesab",
@@ -37,6 +48,29 @@
   "brand": {
     "homeAria": "AZES COMPANY — ana səhifə"
   },
+  "chrome": {
+    "pageHeader": {
+      "actions": "Səhifə əməliyyatları"
+    },
+    "empty": {
+      "title": "Hələ heç nə yoxdur",
+      "forbiddenHint": "İcazə lazımdırsa administratora müraciət edin."
+    },
+    "filters": {
+      "search": "Axtarış",
+      "clear": "Filtrləri təmizlə"
+    },
+    "actions": {
+      "more": "Digər əməliyyatlar",
+      "cancel": "Ləğv et",
+      "create": "Yarat",
+      "save": "Saxla",
+      "discard": "At",
+      "back": "Geri",
+      "discardDirty": "Dəyişikliklər atılsın?",
+      "discardDirtyDesc": "Saxlanılmamış dəyişikliklər itəcək."
+    }
+  },
   "orgs": {
     "title": "Təşkilatlar",
     "subtitle": "Tenant təşkilatlarını yaradın və idarə edin",
@@ -47,21 +81,74 @@
     "creating": "Yaranır…",
     "createError": "Təşkilat yaradıla bilmədi",
     "loadError": "Təşkilatlar yüklənə bilmədi",
+    "trialHint": "Sınaq müddəti yaradılışdan 35 gün sonra avtomatik təyin olunur.",
+    "empty": {
+      "description": "Başlamaq üçün ilk təşkilatı yaradın."
+    },
+    "filters": {
+      "all": "Hamısı"
+    },
+    "dialog": {
+      "title": "Təşkilat yarat",
+      "created": "Təşkilat yaradıldı",
+      "blocked": "Təşkilat bloklandı",
+      "unblocked": "Təşkilat blokdan çıxarıldı"
+    },
+    "confirmBlock": {
+      "title": "Təşkilat bloklansın?",
+      "description": "{{name}} blokdan çıxarılana qədər abunəlikə çıxışı itirəcək."
+    },
+    "confirmUnblock": {
+      "title": "Blokdan çıxarılsın?",
+      "description": "{{name}} üçün abunəlik çıxışı bərpa olunsun."
+    },
+    "trialRelative": {
+      "expired": "Bitib",
+      "today": "Bu gün bitir",
+      "days": "{{count}} gün qalıb"
+    },
     "fields": {
       "name": "Ad",
+      "description": "Təsvir",
+      "color": "Rəng",
       "slug": "Slug (istəyə bağlı)"
+    },
+    "subscription": {
+      "active": "Aktiv",
+      "blocked": "Bloklanıb",
+      "readOnly": "Yalnız oxu",
+      "readOnlyOn": "Təşkilat yalnız-oxu rejiminə keçirildi",
+      "readOnlyOff": "Yalnız-oxu rejimi söndürüldü"
     },
     "columns": {
       "name": "Ad",
+      "description": "Təsvir",
       "slug": "Slug",
-      "status": "Status"
+      "status": "Status",
+      "color": "Rəng",
+      "subscription": "Abunəlik",
+      "trialEnds": "Sınaq sonu",
+      "actions": "Əməliyyatlar"
+    },
+    "status": {
+      "active": "Aktiv",
+      "disabled": "Deaktiv"
+    },
+    "actions": {
+      "block": "Blokla",
+      "unblock": "Blokdan çıxar",
+      "users": "İstifadəçilər",
+      "setReadOnly": "Yalnız-oxu et",
+      "clearReadOnly": "Yalnız-oxunu sil"
     },
     "validation": {
       "nameRequired": "Ad tələb olunur",
       "emailInvalid": "Düzgün e-poçt daxil edin"
     },
     "switcher": {
-      "label": "Təşkilat"
+      "label": "Təşkilat",
+      "switched": "Təşkilat dəyişdirildi",
+      "error": "Təşkilat dəyişdirilə bilmədi"
     },
     "members": {
       "title": "Üzvlər",
@@ -81,12 +168,180 @@
       "error": "Dəvət yaradıla bilmədi",
       "tokenOnce": "Dəvət tokeni (bir dəfə kopyalayın)",
       "pending": "Gözləyən dəvətlər"
+    },
+    "modules": {
+      "title": "Modullar",
+      "hint": "Platforma modullarını yumşaq təyin edin. İşarəsiz modullar deaktiv qalır (məlumat silinmir).",
+      "save": "Modulları saxla",
+      "saving": "Saxlanılır…",
+      "saved": "Modullar yeniləndi",
+      "saveError": "Modullar yenilənə bilmədi"
+    },
+    "units": {
+      "title": "Təşkilat vahidləri",
+      "hint": "Bu təşkilat daxilində filial / şöbə (parent-org ağacı deyil).",
+      "loadError": "Vahidlər yüklənə bilmədi",
+      "createTitle": "Vahid əlavə et",
+      "create": "Vahid yarat",
+      "created": "Vahid yaradıldı",
+      "createError": "Vahid yaradıla bilmədi",
+      "membersTitle": "Vahid üzvləri",
+      "noMembers": "Bu vahiddə hələ üzv yoxdur.",
+      "assign": "Üzv təyin et",
+      "memberAssigned": "Üzv vahidə təyin edildi",
+      "assignError": "Üzv təyin edilə bilmədi",
+      "fields": {
+        "name": "Ad",
+        "code": "Kod",
+        "userId": "İstifadəçi id"
+      },
+      "columns": {
+        "name": "Ad",
+        "code": "Kod",
+        "kind": "Növ",
+        "status": "Status"
+      }
     }
   },
   "users": {
     "title": "İstifadəçilər",
     "subtitle": "Aktiv təşkilatınızın üzvləri",
-    "noActiveOrg": "Üzvləri görmək üçün aktiv təşkilat seçin"
+    "subtitleSuper": "Org admin və ya user yaradıb təşkilata bağlayın",
+    "subtitleAdmin": "Təşkilatlarınızda yalnız user (member) yaradın",
+    "noActiveOrg": "Üzvləri görmək üçün aktiv təşkilat seçin",
+    "forbidden": "İstifadəçiləri idarə etmək üçün icazəniz yoxdur.",
+    "createTitle": "İstifadəçi əlavə et",
+    "create": "Əlavə et",
+    "creating": "Əlavə olunur…",
+    "createError": "İstifadəçi yaradıla bilmədi",
+    "createConflict": "Bu istifadəçi adı artıq mövcuddur. Başqa ad seçin.",
+    "loadError": "İstifadəçilər yüklənə bilmədi",
+    "roleForcedMember": "Yeni istifadəçilərə avtomatik member rolu verilir.",
+    "empty": {
+      "description": "İstifadəçi əlavə edib təşkilata bağlayın."
+    },
+    "drawer": {
+      "title": "İstifadəçi əlavə et",
+      "subtitle": "Hesab yaradın və təşkilata bağlayın",
+      "created": "İstifadəçi yaradıldı"
+    },
+    "filters": {
+      "org": "Təşkilat",
+      "orgAll": "Bütün təşkilatlar",
+      "role": "Rol",
+      "roleAll": "Bütün rollar"
+    },
+    "fields": {
+      "username": "İstifadəçi adı",
+      "password": "Şifrə",
+      "org": "Təşkilat",
+      "orgPlaceholder": "Təşkilat seçin",
+      "role": "Rol"
+    },
+    "roles": {
+      "member": "İstifadəçi (member)",
+      "orgAdmin": "Təşkilat admini",
+      "instructor": "İnstruktor",
+      "student": "Tələbə",
+      "guest": "Qonaq",
+      "superAdmin": "Super admin",
+      "agent": "Agent",
+      "teacher": "Müəllim"
+    },
+    "status": {
+      "active": "Aktiv",
+      "disabled": "Deaktiv",
+      "pending": "Gözləmədə"
+    },
+    "columns": {
+      "username": "Ad",
+      "role": "Rol",
+      "org": "Təşkilat",
+      "color": "Rəng",
+      "status": "Status",
+      "actions": "Əməliyyat"
+    },
+    "actions": {
+      "access": "Menyular"
+    },
+    "validation": {
+      "usernameRequired": "İstifadəçi adı tələb olunur (min 3)",
+      "passwordRequired": "Şifrə ən azı 8 simvol olmalıdır",
+      "orgRequired": "Təşkilat tələb olunur"
+    }
+  },
+  "userAccess": {
+    "title": "İstifadəçi icazələri",
+    "subtitle": "{{userId}} üçün menyu və icazələr",
+    "forbidden": "İstifadəçi icazələrini idarə etmək üçün icazəniz yoxdur.",
+    "menusTitle": "Menyular",
+    "flagsTitle": "İcazələr",
+    "flagsHint": "CRUD bayraqları {resource}.{action} kodlarına uyğundur (məs. crm.customers.read).",
+    "selectAll": "Hamısını seç",
+    "clearAll": "Təmizlə",
+    "noMenusSelected": "CRUD bayraqlarını redaktə etmək üçün soldan menyu seçin.",
+    "fields": {
+      "org": "Təşkilat"
+    },
+    "flags": {
+      "read": "Oxu",
+      "create": "Yarat",
+      "update": "Yenilə",
+      "delete": "Sil"
+    },
+    "sticky": {
+      "dirty": "Saxlanılmamış dəyişikliklər",
+      "clean": "Bütün dəyişikliklər saxlanılıb",
+      "save": "İcazələri saxla"
+    },
+    "leaveDirty": {
+      "title": "Saxlamadan çıxılsın?",
+      "description": "İcazə dəyişiklikləriniz itəcək."
+    },
+    "save": "Saxla",
+    "saving": "Saxlanılır…",
+    "saved": "İcazələr saxlanıldı.",
+    "saveError": "İcazələr saxlanıla bilmədi"
+  },
+  "platformRoles": {
+    "title": "Platforma rolları",
+    "subtitle": "Elastik rol kataloqu. Menyuları Rol menyuları səhifəsində bağlayın.",
+    "forbidden": "Yalnız SuperAdmin platforma rollarını idarə edə bilər.",
+    "createTitle": "Rol əlavə et",
+    "create": "Əlavə et",
+    "creating": "Yaranır…",
+    "createError": "Rol yaradıla bilmədi",
+    "loadError": "Rollar yüklənə bilmədi",
+    "empty": {
+      "description": "Xüsusi rol yaradın, sonra menyuları bağlayın."
+    },
+    "dialog": {
+      "title": "Rol əlavə et",
+      "created": "Rol yaradıldı",
+      "deleted": "Rol silindi"
+    },
+    "confirmDelete": {
+      "title": "Rol silinsin?",
+      "description": "{{name}} silinsin? Bu geri qaytarıla bilməz."
+    },
+    "systemTooltip": "Sistem rolları silinə bilməz.",
+    "fields": {
+      "name": "Rol adı"
+    },
+    "columns": {
+      "name": "Ad",
+      "system": "Sistem",
+      "actions": "Əməliyyatlar"
+    },
+    "systemYes": "Bəli",
+    "systemNo": "Xeyr",
+    "actions": {
+      "menus": "Menyular",
+      "delete": "Sil"
+    },
+    "validation": {
+      "nameRequired": "Rol adı tələb olunur (min 2)"
+    }
   },
   "customers": {
     "title": "Müştərilər",

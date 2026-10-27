@@ -190,6 +190,13 @@ Native (`ui-native`) unchanged relative to the MUI web platform track.
 
 ## Delta log
 
+- 2026-10-26 — Admin premium chrome (`apps/admin/src/shared/adminChrome/`):
+  `PageHeader` diagonal primary wash (`linear-gradient(135deg)` + `alpha(primary, 0.06–0.10)`);
+  `EmptyState` repeating 45° stripe pattern; `FilterToolbar` search + chip filters;
+  `OrgColorDot` / `UserAvatar`; `useNotify` → `useAzesSnackbar`; `useDirtyLeaveGuard`.
+  Orgs/Users/UserAccess/PlatformRoles Views compose Dialog custom / SidePanel (`adminUserCreate`,
+  width `lg`≈480) / `AzesMenu` / Confirm — **no new ui-web package components**. Responsive:
+  table X-scroll &lt;768; UserAccess sticky save bar + stacked columns on narrow.
 - 2026-10-26 — `apps/admin` L-shell restore: `AdminShell` + `AzesDashboardLayout`
   (AppBar / menus toolbar / sidebar+rail slots / settings); primary nav **Home only**;
   `headerEnd` locale + `AzesAccountMenu`; Home scoop polish (no catalog content); port 200.

@@ -4,13 +4,12 @@
  * ║ File: apps/admin/src/features/roleMenus/components/RoleMenusView/RoleMenusView.tsx
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-26
- * ║ Updated: 2026-10-26
- * ║ Purpose: SuperAdmin role ↔ menu binding UI (TAGET M1.5)
+ * ║ Updated: 2026-10-27
+ * ║ Purpose: SuperAdmin role ↔ menu binding UI (TAGET M1.5 / Phase 07)
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
  */
 
-import { getGetApiV1MeQueryKey } from '@azes/api/azes/auth';
 import {
   getGetApiV1RolesRoleMenusQueryKey,
   useGetApiV1Menus,
@@ -25,6 +24,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
 import { checkPermission } from '../../../../auth/checkPermission.js';
+import { invalidateAccessQueries } from '../../../../auth/invalidateAccessQueries.js';
 import { useSessionMe } from '../../../../auth/useSessionMe.js';
 import { ADMIN_NAMESPACE } from '../../../../i18n/createAdminI18n.js';
 
@@ -74,7 +74,7 @@ export function RoleMenusView() {
         await queryClient.invalidateQueries({
           queryKey: getGetApiV1RolesRoleMenusQueryKey(selectedRole),
         });
-        await queryClient.invalidateQueries({ queryKey: getGetApiV1MeQueryKey() });
+        await invalidateAccessQueries(queryClient);
       },
       onError: () => {
         setSaveOk(false);

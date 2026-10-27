@@ -4,15 +4,21 @@
  * ║ File: apps/api/src/auth/service.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-19
- * ║ Updated: 2026-10-20
+ * ║ Updated: 2026-10-27
  * ║ Purpose: Login / refresh / logout / me session logic
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
  */
 
+import type { EntitlementRepository } from '../access/entitlementRepository.js';
+import {
+  resolveEffectiveAccess,
+  type ResolveAccessContext,
+  type ModuleEntitlementSummary,
+  type ScopeSummary,
+} from '../access/effectiveAccess.js';
 import { ApiHttpError } from '../errors.js';
 import type { MenuRepository } from '../menu/repository.js';
-import { resolveEffectiveNav, resolveEffectivePermissions } from '../menu/effectiveAccess.js';
 import type { AuthNavItem } from './navCatalog.js';
 import { normalizeRoles, primaryRole } from './permissions.js';
 import { normalizeUsername, verifyPassword } from './password.js';
@@ -43,6 +49,12 @@ export type MeResponse = {
   nav: AuthNavItem[];
   activeTracks: { id: string; name: string; slug: string }[];
   status: UserStatus;
+  /** Platform module entitlement + subscription summary (Phase 06 additive). */
+  modules: ModuleEntitlementSummary[];
+  /** Scope summary for active membership (Phase 06 additive). */
+  scopeSummary: ScopeSummary | null;
+  /** Incremented when access-relevant data changes (Phase 06 additive). */
+  accessVersion: number;
 };
 
 export type LoginInput = {
@@ -90,6 +102,8 @@ export async function issueTokenPair(
   });
 
   const roles = normalizeRoles(params.roles);
+  // `permissions` still emitted for client compat (AC-D05 deprecate window) —
+  // server authz must not treat the claim as authoritative.
   const accessToken = await signAccessToken(
     {
       sub: params.userId,
@@ -114,6 +128,7 @@ export async function loginWithPassword(
   jwtSecret: string,
   input: LoginInput,
   menuRepo?: MenuRepository | null,
+  entitlementRepo?: EntitlementRepository | null,
 ): Promise<TokenPairResponse> {
   void input.deviceId;
   void input.platform;
@@ -135,12 +150,19 @@ export async function loginWithPassword(
   }
 
   const roles = await repo.getUserRoles(user.id);
-  const permissions = await resolveEffectivePermissions(roles, menuRepo);
+  const accessCtx: ResolveAccessContext = {
+    orgId: user.orgId ?? null,
+    userId: user.id,
+    menuRepo,
+    entitlementRepo,
+    bypassEntitlementFilter: false, // Will be resolved inside effectiveAccess
+  };
+  const effective = await resolveEffectiveAccess(roles, accessCtx);
   return issueTokenPair(repo, {
     userId: user.id,
     roles,
     orgId: user.orgId ?? null,
-    permissions,
+    permissions: effective.permissions,
     userAgent: input.userAgent || null,
     jwtSecret,
   });
@@ -151,6 +173,7 @@ export async function refreshTokens(
   jwtSecret: string,
   input: RefreshInput,
   menuRepo?: MenuRepository | null,
+  entitlementRepo?: EntitlementRepository | null,
 ): Promise<TokenPairResponse> {
   void input.deviceId;
 
@@ -182,7 +205,14 @@ export async function refreshTokens(
   }
 
   const roles = await repo.getUserRoles(user.id);
-  const permissions = await resolveEffectivePermissions(roles, menuRepo);
+  const accessCtx: ResolveAccessContext = {
+    orgId: user.orgId ?? null,
+    userId: user.id,
+    menuRepo,
+    entitlementRepo,
+    bypassEntitlementFilter: false,
+  };
+  const effective = await resolveEffectiveAccess(roles, accessCtx);
   const newSessionId = newId();
   const refreshSecret = createRefreshSecret();
   const newHash = await hashRefreshToken(refreshSecret);
@@ -212,7 +242,7 @@ export async function refreshTokens(
       sid: newSessionId,
       roles: normalizeRoles(roles),
       orgId: user.orgId ?? null,
-      permissions,
+      permissions: effective.permissions,
     },
     jwtSecret,
   );
@@ -228,12 +258,14 @@ export async function refreshTokens(
 /**
  * Resolve the authenticated user from a Bearer access JWT (Phase 2F).
  * Validates signature/exp, refresh-session row still active, and user status.
+ * Phase 06: uses unified Effective Access Resolver for permissions/nav/modules/scope/accessVersion.
  */
 export async function getMeFromAccessToken(
   repo: AuthRepository,
   jwtSecret: string,
   accessToken: string,
   menuRepo?: MenuRepository | null,
+  entitlementRepo?: EntitlementRepository | null,
 ): Promise<MeResponse> {
   let claims;
   try {
@@ -261,18 +293,30 @@ export async function getMeFromAccessToken(
   }
 
   const roles = normalizeRoles(await repo.getUserRoles(user.id));
-  const permissions = await resolveEffectivePermissions(roles, menuRepo);
-  const nav = await resolveEffectiveNav(roles, menuRepo);
+  const orgId = user.orgId ?? null;
+  const accessCtx: ResolveAccessContext = {
+    orgId,
+    userId: user.id,
+    menuRepo,
+    entitlementRepo,
+    bypassEntitlementFilter: roles.includes('superAdmin'),
+  };
+
+  const effective = await resolveEffectiveAccess(roles, accessCtx);
+
   return {
     userId: user.id,
     username: user.usernameNormalized,
     roles,
     role: primaryRole(roles),
-    orgId: user.orgId ?? null,
-    permissions,
-    nav,
+    orgId,
+    permissions: effective.permissions,
+    nav: effective.nav,
     activeTracks: [],
     status: user.status,
+    modules: effective.modules,
+    scopeSummary: effective.scopeSummary,
+    accessVersion: effective.accessVersion,
   };
 }
 

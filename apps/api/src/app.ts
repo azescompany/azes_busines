@@ -4,7 +4,7 @@
  * ║ File: apps/api/src/app.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-19
- * ║ Updated: 2026-10-20
+ * ║ Updated: 2026-10-27
  * ║ Purpose: Hono application — CORS + auth + LMS routes + JSON errors
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
@@ -12,6 +12,12 @@
 
 import { Hono } from 'hono';
 
+import {
+  createDrizzleEntitlementRepository,
+  createMemoryEntitlementRepository,
+  type EntitlementRepository,
+} from './access/entitlementRepository.js';
+import { initResolverModeFromEnv } from './access/effectiveAccess.js';
 import type { RateLimitStore } from './auth/rateLimit.js';
 import type { AuthRepository } from './auth/repository.js';
 import { createCorsMiddleware } from './cors.js';
@@ -24,6 +30,7 @@ import type { QuizService } from './lms/quizService.js';
 import type { OrgAdminRepository } from './org/orgAdmins.js';
 import type { OrgRepository } from './org/repository.js';
 import type { TenantRepository } from './org/tenantRepository.js';
+import type { UnitRepository } from './org/unitRepository.js';
 import type { PlatformOverviewDto } from './org/types.js';
 import { createDb } from './db/client.js';
 import type { MenuRepository } from './menu/repository.js';
@@ -37,10 +44,15 @@ import { createLmsQuizRoutes } from './routes/lmsQuiz.js';
 import { createMenuRoutes } from './routes/menu.js';
 import { createModuleRoutes } from './routes/platformModules.js';
 import { createOrgRoutes } from './routes/org.js';
+import { createOrgUnitRoutes } from './routes/orgUnits.js';
 import { createTenantRoutes } from './routes/tenant.js';
 import { createAccessRoutes } from './routes/userAccess.js';
 import { createAuditRoutes } from './routes/auditLogs.js';
 import { createCrmRoutes } from './routes/crmCustomers.js';
+import { createPlatformRoleRoutes } from './routes/platformRoles.js';
+import { createPlatformUserRoutes } from './routes/platformUsers.js';
+import type { PlatformRoleRepository } from './org/platformRoles.js';
+import type { PlatformUserRepository } from './org/platformUsers.js';
 
 export type CreateAppOptions = {
   /** Injected for unit tests (avoids D1). */
@@ -63,15 +75,38 @@ export type CreateAppOptions = {
   tenantRepo?: TenantRepository;
   /** Injected menu RBAC repository for unit tests. */
   menuRepo?: MenuRepository;
+  /** Injected organization-unit repository for unit tests (Phase 03). */
+  unitRepo?: UnitRepository;
+  /** Injected entitlement / subscription repo (Phase 04). */
+  entitlementRepo?: EntitlementRepository;
+  /** Injected platform user create/list (M5.0-lite). */
+  platformUserRepo?: PlatformUserRepository;
+  /** Injected platform role catalog (M5.0-lite). */
+  platformRoleRepo?: PlatformRoleRepository;
   /** Injected platform overview for unit tests. */
   platformOverview?: PlatformOverviewDto;
+  /** Phase 06 test override — ACCESS_RESOLVER_MODE=legacy|unified (default unified). */
+  accessResolverMode?: 'legacy' | 'unified';
 };
 
 export function createApp(options: CreateAppOptions = {}) {
   const app = new Hono<{
     Bindings: ApiEnv;
-    Variables: { menuRepo?: MenuRepository | null };
+    Variables: {
+      menuRepo?: MenuRepository | null;
+      entitlementRepo?: EntitlementRepository | null;
+    };
   }>();
+
+  // Phase 06: ACCESS_RESOLVER_MODE (default unified). Tests may pass accessResolverMode.
+  if (options.accessResolverMode) {
+    initResolverModeFromEnv({ ACCESS_RESOLVER_MODE: options.accessResolverMode });
+  }
+
+  app.use('*', async (c, next) => {
+    initResolverModeFromEnv(c.env);
+    await next();
+  });
 
   app.use('*', createCorsMiddleware());
 
@@ -81,6 +116,17 @@ export function createApp(options: CreateAppOptions = {}) {
       options.menuRepo ??
       (c.env.DB ? createDrizzleMenuRepository(createDb(c.env.DB)) : createMemoryMenuRepository());
     c.set('menuRepo', repo);
+    await next();
+  });
+
+  /** Phase 04 — module entitlement + subscription lite. */
+  app.use('*', async (c, next) => {
+    const repo =
+      options.entitlementRepo ??
+      (c.env.DB
+        ? createDrizzleEntitlementRepository(createDb(c.env.DB))
+        : createMemoryEntitlementRepository());
+    c.set('entitlementRepo', repo);
     await next();
   });
 
@@ -135,11 +181,26 @@ export function createApp(options: CreateAppOptions = {}) {
       menuRepo: options.menuRepo,
     }),
   );
+  app.route(
+    '/',
+    createOrgUnitRoutes({
+      tenantRepo: options.tenantRepo,
+      unitRepo: options.unitRepo,
+    }),
+  );
   app.route('/', createMenuRoutes({ menuRepo: options.menuRepo }));
-  app.route('/', createModuleRoutes());
+  app.route('/', createModuleRoutes({ entitlementRepo: options.entitlementRepo }));
   app.route('/', createAccessRoutes({ menuRepo: options.menuRepo }));
   app.route('/', createAuditRoutes());
-  app.route('/', createCrmRoutes());
+  app.route('/', createCrmRoutes({ unitRepo: options.unitRepo }));
+  app.route(
+    '/',
+    createPlatformUserRoutes({
+      platformUserRepo: options.platformUserRepo,
+      tenantRepo: options.tenantRepo,
+    }),
+  );
+  app.route('/', createPlatformRoleRoutes({ platformRoleRepo: options.platformRoleRepo }));
 
   app.notFound((c) => {
     return c.json(

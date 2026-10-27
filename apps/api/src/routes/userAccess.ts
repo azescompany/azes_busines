@@ -4,8 +4,8 @@
  * ║ File: apps/api/src/routes/userAccess.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-26
- * ║ Updated: 2026-10-26
- * ║ Purpose: Permission profiles + user menu assignment (TAGET M3)
+ * ║ Updated: 2026-10-27
+ * ║ Purpose: Permission profiles + user menu assignment (TAGET M3 / Phase 05)
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
  */
@@ -14,8 +14,13 @@ import { and, eq } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { z } from 'zod';
 
+import { assertGrantWithinCeiling, assertMenusWithinCeiling } from '../access/delegation.js';
+import { mapCrudFlagsToPermissionCodes } from '../access/permissionMapper.js';
+import { claimHasPermission } from '../auth/permissions.js';
 import {
   getAuthUser,
+  getEntitlementRepo,
+  getMenuRepo,
   requireAuth,
   requirePermission,
   type AuthedEnv,
@@ -29,6 +34,11 @@ import {
   userMenus,
 } from '../db/schema.js';
 import { ApiHttpError } from '../errors.js';
+import {
+  resolveEffectiveAccess,
+  resolveGrantableMenuIds,
+  type ResolveAccessContext,
+} from '../access/effectiveAccess.js';
 import type { MenuRepository } from '../menu/repository.js';
 import { writeAuditLog } from '../org/writeAuditLog.js';
 
@@ -59,7 +69,7 @@ const putUserAccessSchema = z.object({
     .optional(),
 });
 
-export function createAccessRoutes(_options: CreateAccessRoutesOptions = {}) {
+export function createAccessRoutes(options: CreateAccessRoutesOptions = {}) {
   const routes = new Hono<AuthedEnv>();
 
   routes.get(
@@ -128,8 +138,12 @@ export function createAccessRoutes(_options: CreateAccessRoutesOptions = {}) {
       if (!effectiveOrg) {
         throw new ApiHttpError(400, 'VALIDATION_ERROR', 'orgId required');
       }
+      const menuRepo = options.menuRepo ?? getMenuRepo(c);
       if (!c.env.DB) {
-        return c.json({ userId, orgId: effectiveOrg, menuIds: [], permissions: [] });
+        const menuIds = menuRepo
+          ? await menuRepo.listUserOverrideMenuIds(userId, effectiveOrg)
+          : [];
+        return c.json({ userId, orgId: effectiveOrg, menuIds, permissions: [] });
       }
       const db = createDb(c.env.DB);
       const menus = await db
@@ -171,7 +185,69 @@ export function createAccessRoutes(_options: CreateAccessRoutesOptions = {}) {
       if (!orgId) {
         throw new ApiHttpError(400, 'VALIDATION_ERROR', 'orgId required');
       }
+
+      const menuRepo = options.menuRepo ?? getMenuRepo(c);
+      if (!menuRepo) {
+        throw new ApiHttpError(503, 'SERVICE_UNAVAILABLE', 'Menu repository unavailable');
+      }
+
+      const actorHasManageAll = claimHasPermission(actor, 'org.manage_all');
+      const accessCtx: ResolveAccessContext = {
+        orgId: actor.orgId,
+        userId: actor.sub,
+        menuRepo,
+        entitlementRepo: getEntitlementRepo(c),
+        bypassEntitlementFilter: actorHasManageAll,
+      };
+      const actorPerms = await resolveEffectiveAccess(actor.roles, accessCtx).then(
+        (r) => r.permissions,
+      );
+      const actorMenus = await resolveGrantableMenuIds(actor.roles, menuRepo, accessCtx);
+
+      const grantedCodes: string[] = [];
+      for (const p of body.permissions ?? []) {
+        const menuCodes = await menuRepo.listPermissionCodesForMenuIds([p.menuId]);
+        grantedCodes.push(...mapCrudFlagsToPermissionCodes(menuCodes, p));
+      }
+      // Menus without explicit CRUD still imply read codes for ceiling check
+      for (const menuId of body.menuIds) {
+        if ((body.permissions ?? []).some((p) => p.menuId === menuId)) continue;
+        const menuCodes = await menuRepo.listPermissionCodesForMenuIds([menuId]);
+        grantedCodes.push(
+          ...mapCrudFlagsToPermissionCodes(menuCodes, {
+            canRead: true,
+            canCreate: false,
+            canUpdate: false,
+            canDelete: false,
+          }),
+        );
+      }
+
+      try {
+        assertMenusWithinCeiling({
+          actorMenuIds: actorMenus,
+          grantedMenuIds: body.menuIds,
+          actorHasManageAll,
+        });
+        assertGrantWithinCeiling({
+          actorPermissions: actorPerms,
+          grantedPermissions: [...new Set(grantedCodes)],
+          actorHasManageAll,
+        });
+      } catch (err) {
+        await writeAuditLog(c.env, {
+          actorUserId: actor.sub,
+          orgId,
+          action: 'user.access.denied_ceiling',
+          targetType: 'user',
+          targetId: userId,
+          meta: { menuIds: body.menuIds },
+        });
+        throw err;
+      }
+
       if (!c.env.DB) {
+        await menuRepo.setUserAccess?.(userId, orgId, body.menuIds, body.permissions ?? []);
         return c.json({
           userId,
           orgId,
@@ -179,6 +255,7 @@ export function createAccessRoutes(_options: CreateAccessRoutesOptions = {}) {
           permissions: body.permissions ?? [],
         });
       }
+
       const db = createDb(c.env.DB);
       const now = nowSec();
       await db

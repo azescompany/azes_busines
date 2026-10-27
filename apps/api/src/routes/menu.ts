@@ -4,7 +4,7 @@
  * ║ File: apps/api/src/routes/menu.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-26
- * ║ Updated: 2026-10-26
+ * ║ Updated: 2026-10-27
  * ║ Purpose: Menu catalog + role↔menu binding HTTP APIs (M1.5)
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
@@ -13,8 +13,14 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 
+import { assertNotProtectedPlatformRole } from '../access/delegation.js';
 import { LMS_ROLES } from '../auth/permissions.js';
-import { requireAuth, requirePermission, type AuthedEnv } from '../auth/requireAuth.js';
+import {
+  getAuthUser,
+  requireAuth,
+  requirePermission,
+  type AuthedEnv,
+} from '../auth/requireAuth.js';
 import { createDb } from '../db/client.js';
 import type { ApiEnv } from '../env.js';
 import { ApiHttpError } from '../errors.js';
@@ -23,6 +29,7 @@ import {
   createMemoryMenuRepository,
   type MenuRepository,
 } from '../menu/repository.js';
+import { writeAuditLog } from '../org/writeAuditLog.js';
 
 export type CreateMenuRoutesOptions = {
   menuRepo?: MenuRepository;
@@ -89,12 +96,22 @@ export function createMenuRoutes(options: CreateMenuRoutesOptions = {}) {
     requirePermission('org.manage_all'),
     async (c) => {
       const role = c.req.param('role');
+      assertNotProtectedPlatformRole(role);
       if (!ASSIGNABLE_ROLES.includes(role as (typeof ASSIGNABLE_ROLES)[number])) {
         throw new ApiHttpError(400, 'VALIDATION_ERROR', 'Cannot rebind menus for this role');
       }
       const body = parseBody(putRoleMenusSchema, await c.req.json());
       const repo = resolveMenuRepo(c.env, options.menuRepo);
       const menuIds = await repo.setRoleMenus(role, body.menuIds);
+      const actor = getAuthUser(c);
+      await writeAuditLog(c.env, {
+        actorUserId: actor.sub,
+        orgId: actor.orgId,
+        action: 'role.menus.update',
+        targetType: 'role',
+        targetId: role,
+        meta: { menuIds },
+      });
       return c.json({ role, menuIds });
     },
   );

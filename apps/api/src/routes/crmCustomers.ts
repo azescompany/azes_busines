@@ -4,7 +4,7 @@
  * ║ File: apps/api/src/routes/crmCustomers.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-26
- * ║ Updated: 2026-10-26
+ * ║ Updated: 2026-10-27
  * ║ Purpose: CRM customers CRUD — tenant + permission scoped (TAGET M4)
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
@@ -14,7 +14,11 @@ import { and, eq } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { z } from 'zod';
 
-import { isOwnerVisible, normalizeDataScope } from '../auth/dataScope.js';
+import {
+  isOwnerVisible,
+  isOwnerVisibleInUnitSubtree,
+  normalizeDataScope,
+} from '../auth/dataScope.js';
 import {
   getAuthUser,
   requireAuth,
@@ -25,7 +29,16 @@ import { newId, nowSec } from '../auth/tokens.js';
 import { createDb } from '../db/client.js';
 import { crmCustomers, organizationMemberships } from '../db/schema.js';
 import { ApiHttpError } from '../errors.js';
+import {
+  createDrizzleUnitRepository,
+  createMemoryUnitRepository,
+  type UnitRepository,
+} from '../org/unitRepository.js';
 import { writeAuditLog } from '../org/writeAuditLog.js';
+
+export type CreateCrmRoutesOptions = {
+  unitRepo?: UnitRepository;
+};
 
 function parseBody<T>(schema: z.ZodType<T>, raw: unknown): T {
   const parsed = schema.safeParse(raw);
@@ -46,8 +59,14 @@ const patchSchema = z.object({
   status: z.enum(['active', 'disabled']).optional(),
 });
 
-export function createCrmRoutes() {
+export function createCrmRoutes(options: CreateCrmRoutesOptions = {}) {
   const routes = new Hono<AuthedEnv>();
+
+  function resolveUnitRepo(env: AuthedEnv['Bindings']): UnitRepository {
+    if (options.unitRepo) return options.unitRepo;
+    if (!env.DB) return createMemoryUnitRepository();
+    return createDrizzleUnitRepository(createDb(env.DB));
+  }
 
   routes.get(
     '/api/v1/crm/customers',
@@ -59,7 +78,7 @@ export function createCrmRoutes() {
         throw new ApiHttpError(400, 'VALIDATION_ERROR', 'Active organization required');
       }
       if (!c.env.DB) {
-        return c.json({ items: [] });
+        return c.json({ items: [], dataScope: 'org' });
       }
       const db = createDb(c.env.DB);
       const membership = await db
@@ -78,7 +97,21 @@ export function createCrmRoutes() {
         .from(crmCustomers)
         .where(eq(crmCustomers.orgId, user.orgId))
         .all();
-      const items = rows.filter((r) => isOwnerVisible(scope, user.sub, r.ownerUserId));
+      const unitRepo = resolveUnitRepo(c.env);
+      const items = [];
+      for (const r of rows) {
+        const visible =
+          scope === 'subtree'
+            ? await isOwnerVisibleInUnitSubtree({
+                scope,
+                viewerUserId: user.sub,
+                ownerUserId: r.ownerUserId,
+                orgId: user.orgId,
+                unitRepo,
+              })
+            : isOwnerVisible(scope, user.sub, r.ownerUserId);
+        if (visible) items.push(r);
+      }
       return c.json({
         items: items.map((r) => ({
           id: r.id,

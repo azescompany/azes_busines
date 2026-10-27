@@ -4,14 +4,15 @@
  * ║ File: apps/api/test/erpAuthzRoadmap.test.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-26
- * ║ Updated: 2026-10-26
- * ║ Purpose: TAGET M2–M4 smoke — modules, hierarchy, CRM, audit, scope
+ * ║ Updated: 2026-10-27
+ * ║ Purpose: TAGET M2–M4 + Phase 04 entitlement / subscription smoke
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
  */
 
 import { describe, expect, it, beforeEach } from 'vitest';
 
+import { createMemoryEntitlementRepository } from '../src/access/entitlementRepository.js';
 import { createApp } from '../src/app.js';
 import { hashPassword } from '../src/auth/password.js';
 import { createMemoryAuthRepository } from '../src/auth/repository.js';
@@ -57,7 +58,7 @@ describe('ERP authz roadmap smoke', () => {
     return ((await res.json()) as { accessToken: string }).accessToken;
   }
 
-  function makeApp() {
+  function makeApp(opts?: { entitlement?: ReturnType<typeof createMemoryEntitlementRepository> }) {
     const authRepo = createMemoryAuthRepository({
       users: [
         {
@@ -80,9 +81,21 @@ describe('ERP authz roadmap smoke', () => {
         'user-oa': ['orgAdmin'],
       },
     });
+
+    const entitlementRepo =
+      opts?.entitlement ??
+      createMemoryEntitlementRepository({
+        orgs: [{ id: 'org-a', subscriptionStatus: 'active', subscriptionReadOnly: false }],
+        orgModules: [
+          { orgId: 'org-a', moduleId: 'pmod-admin-core', status: 'active' },
+          { orgId: 'org-a', moduleId: 'pmod-crm', status: 'active' },
+        ],
+      });
+
     return createApp({
       authRepo,
       menuRepo: createMemoryMenuRepository(),
+      entitlementRepo,
       orgRepo: createMemoryOrgRepository({
         organizations: [
           {
@@ -94,6 +107,8 @@ describe('ERP authz roadmap smoke', () => {
             createdBy: 'user-sa',
             createdAt: 1,
             updatedAt: 1,
+            subscriptionStatus: 'active',
+            subscriptionReadOnly: false,
           },
         ],
       }),
@@ -191,5 +206,121 @@ describe('ERP authz roadmap smoke', () => {
       testEnv,
     );
     expect(denied.status).toBe(403);
+  });
+
+  it('Phase 04: orgAdmin cannot activate org modules (org.manage_all only)', async () => {
+    const app = makeApp();
+    const oa = await login(app, 'orgadmin.a');
+    const res = await app.request(
+      '/api/v1/orgs/org-a/modules',
+      {
+        method: 'PUT',
+        headers: {
+          authorization: `Bearer ${oa}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ moduleIds: ['pmod-crm'] }),
+      },
+      testEnv,
+    );
+    expect(res.status).toBe(403);
+  });
+
+  it('Phase 04: disabled CRM module denies CRM API; soft-disable keeps assignment row', async () => {
+    const entitlement = createMemoryEntitlementRepository({
+      orgs: [{ id: 'org-a', subscriptionStatus: 'active' }],
+      orgModules: [
+        { orgId: 'org-a', moduleId: 'pmod-admin-core', status: 'active' },
+        { orgId: 'org-a', moduleId: 'pmod-crm', status: 'active' },
+      ],
+    });
+    const app = makeApp({ entitlement });
+    const sa = await login(app, 'super.admin');
+
+    const disable = await app.request(
+      '/api/v1/orgs/org-a/modules',
+      {
+        method: 'PUT',
+        headers: {
+          authorization: `Bearer ${sa}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ moduleIds: ['pmod-admin-core'] }),
+      },
+      testEnv,
+    );
+    expect(disable.status).toBe(200);
+
+    // Soft-disable: CRM still listed as inactive assignment (not hard-deleted)
+    expect(await entitlement.isModuleActiveForOrg('org-a', 'crm')).toBe(false);
+
+    const oa = await login(app, 'orgadmin.a');
+    const crm = await app.request(
+      '/api/v1/crm/customers',
+      { headers: { authorization: `Bearer ${oa}` } },
+      testEnv,
+    );
+    expect(crm.status).toBe(403);
+
+    // Re-enable without inventing a new row id — same pmod-crm
+    const enable = await app.request(
+      '/api/v1/orgs/org-a/modules',
+      {
+        method: 'PUT',
+        headers: {
+          authorization: `Bearer ${sa}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ moduleIds: ['pmod-admin-core', 'pmod-crm'] }),
+      },
+      testEnv,
+    );
+    expect(enable.status).toBe(200);
+    expect(await entitlement.isModuleActiveForOrg('org-a', 'crm')).toBe(true);
+  });
+
+  it('Phase 04: blocked subscription denies CRM', async () => {
+    const entitlement = createMemoryEntitlementRepository({
+      orgs: [{ id: 'org-a', subscriptionStatus: 'blocked' }],
+      orgModules: [{ orgId: 'org-a', moduleId: 'pmod-crm', status: 'active' }],
+    });
+    const app = makeApp({ entitlement });
+    const oa = await login(app, 'orgadmin.a');
+    const crm = await app.request(
+      '/api/v1/crm/customers',
+      { headers: { authorization: `Bearer ${oa}` } },
+      testEnv,
+    );
+    expect(crm.status).toBe(403);
+  });
+
+  it('Phase 04: read-only subscription allows CRM GET but denies POST', async () => {
+    const entitlement = createMemoryEntitlementRepository({
+      orgs: [{ id: 'org-a', subscriptionStatus: 'active', subscriptionReadOnly: true }],
+      orgModules: [{ orgId: 'org-a', moduleId: 'pmod-crm', status: 'active' }],
+    });
+    const app = makeApp({ entitlement });
+    const oa = await login(app, 'orgadmin.a');
+
+    const list = await app.request(
+      '/api/v1/crm/customers',
+      { headers: { authorization: `Bearer ${oa}` } },
+      testEnv,
+    );
+    expect(list.status).toBe(200);
+
+    const create = await app.request(
+      '/api/v1/crm/customers',
+      {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${oa}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ name: 'Acme' }),
+      },
+      testEnv,
+    );
+    expect(create.status).toBe(403);
   });
 });

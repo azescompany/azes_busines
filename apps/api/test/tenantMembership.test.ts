@@ -4,7 +4,7 @@
  * ║ File: apps/api/test/tenantMembership.test.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-26
- * ║ Updated: 2026-10-26
+ * ║ Updated: 2026-10-27
  * ║ Purpose: TAGET M1 tenant membership / invite / isolation tests
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
@@ -15,6 +15,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { createApp } from '../src/app.js';
 import { hashPassword } from '../src/auth/password.js';
 import { createMemoryAuthRepository } from '../src/auth/repository.js';
+import { verifyAccessToken } from '../src/auth/tokens.js';
 import { createMemoryLmsMutations } from '../src/lms/mutations.js';
 import { createMemoryLmsRepository } from '../src/lms/repository.js';
 import { createMemoryOrgRepository } from '../src/org/repository.js';
@@ -351,5 +352,166 @@ describe('tenant membership / invite / isolation', () => {
       testEnv,
     );
     expect(res.status).toBe(403);
+  });
+
+  it('blocks switching to org when membership is disabled', async () => {
+    const authRepo = createMemoryAuthRepository({
+      users: [
+        {
+          id: 'user-disabled-mem',
+          usernameNormalized: 'disabled.mem',
+          passwordHash,
+          status: 'active',
+          orgId: 'org-a',
+        },
+      ],
+      rolesByUser: { 'user-disabled-mem': ['orgAdmin'] },
+    });
+    const orgRepo = createMemoryOrgRepository({
+      organizations: [
+        {
+          id: 'org-a',
+          name: 'Org A',
+          slug: 'org-a',
+          status: 'active',
+          parentOrganizationId: null,
+          createdBy: 'user-disabled-mem',
+          createdAt: 1,
+          updatedAt: 1,
+        },
+        {
+          id: 'org-b',
+          name: 'Org B',
+          slug: 'org-b',
+          status: 'active',
+          parentOrganizationId: null,
+          createdBy: 'user-disabled-mem',
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      ],
+    });
+    const tenantRepo = createMemoryTenantRepository({
+      orgs: [
+        { id: 'org-a', name: 'Org A', slug: 'org-a', status: 'active' },
+        { id: 'org-b', name: 'Org B', slug: 'org-b', status: 'active' },
+      ],
+      memberships: [
+        {
+          orgId: 'org-a',
+          userId: 'user-disabled-mem',
+          username: 'disabled.mem',
+          role: 'orgAdmin',
+          status: 'active',
+        },
+        {
+          orgId: 'org-b',
+          userId: 'user-disabled-mem',
+          username: 'disabled.mem',
+          role: 'orgAdmin',
+          status: 'disabled',
+        },
+      ],
+      activeOrgByUser: { 'user-disabled-mem': 'org-a' },
+    });
+    const app = createApp({
+      authRepo,
+      orgRepo,
+      tenantRepo,
+      lmsRepo: createMemoryLmsRepository({ courses: [], curriculum: {} }),
+      lmsMutations: createMemoryLmsMutations({ courses: [], curriculum: {} }),
+    });
+    const token = await login(app, 'disabled.mem');
+    const res = await app.request(
+      '/api/v1/me/active-organization',
+      {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${token}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ orgId: 'org-b' }),
+      },
+      testEnv,
+    );
+    expect(res.status).toBe(403);
+  });
+
+  it('active-org switch JWT orgId matches users.org_id pointer', async () => {
+    const app = makeApp();
+    const token = await login(app, 'multi.member');
+    const res = await app.request(
+      '/api/v1/me/active-organization',
+      {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${token}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ orgId: 'org-b' }),
+      },
+      testEnv,
+    );
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { accessToken: string; orgId: string };
+    const claims = await verifyAccessToken(body.accessToken, JWT_SECRET);
+    expect(claims.orgId).toBe('org-b');
+    expect(claims.sub).toBe('user-multi');
+  });
+
+  it('cross-tenant GET /orgs/:orgId is forbidden without membership', async () => {
+    const app = makeApp();
+    const token = await login(app, 'orgadmin.a');
+    const res = await app.request(
+      '/api/v1/orgs/org-b',
+      { headers: { authorization: `Bearer ${token}` } },
+      testEnv,
+    );
+    expect(res.status).toBe(403);
+  });
+
+  it('LMS instructor invite does not grant ERP org.manage (AC-D07)', async () => {
+    const app = makeApp();
+    const sa = await login(app, 'super.admin');
+    const inviteRes = await app.request(
+      '/api/v1/orgs/org-a/invitations',
+      {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${sa}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ email: 'lms.instructor@example.com', role: 'instructor' }),
+      },
+      testEnv,
+    );
+    expect(inviteRes.status).toBe(201);
+    const invite = (await inviteRes.json()) as { token: string };
+
+    const acceptRes = await app.request(
+      '/api/v1/invitations/accept',
+      {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          token: invite.token,
+          password: 'LocalDevPass123!',
+          username: 'lms.instructor',
+        }),
+      },
+      testEnv,
+    );
+    expect(acceptRes.status).toBe(201);
+    const accepted = (await acceptRes.json()) as { accessToken: string };
+    const claims = await verifyAccessToken(accepted.accessToken, JWT_SECRET);
+    expect(claims.roles).toContain('instructor');
+    expect(claims.roles).not.toContain('orgAdmin');
+
+    const profiles = await app.request(
+      '/api/v1/permission-profiles',
+      { headers: { authorization: `Bearer ${accepted.accessToken}` } },
+      testEnv,
+    );
+    expect(profiles.status).toBe(403);
   });
 });

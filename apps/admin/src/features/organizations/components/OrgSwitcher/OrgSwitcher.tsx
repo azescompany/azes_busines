@@ -4,29 +4,28 @@
  * ║ File: apps/admin/src/features/organizations/components/OrgSwitcher/OrgSwitcher.tsx
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-26
- * ║ Updated: 2026-10-26
- * ║ Purpose: Active organization switcher (header) — server-side switch
+ * ║ Updated: 2026-10-27
+ * ║ Purpose: Active organization switcher — invalidate me + org caches (Phase 07)
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
  */
 
-import {
-  getGetApiV1MeOrganizationsQueryKey,
-  postApiV1MeActiveOrganization,
-  useGetApiV1MeOrganizations,
-} from '@azes/api/azes/orgs';
+import { postApiV1MeActiveOrganization, useGetApiV1MeOrganizations } from '@azes/api/azes/orgs';
 import { sessionFromTokens, useAuthClient } from '@azes/auth';
 import { useTranslation } from '@azes/i18n';
 import { TextField } from '@azes/ui-web';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
+import { invalidateAfterOrgSwitch } from '../../../../auth/invalidateAccessQueries.js';
 import { ADMIN_NAMESPACE } from '../../../../i18n/createAdminI18n.js';
+import { useNotify } from '../../../../shared/adminChrome/index.js';
 
 export function OrgSwitcher() {
   const { t } = useTranslation(ADMIN_NAMESPACE);
   const authClient = useAuthClient();
   const queryClient = useQueryClient();
+  const notify = useNotify();
   const orgsQuery = useGetApiV1MeOrganizations();
   const [busy, setBusy] = useState(false);
 
@@ -54,10 +53,10 @@ export function OrgSwitcher() {
             await authClient.establishSession(
               sessionFromTokens(result.accessToken, result.refreshToken),
             );
-            await queryClient.invalidateQueries();
-            await queryClient.invalidateQueries({
-              queryKey: getGetApiV1MeOrganizationsQueryKey(),
-            });
+            await invalidateAfterOrgSwitch(queryClient);
+            notify.success(t('orgs.switcher.switched'));
+          } catch {
+            notify.error(t('orgs.switcher.error'));
           } finally {
             setBusy(false);
           }

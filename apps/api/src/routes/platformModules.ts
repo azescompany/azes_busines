@@ -4,8 +4,8 @@
  * ║ File: apps/api/src/routes/platformModules.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-26
- * ║ Updated: 2026-10-26
- * ║ Purpose: Platform module registry + org assignment (TAGET M2)
+ * ║ Updated: 2026-10-27
+ * ║ Purpose: Platform module registry + org assignment (TAGET M2 / Phase 04)
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
  */
@@ -14,11 +14,22 @@ import { eq } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { z } from 'zod';
 
-import { requireAuth, requirePermission, type AuthedEnv } from '../auth/requireAuth.js';
-import { nowSec } from '../auth/tokens.js';
+import {
+  createDrizzleEntitlementRepository,
+  createMemoryEntitlementRepository,
+  type EntitlementRepository,
+} from '../access/entitlementRepository.js';
+import {
+  getAuthUser,
+  requireAuth,
+  requirePermission,
+  type AuthedEnv,
+} from '../auth/requireAuth.js';
 import { createDb } from '../db/client.js';
-import { moduleMenus, organizationModules, platformModules } from '../db/schema.js';
+import { moduleMenus } from '../db/schema.js';
+import type { ApiEnv } from '../env.js';
 import { ApiHttpError } from '../errors.js';
+import { writeAuditLog } from '../org/writeAuditLog.js';
 
 function parseBody<T>(schema: z.ZodType<T>, raw: unknown): T {
   const parsed = schema.safeParse(raw);
@@ -32,35 +43,33 @@ const putOrgModulesSchema = z.object({
   moduleIds: z.array(z.string().min(1)),
 });
 
-export function createModuleRoutes() {
+export type CreateModuleRoutesOptions = {
+  entitlementRepo?: EntitlementRepository;
+};
+
+function resolveEntitlementRepo(
+  env: ApiEnv,
+  cRepo: EntitlementRepository | null | undefined,
+  injected?: EntitlementRepository,
+): EntitlementRepository {
+  if (injected) return injected;
+  if (cRepo) return cRepo;
+  if (!env.DB) return createMemoryEntitlementRepository();
+  return createDrizzleEntitlementRepository(createDb(env.DB));
+}
+
+/**
+ * Module registry + org assignment.
+ * PUT remains `org.manage_all` (AC-D01 A — GeneralAdmin = capability set later).
+ * Soft-disable: removing a module sets status=disabled; does not delete business rows.
+ */
+export function createModuleRoutes(options: CreateModuleRoutesOptions = {}) {
   const routes = new Hono<AuthedEnv>();
 
   routes.get('/api/v1/modules', requireAuth(), requirePermission('org.manage_all'), async (c) => {
-    if (!c.env.DB) {
-      return c.json({
-        items: [
-          {
-            id: 'pmod-admin-core',
-            code: 'admin-core',
-            name: 'Admin Core',
-            version: '1.0.0',
-            status: 'active',
-          },
-          { id: 'pmod-crm', code: 'crm', name: 'CRM', version: '1.0.0', status: 'active' },
-        ],
-      });
-    }
-    const db = createDb(c.env.DB);
-    const rows = await db.select().from(platformModules).all();
-    return c.json({
-      items: rows.map((r) => ({
-        id: r.id,
-        code: r.code,
-        name: r.name,
-        version: r.version,
-        status: r.status,
-      })),
-    });
+    const repo = resolveEntitlementRepo(c.env, c.get('entitlementRepo'), options.entitlementRepo);
+    const items = await repo.listPlatformModules();
+    return c.json({ items });
   });
 
   routes.get(
@@ -69,19 +78,12 @@ export function createModuleRoutes() {
     requirePermission('org.manage_all'),
     async (c) => {
       const orgId = c.req.param('orgId');
-      if (!c.env.DB) {
-        return c.json({ orgId, moduleIds: ['pmod-admin-core'] });
-      }
-      const db = createDb(c.env.DB);
-      const rows = await db
-        .select()
-        .from(organizationModules)
-        .where(eq(organizationModules.orgId, orgId))
-        .all();
-      return c.json({
-        orgId,
-        moduleIds: rows.filter((r) => r.status === 'active').map((r) => r.moduleId),
-      });
+      const repo = resolveEntitlementRepo(c.env, c.get('entitlementRepo'), options.entitlementRepo);
+      const codes = await repo.listActiveModuleCodes(orgId);
+      const platform = await repo.listPlatformModules();
+      const byCode = new Map(platform.map((p) => [p.code, p.id]));
+      const moduleIds = codes.map((code) => byCode.get(code)).filter((id): id is string => !!id);
+      return c.json({ orgId, moduleIds });
     },
   );
 
@@ -92,24 +94,18 @@ export function createModuleRoutes() {
     async (c) => {
       const orgId = c.req.param('orgId');
       const body = parseBody(putOrgModulesSchema, await c.req.json());
-      if (!c.env.DB) {
-        return c.json({ orgId, moduleIds: body.moduleIds });
-      }
-      const db = createDb(c.env.DB);
-      await db.delete(organizationModules).where(eq(organizationModules.orgId, orgId)).run();
-      const now = nowSec();
-      for (const moduleId of body.moduleIds) {
-        await db
-          .insert(organizationModules)
-          .values({
-            orgId,
-            moduleId,
-            status: 'active',
-            createdAt: now,
-          })
-          .run();
-      }
-      return c.json({ orgId, moduleIds: body.moduleIds });
+      const repo = resolveEntitlementRepo(c.env, c.get('entitlementRepo'), options.entitlementRepo);
+      const moduleIds = await repo.setOrgModules(orgId, body.moduleIds);
+      const actor = getAuthUser(c);
+      await writeAuditLog(c.env, {
+        actorUserId: actor.sub,
+        orgId,
+        action: 'org.modules.update',
+        targetType: 'organization',
+        targetId: orgId,
+        meta: { moduleIds },
+      });
+      return c.json({ orgId, moduleIds });
     },
   );
 
@@ -120,7 +116,10 @@ export function createModuleRoutes() {
     async (c) => {
       const moduleId = c.req.param('moduleId');
       if (!c.env.DB) {
-        return c.json({ moduleId, menuIds: [] });
+        return c.json({
+          moduleId,
+          menuIds: moduleId === 'pmod-crm' ? ['menu-admin-customers'] : [],
+        });
       }
       const db = createDb(c.env.DB);
       const rows = await db

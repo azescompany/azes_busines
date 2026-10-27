@@ -4,7 +4,7 @@
  * ║ File: apps/api/src/auth/tokens.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-19
- * ║ Updated: 2026-10-19
+ * ║ Updated: 2026-10-27
  * ║ Purpose: Access JWT (jose HS256) + refresh secret hashing
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
@@ -16,6 +16,13 @@ import { ACCESS_TOKEN_TTL_SEC } from './types.js';
 
 const REFRESH_BYTES = 32;
 
+/**
+ * Access JWT claims (AC-D05).
+ *
+ * Authoritative for request identity: `sub`, `sid`, `orgId`, `roles`.
+ * `permissions[]` is optional **compat** emission (login/refresh still fill it) —
+ * server authz must use live `effectiveCan` / role map, not this claim.
+ */
 export type AccessTokenClaims = {
   sub: string;
   sid: string;
@@ -23,8 +30,8 @@ export type AccessTokenClaims = {
   /** Null for platform `superAdmin`. */
   orgId: string | null;
   /**
-   * Effective permissions (menu UNION + LMS baseline). When present, authz
-   * must prefer this over the static role→permission map.
+   * Compat / deprecate-window claim (menu UNION snapshot at issue time).
+   * Non-authoritative — do not use for deny/allow decisions.
    */
   permissions?: string[];
 };
@@ -63,7 +70,8 @@ export async function signAccessToken(
     roles: claims.roles,
     sid: claims.sid,
     orgId: claims.orgId,
-    ...(claims.permissions ? { permissions: claims.permissions } : {}),
+    // Emit when caller provided the array (incl. empty) — compat / deprecate window.
+    ...(claims.permissions !== undefined ? { permissions: claims.permissions } : {}),
   })
     .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
     .setSubject(claims.sub)

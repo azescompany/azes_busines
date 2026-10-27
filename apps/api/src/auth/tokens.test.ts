@@ -4,7 +4,7 @@
  * ║ File: apps/api/src/auth/tokens.test.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-19
- * ║ Updated: 2026-10-19
+ * ║ Updated: 2026-10-27
  * ║ Purpose: JWT + refresh hash unit tests
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
@@ -33,6 +33,27 @@ describe('tokens', () => {
       sid: 'sess-1',
       roles: ['member'],
       orgId: null,
+    });
+  });
+
+  it('still emits permissions claim for client compat (non-authoritative)', async () => {
+    const token = await signAccessToken(
+      {
+        sub: 'user-1',
+        sid: 'sess-1',
+        roles: ['member'],
+        orgId: 'org-1',
+        permissions: ['catalog.read', 'dashboard.read'],
+      },
+      SECRET,
+    );
+    const claims = await verifyAccessToken(token, SECRET);
+    expect(claims).toEqual({
+      sub: 'user-1',
+      sid: 'sess-1',
+      roles: ['member'],
+      orgId: 'org-1',
+      permissions: ['catalog.read', 'dashboard.read'],
     });
   });
 

@@ -4,26 +4,28 @@
  * ║ File: apps/admin/src/layout/AdminShell.tsx
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-26
- * ║ Updated: 2026-10-26
- * ║ Purpose: Caspian L-shell — session bootstrap GET /me (TAGET M1.6)
+ * ║ Updated: 2026-10-27
+ * ║ Purpose: Caspian L-shell — /me nav + accessVersion bootstrap (Phase 07)
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
  */
 
 import { changeAppLocale, LOCALE_META, useTranslation, type SupportedLocale } from '@azes/i18n';
 import { useAuthClient, useAuthSession } from '@azes/auth';
-import { MuiBox } from '@azes/ui-web';
+import { MuiBox, MuiButton, Stack, Text } from '@azes/ui-web';
 import { AzesDashboardLayout } from '@azes/ui-web/layout';
 import { AzesAccountMenu, AzesLocaleMenu } from '@azes/ui-web/locale';
 import { AzesNavProvider } from '@azes/ui-web/navigation';
 import { AzesSettingsButton, AzesSettingsDrawer, useAzesSettings } from '@azes/ui-web/settings';
 import { useSidePanel } from '@azes/ui-web/side-panel';
 import { AzesSkeleton } from '@azes/ui-web/skeleton';
-import { useEffect, useMemo } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useEffect, useMemo, useRef } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 
 import { useAdminRouterAdapter } from '../app/router/useAdminRouterAdapter.js';
 import { pathTo, replaceLocaleInPathname, stripLocalePrefix } from '../app/router/paths.js';
+import { invalidateAccessQueries } from '../auth/invalidateAccessQueries.js';
 import { useSessionMe } from '../auth/useSessionMe.js';
 import { adminEnv } from '../config/env.js';
 import { OrgSwitcher } from '../features/organizations/index.js';
@@ -47,7 +49,9 @@ export function AdminShell() {
   const location = useLocation();
   const session = useAuthSession();
   const authClient = useAuthClient();
+  const queryClient = useQueryClient();
   const meQuery = useSessionMe();
+  const lastAccessVersion = useRef<number | undefined>(undefined);
 
   const locale = (i18n.language?.slice(0, 2) || 'az') as SupportedLocale;
 
@@ -79,8 +83,24 @@ export function AdminShell() {
     }
   }, [meQuery.isSuccess, meQuery.data?.nav, location.pathname, locale, navigate]);
 
+  /** When accessVersion changes after a live refetch, drop org-scoped caches. */
+  useEffect(() => {
+    const version = meQuery.data?.accessVersion;
+    if (typeof version !== 'number') return;
+    if (lastAccessVersion.current !== undefined && lastAccessVersion.current !== version) {
+      void queryClient.invalidateQueries({
+        predicate: (q) => {
+          const key = q.queryKey[0];
+          return key !== '/api/v1/me';
+        },
+      });
+    }
+    lastAccessVersion.current = version;
+  }, [meQuery.data?.accessVersion, queryClient]);
+
   const onLogout = () => {
     void (async () => {
+      queryClient.clear();
       await authClient.clearSession();
       window.location.assign(`${adminEnv.accountAppUrl}/`);
     })();
@@ -103,6 +123,40 @@ export function AdminShell() {
       </MuiBox>
     );
   }
+
+  if (meQuery.isError) {
+    return (
+      <MuiBox sx={{ p: 4, maxWidth: 480 }}>
+        <Stack gap={2}>
+          <Text size="lg" weight="semibold">
+            {t('shell.meError.title')}
+          </Text>
+          <Text tone="muted" size="sm">
+            {t('shell.meError.description')}
+          </Text>
+          <Stack direction="row" gap={1}>
+            <MuiButton
+              variant="contained"
+              onClick={() => {
+                void invalidateAccessQueries(queryClient);
+              }}
+            >
+              {t('shell.meError.retry')}
+            </MuiButton>
+            <MuiButton variant="text" onClick={onLogout}>
+              {t('account.logout')}
+            </MuiButton>
+          </Stack>
+        </Stack>
+      </MuiBox>
+    );
+  }
+
+  const modules = meQuery.data?.modules ?? [];
+  const blockedModules = modules.filter((m) => !m.enabled || m.subscriptionMode === 'blocked');
+  const readOnlyHint =
+    modules.some((m) => m.subscriptionMode === 'read_only') &&
+    !modules.every((m) => m.subscriptionMode === 'blocked');
 
   return (
     <AzesNavProvider router={router}>
@@ -156,6 +210,17 @@ export function AdminShell() {
             py: { xs: 2.5, sm: 3, md: 4 },
           }}
         >
+          {blockedModules.length > 0 || readOnlyHint ? (
+            <MuiBox sx={{ mb: 2 }}>
+              <Text size="sm" tone="muted">
+                {blockedModules.length > 0
+                  ? t('shell.access.modulesBlocked', {
+                      count: blockedModules.length,
+                    })
+                  : t('shell.access.readOnly')}
+              </Text>
+            </MuiBox>
+          ) : null}
           <Outlet />
         </MuiBox>
       </AzesDashboardLayout>

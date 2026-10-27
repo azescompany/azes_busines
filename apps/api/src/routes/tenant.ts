@@ -4,7 +4,7 @@
  * ║ File: apps/api/src/routes/tenant.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-26
- * ║ Updated: 2026-10-26
+ * ║ Updated: 2026-10-27
  * ║ Purpose: Tenant membership / invite / active-org HTTP APIs
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
@@ -115,6 +115,7 @@ export function createTenantRoutes(options: CreateTenantRoutesOptions = {}) {
   });
 
   routes.post('/api/v1/me/active-organization', requireAuth(), async (c) => {
+    // Identity from verified JWT (`sub`); body.orgId is target only (membership-checked).
     const user = getAuthUser(c);
     const body = parseBody(activeOrgSchema, await c.req.json());
     const tenant = resolveTenantRepo(c.env, options.tenantRepo);

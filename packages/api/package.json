@@ -46,6 +46,11 @@
       "import": "./src/azes/orgs/index.ts",
       "default": "./src/azes/orgs/index.ts"
     },
+    "./azes/modules": {
+      "types": "./src/azes/modules/index.ts",
+      "import": "./src/azes/modules/index.ts",
+      "default": "./src/azes/modules/index.ts"
+    },
     "./azes/menus": {
       "types": "./src/azes/menus/index.ts",
       "import": "./src/azes/menus/index.ts",
@@ -60,6 +65,16 @@
       "types": "./src/azes/dashboard/index.ts",
       "import": "./src/azes/dashboard/index.ts",
       "default": "./src/azes/dashboard/index.ts"
+    },
+    "./azes/users": {
+      "types": "./src/azes/users/index.ts",
+      "import": "./src/azes/users/index.ts",
+      "default": "./src/azes/users/index.ts"
+    },
+    "./azes/platform-roles": {
+      "types": "./src/azes/platform-roles/index.ts",
+      "import": "./src/azes/platform-roles/index.ts",
+      "default": "./src/azes/platform-roles/index.ts"
     }
   },
   "files": [
