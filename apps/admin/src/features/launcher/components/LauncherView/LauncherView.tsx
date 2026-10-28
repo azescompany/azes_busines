@@ -36,6 +36,7 @@ import type { AzesModuleDef } from '../../../../modules/types.js';
 import { EmptyState } from '../../../../shared/adminChrome/index.js';
 import { useAppsPrefs } from '../../hooks/useAppsPrefs.js';
 import { useFilteredModules, type AppsViewMode } from '../../hooks/useFilteredModules.js';
+import { LauncherScatterGrid } from '../LauncherScatterGrid/index.js';
 import { LauncherViewSkeleton } from '../LauncherViewSkeleton/LauncherViewSkeleton.js';
 import { ModuleTile } from '../ModuleTile/ModuleTile.js';
 
@@ -168,29 +169,13 @@ export function LauncherView() {
     return <LauncherViewSkeleton />;
   }
 
-  /** Fixed track width so incomplete rows center (not left-stuck in 1fr columns). */
-  const tileTrack = {
-    xs: theme.spacing(11),
-    sm: theme.spacing(12),
-    md: theme.spacing(13),
-  } as const;
-
-  const renderGrid = (mods: AzesModuleDef[], idOffset = 0) => (
-    <MuiBox
-      sx={{
-        display: 'grid',
-        width: '100%',
-        justifyContent: 'center',
-        justifyItems: 'center',
-        gridTemplateColumns: {
-          xs: `repeat(${COLS.xs}, ${tileTrack.xs})`,
-          sm: `repeat(${COLS.sm}, ${tileTrack.sm})`,
-          md: `repeat(${COLS.md}, ${tileTrack.md})`,
-          lg: `repeat(${COLS.lg}, ${tileTrack.md})`,
-        },
-        gap: { xs: 1, sm: 2, md: 2 },
-      }}
-    >
+  const renderGrid = (
+    mods: AzesModuleDef[],
+    idOffset = 0,
+    scrollTrigger = true,
+    intensity: 'full' | 'soft' = 'full',
+  ) => (
+    <LauncherScatterGrid count={mods.length} scrollTrigger={scrollTrigger} intensity={intensity}>
       {mods.map((mod, index) => {
         const flatIndex = idOffset + index;
         return (
@@ -209,7 +194,7 @@ export function LauncherView() {
           />
         );
       })}
-    </MuiBox>
+    </LauncherScatterGrid>
   );
 
   /** Demo audience only — tenant sees live modules (no “not saved” banner). */
@@ -293,7 +278,7 @@ export function LauncherView() {
                   <Text size="sm" weight="semibold" tone="muted">
                     {t('apps.favorites')}
                   </Text>
-                  {renderGrid(favList)}
+                  {renderGrid(favList, 0, true, 'full')}
                 </Stack>
               </MuiBox>
             ) : null}
@@ -303,7 +288,7 @@ export function LauncherView() {
                   <Text size="sm" weight="semibold" tone="muted">
                     {t('apps.recent')}
                   </Text>
-                  {renderGrid(recentList)}
+                  {renderGrid(recentList, 0, true, favList.length > 0 ? 'soft' : 'full')}
                 </Stack>
               </MuiBox>
             ) : null}
@@ -314,23 +299,27 @@ export function LauncherView() {
           <EmptyState title={t('apps.empty')} description={t('apps.emptyHint')} />
         ) : viewMode === 'grouped' && grouped ? (
           <Stack gap={3} align="center">
-            {grouped.map((g) => (
-              <MuiBox key={g.category} sx={{ width: '100%' }}>
-                <Stack gap={2} align="center">
-                  <Text size="md" weight="semibold">
-                    {t(`apps.category.${g.category}`)}
-                  </Text>
-                  {renderGrid(g.modules)}
-                </Stack>
-              </MuiBox>
-            ))}
+            {grouped.map((g, gi) => {
+              const leadTaken = favList.length > 0 || recentList.length > 0;
+              const intensity = !leadTaken && gi === 0 ? 'full' : 'soft';
+              return (
+                <MuiBox key={g.category} sx={{ width: '100%' }}>
+                  <Stack gap={2} align="center">
+                    <Text size="md" weight="semibold">
+                      {t(`apps.category.${g.category}`)}
+                    </Text>
+                    {renderGrid(g.modules, 0, true, intensity)}
+                  </Stack>
+                </MuiBox>
+              );
+            })}
           </Stack>
         ) : (
           <Stack gap={2} align="center">
             <Text size="sm" weight="semibold" tone="muted">
               {t('apps.allApps')}
             </Text>
-            {renderGrid(filtered)}
+            {renderGrid(filtered, 0, false, 'full')}
           </Stack>
         )}
       </Stack>

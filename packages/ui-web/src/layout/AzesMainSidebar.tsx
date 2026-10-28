@@ -5,7 +5,7 @@
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-28
  * ║ Updated: 2026-10-28
- * ║ Purpose: In-content section nav rail (module menus) — not L-shell chrome
+ * ║ Purpose: In-content section nav — paper ink via integrated navToneVars
  * ║ Layer: package
  * ╚══════════════════════════════════════════════════════════════╝
  */
@@ -21,6 +21,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useEffect, useState, type ReactNode } from 'react';
 
 import { AzesNavList } from '../navigation/AzesNavList';
+import { navToneVars } from '../navigation/navStyles';
 import type { AzesNavConfig } from '../navigation/types';
 
 export type AzesMainSidebarProps = {
@@ -113,13 +114,20 @@ export function AzesMainSidebar({
     </Box>
   );
 
+  /** Reset chrome contrast vars so AzesNavList ink is readable on paper (light mode). */
+  const paperNavTone = (t: typeof theme) => ({
+    ...navToneVars(t, 'integrated'),
+    color: 'var(--azes-nav-text-strong)',
+  });
+
   if (isDesktop) {
     return (
       <Box
         component="aside"
         aria-label={label}
         data-azes-main-sidebar=""
-        sx={{
+        sx={(t) => ({
+          ...paperNavTone(t),
           flexShrink: 0,
           width: 'var(--azes-layout-content-sidebar-width)',
           alignSelf: 'flex-start',
@@ -129,9 +137,9 @@ export function AzesMainSidebar({
           borderInlineEnd: '1px solid',
           borderColor: 'divider',
           bgcolor: 'background.paper',
-          borderRadius: (t) => `${t.shape.radiusMd}px`,
+          borderRadius: `${t.shape.radiusMd}px`,
           mr: { lg: 2 },
-        }}
+        })}
       >
         {panel}
       </Box>
@@ -171,11 +179,12 @@ export function AzesMainSidebar({
         slotProps={{
           paper: {
             'aria-label': label,
-            sx: {
+            sx: (t) => ({
+              ...paperNavTone(t),
               width: 'var(--azes-layout-content-sidebar-width)',
               maxWidth: '85vw',
               bgcolor: 'background.paper',
-            },
+            }),
           },
         }}
       >

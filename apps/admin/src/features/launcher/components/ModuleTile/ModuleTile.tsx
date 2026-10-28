@@ -41,7 +41,9 @@ export function ModuleTile({
   const { t } = useTranslation(ADMIN_NAMESPACE);
   const theme = useTheme();
   const accentMain = theme.vars.palette[module.accent].main;
+  const primaryMain = theme.vars.palette.primary.main;
   const title = t(module.i18nKey);
+  const ring = `0 0 0 2px ${primaryMain}`;
 
   const stopFav = (e: MouseEvent) => {
     e.preventDefault();
@@ -71,59 +73,102 @@ export function ModuleTile({
         transition: theme.transitions.create(['transform', 'box-shadow'], {
           duration: theme.transitions.duration.shorter,
         }),
-        '&:hover': {
+        '&:hover, &:focus-visible': {
           transform: 'translateY(-2px)',
           boxShadow: theme.azes.customShadows.card,
           '& [data-azes-module-icon]': {
-            outline: `2px solid ${theme.vars.palette.primary.main}`,
-            outlineOffset: 2,
+            boxShadow: ring,
+          },
+          /* Star sits on the ring: knockout disc + primary stroke = continuous border. */
+          '& [data-azes-module-fav]': {
+            opacity: 1,
+            color: primaryMain,
+            bgcolor: 'background.default',
+            boxShadow: `0 0 0 ${theme.spacing(0.5)} ${theme.vars.palette.background.default}`,
+            '& .MuiSvgIcon-root': {
+              color: primaryMain,
+            },
           },
         },
         '&:focus-visible': {
-          boxShadow: `0 0 0 3px color-mix(in srgb, ${theme.vars.palette.primary.main} 45%, transparent)`,
+          boxShadow: `0 0 0 3px color-mix(in srgb, ${primaryMain} 45%, transparent)`,
         },
         '@media (prefers-reduced-motion: reduce)': {
           transition: 'none',
-          '&:hover': { transform: 'none' },
+          '&:hover, &:focus-visible': { transform: 'none' },
         },
       }}
     >
-      <IconButton
-        size="small"
-        aria-label={favorite ? t('apps.unfavorite') : t('apps.favorite')}
-        aria-pressed={favorite}
-        onClick={stopFav}
-        sx={{
-          position: 'absolute',
-          top: 0,
-          insetInlineEnd: 0,
-          zIndex: 1,
-          opacity: favorite ? 1 : 0.35,
-          '&:hover, &:focus-visible': { opacity: 1 },
-        }}
-      >
-        {favorite ? (
-          <IconStarFilled fontSize="small" color="warning" />
-        ) : (
-          <IconStar fontSize="small" />
-        )}
-      </IconButton>
-
       <MuiBox
-        data-azes-module-icon
+        data-azes-module-glyph
         sx={{
+          position: 'relative',
           width: { xs: 56, sm: 64 },
           height: { xs: 56, sm: 64 },
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: `${theme.shape.radiusLg}px`,
-          bgcolor: `color-mix(in srgb, ${accentMain} 14%, transparent)`,
-          color: accentMain,
-          '& .MuiSvgIcon-root': { fontSize: { xs: 28, sm: 32 } },
+          flexShrink: 0,
         }}
       >
-        {resolveModuleIcon(module.iconKey, 'large')}
+        <MuiBox
+          data-azes-module-icon
+          sx={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: `${theme.shape.radiusLg}px`,
+            bgcolor: `color-mix(in srgb, ${accentMain} 14%, transparent)`,
+            color: accentMain,
+            transition: theme.transitions.create(['box-shadow'], {
+              duration: theme.transitions.duration.shorter,
+            }),
+            '@media (prefers-reduced-motion: reduce)': {
+              transition: 'none',
+            },
+            '& .MuiSvgIcon-root': { fontSize: { xs: 28, sm: 32 } },
+          }}
+        >
+          {resolveModuleIcon(module.iconKey, 'large')}
+        </MuiBox>
+
+        <IconButton
+          data-azes-module-fav
+          size="small"
+          aria-label={favorite ? t('apps.unfavorite') : t('apps.favorite')}
+          aria-pressed={favorite}
+          onClick={stopFav}
+          sx={{
+            position: 'absolute',
+            top: 0,
+            insetInlineEnd: 0,
+            zIndex: 2,
+            p: 0.25,
+            minWidth: 0,
+            width: theme.spacing(2.75),
+            height: theme.spacing(2.75),
+            transform: 'translate(35%, -35%)',
+            borderRadius: '50%',
+            opacity: favorite ? 1 : 0.4,
+            color: favorite ? theme.vars.palette.warning.main : 'text.secondary',
+            bgcolor: 'transparent',
+            transition: theme.transitions.create(
+              ['opacity', 'color', 'background-color', 'box-shadow'],
+              {
+                duration: theme.transitions.duration.shorter,
+              },
+            ),
+            '&:hover, &:focus-visible': {
+              opacity: 1,
+              bgcolor: 'background.default',
+            },
+            '@media (prefers-reduced-motion: reduce)': {
+              transition: 'none',
+            },
+            '& .MuiSvgIcon-root': { fontSize: theme.spacing(2) },
+          }}
+        >
+          {favorite ? <IconStarFilled fontSize="inherit" /> : <IconStar fontSize="inherit" />}
+        </IconButton>
       </MuiBox>
 
       <MuiBox

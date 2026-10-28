@@ -197,6 +197,18 @@ LandingShell). See `docs/access_control/UNIFIED_HOME.md`.
 
 ## Delta log
 
+- 2026-10-28 — ModuleTile hover: icon ring + favorite star share one primary stroke
+  (star on corner with `background.default` knockout so the ring does not cut through).
+- 2026-10-28 — Launcher **Spiral Bloom** entrance (replaces stack/hold scatter): CSS
+  `@keyframes` path (6 samples / 4 mobile) + spin/scale/opacity; constants in
+  `spiralConfig.ts`, pure math `spiralPose.ts` + vitest; `intensity` full|soft;
+  IO trigger kept; reduced-motion → instant settle; transform+opacity only.
+- 2026-10-28 — Launcher scatter polish (superseded by Spiral Bloom): hold ~1100ms →
+  settle ~1650ms soft ease; quadratic distance stagger.
+- 2026-10-28 — `AzesMainSidebar`: `navToneVars(..., 'integrated')` on paper/drawer so
+  chrome contrast `--azes-nav-text` (white) no longer hides inactive items in light mode.
+  Admin launcher: `LauncherScatterGrid` — stack→settle on IO / mount (`transform`+`opacity`;
+  `prefers-reduced-motion` → settled).
 - 2026-10-28 — `AzesMainSidebar` (`@azes/ui-web/layout`): in-content module/section nav
   (sticky `lg+`, drawer below); token `layoutPx.contentSidebarWidth` + CSS var
   `--azes-layout-content-sidebar-width`. Admin module workspace uses it; shell horizontal

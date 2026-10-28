@@ -91,6 +91,9 @@ type AzesMainSidebarProps = {
 - Desktop (`lg+`): sticky aside, width `--azes-layout-content-sidebar-width`.
 - Below `layoutQuery`: menu button + temporary Drawer.
 - Apps pass already-translated module menus; shell chrome nav stays separate.
+- **Ink:** always apply `navToneVars(theme, 'integrated')` on the sidebar root (and drawer
+  paper). Chrome `contrast` vars cascade into the scoop; without reset, inactive
+  `AzesNavList` labels are near-white on paper in light mode.
 
 Components use the variables, never literal px. The audit check `layout-hardcoded-values`
 rejects px literals in `packages/ui-web/src/layout`.
