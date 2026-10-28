@@ -4,8 +4,8 @@
  * ║ File: packages/design-tokens/src/primitives/layout.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-04
- * ║ Updated: 2026-10-05
- * ║ Purpose: Application layout dimensions — L-shell flush gap + Adobe scoop join radius
+ * ║ Updated: 2026-10-28
+ * ║ Purpose: Application layout dimensions — L-shell + content sidebar width
  * ║ Layer: package
  * ╚══════════════════════════════════════════════════════════════╝
  */
@@ -21,6 +21,11 @@ export const layoutPx = {
   navMobileWidth: 288,
   /** Horizontal menus toolbar strip height (Apps row). */
   navHorizontalHeight: 56,
+  /**
+   * In-content module/section sidebar (`AzesMainSidebar`).
+   * Published as `--azes-layout-content-sidebar-width`.
+   */
+  contentSidebarWidth: 240,
   contentMaxWidth: 1280,
   pagePaddingXs: 16,
   pagePaddingMd: 24,

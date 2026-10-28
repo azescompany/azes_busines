@@ -41,6 +41,8 @@ apps/api/seed.sql
 apps/api/seed-role-users.sql
 apps/api/seed-lms.sql
 apps/api/seed.err
+# Phase 09 demo seed artifacts (credentials + generated SQL)
+apps/api/.local/
 
 # Cloudflare Wrangler local state
 .wrangler/

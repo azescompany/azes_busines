@@ -88,9 +88,10 @@ const activeOrgSchema = z.object({
   orgId: z.string().min(1),
 });
 
+/** ERP default `member`/`orgAdmin`; instructor/student = LMS channel only (Phase 09). */
 const inviteSchema = z.object({
   email: z.string().email(),
-  role: z.enum(['orgAdmin', 'instructor', 'student']),
+  role: z.enum(['orgAdmin', 'member', 'instructor', 'student']).optional(),
 });
 
 const acceptInviteSchema = z.object({
@@ -100,7 +101,7 @@ const acceptInviteSchema = z.object({
 });
 
 const memberPatchSchema = z.object({
-  role: z.enum(['orgAdmin', 'instructor', 'student', 'guest']).optional(),
+  role: z.enum(['orgAdmin', 'member', 'instructor', 'student', 'guest']).optional(),
   status: z.enum(['active', 'disabled', 'revoked']).optional(),
 });
 
@@ -209,7 +210,7 @@ export function createTenantRoutes(options: CreateTenantRoutesOptions = {}) {
       actor: user,
       orgId: c.req.param('orgId'),
       email: body.email,
-      role: body.role,
+      role: body.role ?? 'member',
     });
     return c.json(created, 201);
   });

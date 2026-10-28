@@ -33,6 +33,7 @@ import { z } from 'zod';
 
 import { pathTo, PATHS } from '../../../../app/router/paths.js';
 import { checkPermission } from '../../../../auth/checkPermission.js';
+import { invalidateAccessQueries } from '../../../../auth/invalidateAccessQueries.js';
 import { useSessionMe } from '../../../../auth/useSessionMe.js';
 import { ADMIN_NAMESPACE } from '../../../../i18n/createAdminI18n.js';
 import {
@@ -160,6 +161,7 @@ export function PlatformRolesView() {
         await queryClient.invalidateQueries({
           queryKey: getGetApiV1PlatformRolesQueryKey(),
         });
+        await invalidateAccessQueries(queryClient);
         notify.success(t('platformRoles.dialog.deleted'));
       } catch {
         notify.error(t('platformRoles.createError'));

@@ -2,14 +2,14 @@
 # File: packages/api/openapi/azes/openapi.yaml
 # Author: AZES_COMPANY
 # Created: 2026-10-19
-# Updated: 2026-10-27
+# Updated: 2026-10-28
 # Purpose: AZES OpenAPI — auth + LMS + tenant + menu RBAC (M1.5)
 # Layer: package
 
 openapi: 3.0.3
 info:
   title: AZES API
-  version: 0.20.0
+  version: 0.21.0
   description: |
     AZES HTTP API client contract (auth + LMS + tenant + menu RBAC + ERP + tenant console).
     Runtime behaviour is owned by apps/api (@azes/api-server).
@@ -18,6 +18,7 @@ info:
     Phase 03: organization_units + unit_memberships (in-tenant; not parentOrganizationId).
     Phase 04: module entitlement + subscription lite (blocked/trial/read-only).
     Phase 06: Unified Effective Access Resolver (requirePermission + /me same policy); ACCESS_RESOLVER_MODE=legacy|unified.
+    Phase 09: audit-logs list (audit.read); LMS soft de-authz; GeneralAdmin capability.
 servers:
   - url: http://127.0.0.1:8787
     description: Local Wrangler Worker
@@ -42,6 +43,8 @@ tags:
     description: Platform user create/list (SuperAdmin + orgAdmin)
   - name: platform-roles
     description: Elastic role catalog (SuperAdmin)
+  - name: audit
+    description: Privileged action audit log (Phase 09)
 paths:
   /api/v1/me:
     get:
@@ -2825,6 +2828,42 @@ paths:
                 properties:
                   ok:
                     type: boolean
+
+  /api/v1/audit-logs:
+    get:
+      tags: [audit]
+      operationId: getApiV1AuditLogs
+      summary: List recent audit log entries (requires audit.read)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+      responses:
+        '200':
+          description: Audit log page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLogList'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
 components:
   securitySchemes:
     bearerAuth:
@@ -2832,6 +2871,27 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    AuditLogItem:
+      type: object
+      required: [id, actorUserId, action, createdAt]
+      properties:
+        id: { type: string }
+        actorUserId: { type: string, nullable: true }
+        orgId: { type: string, nullable: true }
+        action: { type: string }
+        targetType: { type: string, nullable: true }
+        targetId: { type: string, nullable: true }
+        meta: { nullable: true }
+        createdAt: { type: integer }
+    AuditLogList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogItem'
+
     AuthLoginRequest:
       type: object
       required: [username, password, deviceId, userAgent, platform, language]

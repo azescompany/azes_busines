@@ -11,6 +11,13 @@
  */
 
 export {
+  getApiV1AuditLogs,
+  getGetApiV1AuditLogsQueryKey,
+  getGetApiV1AuditLogsQueryOptions,
+  useGetApiV1AuditLogs,
+} from './audit';
+export type * from './audit';
+export {
   getApiV1Me,
   getGetApiV1MeQueryKey,
   getGetApiV1MeQueryOptions,

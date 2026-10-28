@@ -4,7 +4,7 @@
 ║ File: docs/styles/CURRENT-STATE.md
 ║ Author: AZES_COMPANY
 ║ Created: 2026-10-09
-║ Updated: 2026-10-26
+║ Updated: 2026-10-28
 ║ Purpose: Living snapshot of AZES web UI/theme architecture for Agent Dizayner
 ║ Layer: docs
 ╚══════════════════════════════════════════════════════════════╝
@@ -142,17 +142,24 @@ in layout engine.
 
 ### App adoption (web)
 
-| App                | Theme / UI shell                                              | Notes                                                                                                        |
-| ------------------ | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `account`          | `AzesUiProvider`                                              | Login/branding in app features; no dashboard layout yet                                                      |
-| `admin`            | `AzesUiProvider` + `AzesDashboardLayout` in `AdminShell`      | Port **200**; Home-only primary nav; locale + `AzesAccountMenu` in `headerEnd`; settings drawer (no AI rail) |
-| `azes-ui`          | Showcase / pilot                                              | Full platform demos · port **700**                                                                           |
-| `agent-platform`   | `AzesThemeProvider` only                                      | Lighter Vite shell                                                                                           |
-| `agent-site`       | `AzesThemeProvider` (+ Next exceptions per ADR-009)           | App Router · port 3000                                                                                       |
-| `realestate`       | `AzesThemeProvider` (+ Next exceptions per ADR-009)           | App Router                                                                                                   |
-| `real-estate-site` | `AzesUiProvider` + `AzesDashboardLayout` (`CaspianSiteShell`) | Caspian Key L-shell + Phase 2 scoop marketplace UI; brief: `styles-current/real-estate-site.md`              |
+| App                | Theme / UI shell                                               | Notes                                                                                                      |
+| ------------------ | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `account`          | `AzesUiProvider`                                               | Login/branding in app features; no dashboard layout yet                                                    |
+| `admin`            | `AzesUiProvider` + public `LandingShell` + tenant `AdminShell` | Port **200**; `/:locale` public landing (no L-nav); `/apps` + modules under AuthGate `AzesDashboardLayout` |
+| `azes-ui`          | Showcase / pilot                                               | Full platform demos · port **700**                                                                         |
+| `agent-platform`   | `AzesThemeProvider` only                                       | Lighter Vite shell                                                                                         |
+| `agent-site`       | `AzesThemeProvider` (+ Next exceptions per ADR-009)            | App Router · port 3000                                                                                     |
+| `realestate`       | `AzesThemeProvider` (+ Next exceptions per ADR-009)            | App Router                                                                                                 |
+| `real-estate-site` | `AzesUiProvider` + `AzesDashboardLayout` (`CaspianSiteShell`)  | Caspian Key L-shell + Phase 2 scoop marketplace UI; brief: `styles-current/real-estate-site.md`            |
 
 Native (`ui-native`) unchanged relative to the MUI web platform track.
+
+**Admin unified AppShell:** `AdminShell` + `AzesDashboardLayout` for both audiences.
+`hidePrimaryNav` **or empty `nav` items** suppresses horizontal menu strip + Hide/Show menus
+waffle; mini-rail + header (logo / headerStart / headerEnd) stay. Helper
+`hasPrimaryNavItems`. Demo: rail + appbar + Login CTA; tenant: full Caspian toolbar from
+`/me.nav` + OrgSwitcher + Account. Home `/` = same `LauncherView` density (no marketing
+LandingShell). See `docs/access_control/UNIFIED_HOME.md`.
 
 ### File map (edit here first)
 
@@ -168,7 +175,7 @@ Native (`ui-native`) unchanged relative to the MUI web platform track.
 | Carousel                   | `packages/ui-web/src/carousel/*`                                                                                                        |
 | AzesTable                  | `packages/ui-web/src/table/AzesTable.tsx`, `tableStyles.ts`                                                                             |
 | DataGrid (legacy)          | `packages/ui-web/src/data-grid/AzesDataGrid.tsx`, `dataGridStyles.ts`                                                                   |
-| Admin chrome example       | `apps/admin/src/layout/AdminShell.tsx`                                                                                                  |
+| Admin chrome example       | `apps/admin/src/layout/AdminShell.tsx` (tenant); `features/landing` = public LandingShell (no L-nav)                                    |
 | Account providers          | `apps/account/src/providers/AppProviders.tsx`                                                                                           |
 
 ### Topic doc map
@@ -190,6 +197,20 @@ Native (`ui-native`) unchanged relative to the MUI web platform track.
 
 ## Delta log
 
+- 2026-10-28 — `AzesMainSidebar` (`@azes/ui-web/layout`): in-content module/section nav
+  (sticky `lg+`, drawer below); token `layoutPx.contentSidebarWidth` + CSS var
+  `--azes-layout-content-sidebar-width`. Admin module workspace uses it; shell horizontal
+  nav empty inside modules. Launcher grid centered (`justifyContent` + fixed tile tracks).
+- 2026-10-28 — Admin **Apps Launcher** (`/`): Odoo-inspired module grid (35 registry
+  modules under `apps/admin/src/modules/`); search / favorites / grouped categories;
+  `/m/:moduleId/*` workspace with module menus in L-shell; prefs key `azes.admin.apps.v1`
+  (not settings store). Icons + CURRENT-STATE for launcher tiles.
+- 2026-10-28 — Apps launcher icons (`@azes/ui-web/icons`): `IconChat`, `IconHandshake`,
+  `IconInventory`, `IconCart`, `IconAccountBalance`, `IconPayments`, `IconReceipt`,
+  `IconPointOfSale`, `IconRestaurant`, `IconBarcode`, `IconDraw`, `IconBadge`,
+  `IconPersonSearch`, `IconBeach`, `IconTask`, `IconEvent`/`IconEventAvailable`,
+  `IconSchedule`, `IconSupportAgent`, `IconFactory`, `IconManufacturing`,
+  `IconSubscriptions`, `IconKey`, `IconStar`/`IconStarFilled` — for Admin module tiles.
 - 2026-10-26 — Admin premium chrome (`apps/admin/src/shared/adminChrome/`):
   `PageHeader` diagonal primary wash (`linear-gradient(135deg)` + `alpha(primary, 0.06–0.10)`);
   `EmptyState` repeating 45° stripe pattern; `FilterToolbar` search + chip filters;
@@ -650,3 +671,16 @@ Newest first. One bullet per change set. Format:
 - 2026-10-20 — Account login copy → AZES Academy / LMS (en/az/ru): brand, welcome,
   showcase hero + 5 decorative card labels (courses/progress/path/kanban); layout,
   tokens, and card chrome unchanged (`31-login-shell.md`).
+- 2026-10-28 — Admin Phase 09 audit logs: `AuditLogsViewSkeleton` (layout-matched
+  `AzesSkeletonGroup` + responsive filter stack xs→sm); no new tokens/hex.
+- 2026-10-28 — Admin public LandingShell (`features/landing`): light chrome (brand,
+  locale, login CTA, demo banner) + MODULE_REGISTRY grid; mobile-first cols 3→6;
+  token gradient/surfaces only; tenant launcher moved to `/apps` (AuthGate).
+- 2026-10-28 — Landing visual polish: sticky paper header (blur) vs tenant
+  `AdminShell` contrast L-nav; dismissible demo banner (`azes.admin.landing.banner.v1`);
+  hero CTA hierarchy + ModuleTile-aligned fixed-track grid (3→6); `contentMaxWidth`
+  - spacing/touch targets; no new ui-web primitive.
+- 2026-10-28 — Unified AppShell: `AzesDashboardLayout.hidePrimaryNav` (demo toolbar off);
+  `LandingShell` demounted; `/` = LauncherView audience demo|tenant; rail home `/`.
+- 2026-10-28 — `hidePrimaryNav` + empty-nav: no horizontal menus strip / waffle; export
+  `hasPrimaryNavItems`; layout tests; demo headerEnd Login spacing + launcher banner density.

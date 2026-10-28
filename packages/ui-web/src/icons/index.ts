@@ -4,8 +4,8 @@
  * ║ File: packages/ui-web/src/icons/index.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-04
- * ║ Updated: 2026-10-13
- * ║ Purpose: Curated semantic icon exports (+ listing contact/meta) and createAzesIcon
+ * ║ Updated: 2026-10-28
+ * ║ Purpose: Curated semantic icon exports (+ apps launcher module icons)
  * ║ Layer: package
  * ╚══════════════════════════════════════════════════════════════╝
  */
@@ -13,21 +13,26 @@
 export { createAzesIcon, type AzesIcon, type AzesIconProps } from './createAzesIcon';
 
 // One path import per icon keeps unused icons out of app bundles.
+export { default as IconAccessibility } from '@mui/icons-material/AccessibilityNewOutlined';
+export { default as IconAccountBalance } from '@mui/icons-material/AccountBalanceOutlined';
 export { default as IconAdd } from '@mui/icons-material/Add';
 export { default as IconAgency } from '@mui/icons-material/StorefrontOutlined';
+export { default as IconAi } from '@mui/icons-material/AutoAwesomeOutlined';
 export { default as IconAnalytics } from '@mui/icons-material/InsightsOutlined';
 export { default as IconApps } from '@mui/icons-material/Apps';
 export { default as IconArrowBack } from '@mui/icons-material/ArrowBack';
 export { default as IconArrowForward } from '@mui/icons-material/ArrowForward';
+export { default as IconBadge } from '@mui/icons-material/BadgeOutlined';
+export { default as IconBarcode } from '@mui/icons-material/QrCode2Outlined';
 export { default as IconBath } from '@mui/icons-material/BathtubOutlined';
+export { default as IconBeach } from '@mui/icons-material/BeachAccessOutlined';
 export { default as IconBed } from '@mui/icons-material/BedOutlined';
 export { default as IconBudget } from '@mui/icons-material/AccountBalanceWalletOutlined';
-export { default as IconFullscreen } from '@mui/icons-material/FullscreenOutlined';
-export { default as IconFullscreenExit } from '@mui/icons-material/FullscreenExitOutlined';
-export { default as IconImage } from '@mui/icons-material/ImageOutlined';
 export { default as IconBusiness } from '@mui/icons-material/BusinessOutlined';
 export { default as IconCalendar } from '@mui/icons-material/CalendarMonthOutlined';
 export { default as IconCampaign } from '@mui/icons-material/CampaignOutlined';
+export { default as IconCart } from '@mui/icons-material/ShoppingCartOutlined';
+export { default as IconChat } from '@mui/icons-material/ForumOutlined';
 export { default as IconCheck } from '@mui/icons-material/Check';
 export { default as IconChevronDown } from '@mui/icons-material/ExpandMore';
 export { default as IconChevronLeft } from '@mui/icons-material/ChevronLeft';
@@ -38,50 +43,70 @@ export { default as IconComponents } from '@mui/icons-material/WidgetsOutlined';
 export { default as IconContact } from '@mui/icons-material/ContactMailOutlined';
 export { default as IconDashboard } from '@mui/icons-material/SpaceDashboardOutlined';
 export { default as IconDelete } from '@mui/icons-material/DeleteOutlined';
+export { default as IconDocs } from '@mui/icons-material/MenuBookOutlined';
 export { default as IconDocument } from '@mui/icons-material/DescriptionOutlined';
 export { default as IconDownload } from '@mui/icons-material/FileDownloadOutlined';
+export { default as IconDraw } from '@mui/icons-material/DrawOutlined';
 export { default as IconEdit } from '@mui/icons-material/EditOutlined';
 export { default as IconEmail } from '@mui/icons-material/EmailOutlined';
-export { default as IconFacebook } from '@mui/icons-material/Facebook';
-export { default as IconInstagram } from '@mui/icons-material/Instagram';
-export { default as IconLinkedIn } from '@mui/icons-material/LinkedIn';
-export { default as IconX } from '@mui/icons-material/X';
 export { default as IconError } from '@mui/icons-material/ErrorOutlined';
+export { default as IconEvent } from '@mui/icons-material/EventOutlined';
+export { default as IconEventAvailable } from '@mui/icons-material/EventAvailableOutlined';
+export { default as IconFacebook } from '@mui/icons-material/Facebook';
+export { default as IconFactory } from '@mui/icons-material/FactoryOutlined';
 export { default as IconFavorite } from '@mui/icons-material/FavoriteBorderOutlined';
 export { default as IconFavoriteFilled } from '@mui/icons-material/Favorite';
 export { default as IconFilter } from '@mui/icons-material/FilterListOutlined';
 export { default as IconForm } from '@mui/icons-material/AssignmentOutlined';
+export { default as IconFullscreen } from '@mui/icons-material/FullscreenOutlined';
+export { default as IconFullscreenExit } from '@mui/icons-material/FullscreenExitOutlined';
+export { default as IconGlobe } from '@mui/icons-material/PublicOutlined';
+export { default as IconHandshake } from '@mui/icons-material/HandshakeOutlined';
 export { default as IconHelp } from '@mui/icons-material/HelpOutlineOutlined';
 export { default as IconHome } from '@mui/icons-material/HomeOutlined';
+export { default as IconImage } from '@mui/icons-material/ImageOutlined';
 export { default as IconInbox } from '@mui/icons-material/InboxOutlined';
 export { default as IconInfo } from '@mui/icons-material/InfoOutlined';
+export { default as IconInstagram } from '@mui/icons-material/Instagram';
+export { default as IconInventory } from '@mui/icons-material/Inventory2Outlined';
+export { default as IconKey } from '@mui/icons-material/VpnKeyOutlined';
 export { default as IconLanguage } from '@mui/icons-material/TranslateOutlined';
-export { default as IconGlobe } from '@mui/icons-material/PublicOutlined';
 export { default as IconLayout } from '@mui/icons-material/ViewQuiltOutlined';
+export { default as IconLinkedIn } from '@mui/icons-material/LinkedIn';
 export { default as IconList } from '@mui/icons-material/ListAltOutlined';
 export { default as IconLock } from '@mui/icons-material/LockOutlined';
 export { default as IconLogout } from '@mui/icons-material/LogoutOutlined';
+export { default as IconManufacturing } from '@mui/icons-material/PrecisionManufacturingOutlined';
 export { default as IconMenu } from '@mui/icons-material/Menu';
 export { default as IconMore } from '@mui/icons-material/MoreVert';
 export { default as IconNavigation } from '@mui/icons-material/AccountTreeOutlined';
 export { default as IconNotifications } from '@mui/icons-material/NotificationsNoneOutlined';
 export { default as IconPalette } from '@mui/icons-material/PaletteOutlined';
+export { default as IconPayments } from '@mui/icons-material/PaymentsOutlined';
 export { default as IconPeople } from '@mui/icons-material/PeopleOutlined';
 export { default as IconPerson } from '@mui/icons-material/PersonOutlined';
+export { default as IconPersonSearch } from '@mui/icons-material/PersonSearchOutlined';
 export { default as IconPhone } from '@mui/icons-material/PhoneOutlined';
 export { default as IconPlace } from '@mui/icons-material/PlaceOutlined';
+export { default as IconPointOfSale } from '@mui/icons-material/PointOfSaleOutlined';
+export { default as IconReceipt } from '@mui/icons-material/ReceiptLongOutlined';
+export { default as IconRestaurant } from '@mui/icons-material/RestaurantOutlined';
+export { default as IconSchedule } from '@mui/icons-material/ScheduleOutlined';
 export { default as IconSearch } from '@mui/icons-material/Search';
 export { default as IconSecurity } from '@mui/icons-material/SecurityOutlined';
 export { default as IconSell } from '@mui/icons-material/SellOutlined';
 export { default as IconSettings } from '@mui/icons-material/SettingsOutlined';
 export { default as IconSquareFoot } from '@mui/icons-material/SquareFootOutlined';
+export { default as IconStar } from '@mui/icons-material/StarBorderOutlined';
+export { default as IconStarFilled } from '@mui/icons-material/Star';
+export { default as IconSubscriptions } from '@mui/icons-material/AutorenewOutlined';
 export { default as IconSuccess } from '@mui/icons-material/CheckCircleOutlined';
+export { default as IconSupportAgent } from '@mui/icons-material/SupportAgentOutlined';
 export { default as IconTable } from '@mui/icons-material/TableChartOutlined';
+export { default as IconTask } from '@mui/icons-material/TaskAltOutlined';
 export { default as IconUpload } from '@mui/icons-material/FileUploadOutlined';
 export { default as IconVisibility } from '@mui/icons-material/VisibilityOutlined';
 export { default as IconVisibilityOff } from '@mui/icons-material/VisibilityOffOutlined';
 export { default as IconWarning } from '@mui/icons-material/WarningAmberOutlined';
 export { default as IconWhatsApp } from '@mui/icons-material/WhatsApp';
-export { default as IconAccessibility } from '@mui/icons-material/AccessibilityNewOutlined';
-export { default as IconAi } from '@mui/icons-material/AutoAwesomeOutlined';
-export { default as IconDocs } from '@mui/icons-material/MenuBookOutlined';
+export { default as IconX } from '@mui/icons-material/X';

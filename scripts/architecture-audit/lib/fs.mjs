@@ -4,7 +4,7 @@
  * ║ File: scripts/architecture-audit/lib/fs.mjs
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-08-22
- * ║ Updated: 2026-08-22
+ * ║ Updated: 2026-10-28
  * ║ Purpose: Shared filesystem helpers for architecture audits
  * ║ Layer: tooling
  * ╚══════════════════════════════════════════════════════════════╝
@@ -22,6 +22,7 @@ const IGNORE_DIR_NAMES = new Set([
   '.turbo',
   '.next',
   '.expo',
+  '.wrangler',
   'playwright-report',
   'test-results',
   '.git',
@@ -74,13 +75,16 @@ export function rel(root, filePath) {
 }
 
 export function listWorkspacePackageDirs(root) {
-  const apps = fs
-    .readdirSync(path.join(root, 'apps'), { withFileTypes: true })
-    .filter((d) => d.isDirectory())
-    .map((d) => path.join(root, 'apps', d.name));
-  const packages = fs
-    .readdirSync(path.join(root, 'packages'), { withFileTypes: true })
-    .filter((d) => d.isDirectory())
-    .map((d) => path.join(root, 'packages', d.name));
-  return { apps, packages };
+  /** Only real workspace packages (ignore asset folders without package.json). */
+  const withPackageJson = (base) =>
+    fs
+      .readdirSync(path.join(root, base), { withFileTypes: true })
+      .filter((d) => d.isDirectory())
+      .map((d) => path.join(root, base, d.name))
+      .filter((dir) => fs.existsSync(path.join(dir, 'package.json')));
+
+  return {
+    apps: withPackageJson('apps'),
+    packages: withPackageJson('packages'),
+  };
 }

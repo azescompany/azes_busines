@@ -11,7 +11,8 @@
  */
 
 export type MembershipRole = 'orgAdmin' | 'instructor' | 'student' | 'guest' | 'member';
-export type InviteRole = 'orgAdmin' | 'instructor' | 'student';
+/** Phase 09: `member` for ERP invites; instructor/student = LMS channel. */
+export type InviteRole = 'orgAdmin' | 'member' | 'instructor' | 'student';
 export type MembershipStatus = 'active' | 'disabled' | 'revoked';
 export type InvitationStatus = 'pending' | 'accepted' | 'revoked' | 'expired';
 

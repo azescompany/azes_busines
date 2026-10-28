@@ -9,8 +9,9 @@ M5.0-lite: org color/subscription, platform users/roles.
 Phase 03: organization_units + unit_memberships (in-tenant; not parentOrganizationId).
 Phase 04: module entitlement + subscription lite (blocked/trial/read-only).
 Phase 06: Unified Effective Access Resolver (requirePermission + /me same policy); ACCESS_RESOLVER_MODE=legacy|unified.
+Phase 09: audit-logs list (audit.read); LMS soft de-authz; GeneralAdmin capability.
 
- * OpenAPI spec version: 0.20.0
+ * OpenAPI spec version: 0.21.0
  */
 
 export type OrgInvitationCreatedAllOf = {

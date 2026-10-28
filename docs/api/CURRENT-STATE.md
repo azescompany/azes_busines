@@ -4,7 +4,7 @@
 ║ File: docs/api/CURRENT-STATE.md
 ║ Author: AZES_COMPANY
 ║ Created: 2026-10-09
-║ Updated: 2026-10-27
+║ Updated: 2026-10-28
 ║ Purpose: Living snapshot of AZES API / Query / auth-bridge for Agent Worker
 ║ Layer: docs
 ╚══════════════════════════════════════════════════════════════╝
@@ -29,7 +29,7 @@ Codegen hard rules: `.cursor/rules/api-generation.mdc`.
 | Layer          | Package / entry                           | Role                                                                    |
 | -------------- | ----------------------------------------- | ----------------------------------------------------------------------- |
 | HTTP runtime   | `apps/api` (`@azes/api-server`)           | Hono + Workers + D1 (+ R2 FILES) — auth + LMS read/manage               |
-| Spec (AZES)    | `packages/api/openapi/azes/openapi.yaml`  | Auth + LMS + tenant + units + modules + ERP + /me access (v0.20)        |
+| Spec (AZES)    | `packages/api/openapi/azes/openapi.yaml`  | Auth + LMS + tenant + units + modules + ERP + /me + audit (v0.21)       |
 | Spec (ADMIN)   | `packages/api/openapi/admin/swagger.json` | Legacy Caspian ADMIN OpenAPI (non-auth leftovers)                       |
 | Generate       | Orval → `generated/azes/**` + `admin/**`  | Hooks + models — **never hand-edit**                                    |
 | Facade         | `@azes/api/azes` + `@azes/api/admin`      | Tag barrels; Academy uses `@azes/api/azes` (+ `/courses                 | /manage`) |
@@ -419,3 +419,8 @@ siteEnv.apiBaseUrl })` + `NEXT_PUBLIC_API_BASE_URL`; when set,
   `nav`/`modules`/`accessVersion`; org-switch + role-menu + user-access invalidate;
   UserAccess CRUD→code labels; org detail modules + units (OpenAPI); subscriptionReadOnly
   chip/toggle; i18n en+az+ru. No OpenAPI bump.
+- 2026-10-28 — **Access Control Phase 09 delta:** LMS soft de-authz (no ERP via
+  instructor/student/guest baseline); GeneralAdmin capability profile (AC-D01 A);
+  `GET /api/v1/audit-logs` OpenAPI **0.21** + `@azes/api/azes/audit`; Admin
+  `features/auditLogs`; multi-org `seed:demo-env` (local-only); `/me` invalidation on
+  platform-roles / org subscription toggle / users create / unit assign.

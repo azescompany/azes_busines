@@ -4,7 +4,7 @@
 ║ File: docs/access_control/CURRENT_STATE_AUDIT.md
 ║ Author: AZES_COMPANY
 ║ Created: 2026-10-27
-║ Updated: 2026-10-27
+║ Updated: 2026-10-28
 ║ Purpose: Fact-based audit of current authz vs target architecture
 ║ Layer: docs
 ╚══════════════════════════════════════════════════════════════╝
@@ -12,8 +12,8 @@
 
 # CURRENT STATE AUDIT — Access Control
 
-**Audit date:** 2026-10-27  
-**Scope:** Read-only repository inspection for planning. No code changes.  
+**Audit date:** 2026-10-27 (baseline); **Phase 09 delta:** 2026-10-28  
+**Scope:** Baseline was read-only planning; Phase 09 closed listed gaps in code.  
 **Primary inputs:** `TAGET.MD`, `AccessControlArixtektura.md`, `apps/api`, `@azes/auth`,
 `@azes/api`, `apps/admin` features.
 
@@ -85,17 +85,17 @@ Status legend:
 
 ## 4. Roles (platform / LMS / ERP)
 
-| Item                                         | Status                           | Evidence                                                                       |
-| -------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------ |
-| `superAdmin`                                 | EXISTS                           | JWT roles; platform exception in `effectiveAccess.ts`; seed scripts            |
-| `orgAdmin`                                   | EXISTS                           | Membership + `ROLE_PERMISSIONS` + menus                                        |
-| LMS roles `instructor` / `student` / `guest` | EXISTS                           | Same enum as membership; mixed with ERP `member`                               |
-| Elastic `platform-roles` catalog             | EXISTS                           | `routes/platformRoles.ts`; Admin `features/platformRoles`                      |
-| `roles` + `user_roles` tables                | EXISTS                           | Platform role assignment storage                                               |
-| `role_menus` by `role_name`                  | EXISTS                           | Global string role name, not org-scoped role id                                |
-| GeneralAdmin as distinct authority           | MISSING                          | No symbol/role name `GeneralAdmin` in API permissions or membership enums      |
-| Org-defined custom roles (tenant-scoped)     | PARTIAL / MISSING                | Platform roles elastic; org-local role entities with ceiling not fully modeled |
-| SubAdmin hardcoded global role               | MISSING (intentional per target) | Target says use delegated org roles — not implemented as unit managers yet     |
+| Item                                         | Status                           | Evidence                                                                           |
+| -------------------------------------------- | -------------------------------- | ---------------------------------------------------------------------------------- |
+| `superAdmin`                                 | EXISTS                           | JWT roles; platform exception in `effectiveAccess.ts`; seed scripts                |
+| `orgAdmin`                                   | EXISTS                           | Membership + `ROLE_PERMISSIONS` + menus                                            |
+| LMS roles `instructor` / `student` / `guest` | EXISTS                           | Same enum as membership; mixed with ERP `member`                                   |
+| Elastic `platform-roles` catalog             | EXISTS                           | `routes/platformRoles.ts`; Admin `features/platformRoles`                          |
+| `roles` + `user_roles` tables                | EXISTS                           | Platform role assignment storage                                                   |
+| `role_menus` by `role_name`                  | EXISTS                           | Global string role name, not org-scoped role id                                    |
+| GeneralAdmin as distinct authority           | EXISTS (Phase 09 capability)     | `generalAdmin` ROLE_PERMISSIONS profile + seed; **not** membership enum (AC-D01 A) |
+| Org-defined custom roles (tenant-scoped)     | PARTIAL / MISSING                | Platform roles elastic; org-local role entities with ceiling not fully modeled     |
+| SubAdmin hardcoded global role               | MISSING (intentional per target) | Target says use delegated org roles — not implemented as unit managers yet         |
 
 ---
 
@@ -175,33 +175,34 @@ Status legend:
 
 ## 10. Admin UI inventory (access-related)
 
-| Feature                     | Path                                             | Status                                        |
-| --------------------------- | ------------------------------------------------ | --------------------------------------------- |
-| Organizations               | `apps/admin/src/features/organizations`          | EXISTS                                        |
-| Users (platform/org create) | Organizations `UsersView` + `POST /api/v1/users` | EXISTS                                        |
-| Role ↔ menus                | `features/roleMenus`                             | EXISTS                                        |
-| Platform roles              | `features/platformRoles`                         | EXISTS                                        |
-| User access profiles        | `features/userAccess`                            | EXISTS (API wired; effective enforcement gap) |
-| Customers (CRM)             | `features/customers`                             | EXISTS                                        |
-| Module assignment UI        | —                                                | PARTIAL / MISSING (API yes)                   |
-| Subscription plan UI        | —                                                | MISSING                                       |
-| Unit / branch admin UI      | —                                                | MISSING                                       |
+| Feature                     | Path                                             | Status                                         |
+| --------------------------- | ------------------------------------------------ | ---------------------------------------------- |
+| Organizations               | `apps/admin/src/features/organizations`          | EXISTS                                         |
+| Users (platform/org create) | Organizations `UsersView` + `POST /api/v1/users` | EXISTS                                         |
+| Role ↔ menus                | `features/roleMenus`                             | EXISTS                                         |
+| Platform roles              | `features/platformRoles`                         | EXISTS                                         |
+| User access profiles        | `features/userAccess`                            | EXISTS (API wired; effective enforcement gap)  |
+| Customers (CRM)             | `features/customers`                             | EXISTS                                         |
+| Module assignment UI        | Org detail                                       | EXISTS (Phase 07)                              |
+| Subscription plan UI        | —                                                | MISSING (AC-D08 deferred)                      |
+| Unit / branch admin UI      | Org detail                                       | EXISTS (Phase 07; edit/delete polish residual) |
+| Audit logs UI               | `features/auditLogs`                             | EXISTS (Phase 09)                              |
 
 ---
 
 ## 11. Target vs current matrix (summary)
 
-| Target concept             | Current                      | Gap type                                  |
-| -------------------------- | ---------------------------- | ----------------------------------------- |
-| Token = identity + context | JWT roles + optional perms   | Shrink permission claims; keep live authz |
-| Backend-generated menus    | `/me.nav`                    | Hierarchy + modules + overrides           |
-| Effective Access formula   | Unified resolver (Phase 06)  | Admin UI consume → Phase 07               |
-| GeneralAdmin               | Missing                      | Decision AC-D01                           |
-| Org Unit                   | Exists (API Phase 03)        | UI Phase 07                               |
-| Permission registry        | TS + menu codes + CRUD flags | Decision AC-D03                           |
-| Subscription lifecycle     | Lite block/trial             | Phase 04                                  |
-| Delegation ceiling         | Exists (Phase 05 helpers)    | Wired with resolver grantable set         |
-| `/me` access fields        | Exists (AC-D04 A)            | modules + scopeSummary + accessVersion    |
+| Target concept             | Current                       | Gap type                                  |
+| -------------------------- | ----------------------------- | ----------------------------------------- |
+| Token = identity + context | JWT roles + optional perms    | Shrink permission claims; keep live authz |
+| Backend-generated menus    | `/me.nav`                     | Hierarchy + modules + overrides           |
+| Effective Access formula   | Unified resolver (Phase 06)   | Admin UI consume → Phase 07               |
+| GeneralAdmin               | Capability profile (Phase 09) | AC-D01 A — no membership enum             |
+| Org Unit                   | Exists (API Phase 03)         | UI Phase 07                               |
+| Permission registry        | TS + menu codes + CRUD flags  | Decision AC-D03                           |
+| Subscription lifecycle     | Lite block/trial              | Phase 04                                  |
+| Delegation ceiling         | Exists (Phase 05 helpers)     | Wired with resolver grantable set         |
+| `/me` access fields        | Exists (AC-D04 A)             | modules + scopeSummary + accessVersion    |
 
 ---
 

@@ -4,12 +4,13 @@
  * ║ File: apps/api/src/access/delegation.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-27
- * ║ Updated: 2026-10-27
+ * ║ Updated: 2026-10-28
  * ║ Purpose: Delegation ceiling — grant ⊆ actor grantable set
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
  */
 
+import { isPlatformOrErpPermission } from '../auth/permissions.js';
 import { ApiHttpError } from '../errors.js';
 
 /** Roles that must never be assigned via ordinary org / catalog APIs. */
@@ -72,4 +73,23 @@ export const LMS_GRANT_ROLES = new Set(['instructor', 'student', 'guest']);
 
 export function isLmsGrantRole(role: string): boolean {
   return LMS_GRANT_ROLES.has(role);
+}
+
+/**
+ * Phase 09 soft de-authz: LMS channel roles cannot be bound to menus that
+ * carry platform/ERP permission codes.
+ */
+export function assertLmsRoleMenusExcludeErp(params: {
+  role: string;
+  menuPermissionCodes: readonly string[];
+}): void {
+  if (!isLmsGrantRole(params.role)) return;
+  const erp = params.menuPermissionCodes.filter((c) => isPlatformOrErpPermission(c));
+  if (erp.length > 0) {
+    throw new ApiHttpError(
+      400,
+      'VALIDATION_ERROR',
+      `LMS role "${params.role}" cannot be bound to platform/ERP permissions: ${erp.slice(0, 5).join(', ')}`,
+    );
+  }
 }

@@ -4,7 +4,7 @@
  * ║ File: packages/ui-web/src/layout/layout.test.tsx
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-04
- * ║ Updated: 2026-10-14
+ * ║ Updated: 2026-10-28
  * ║ Purpose: Dashboard/auth layout landmarks, mobile drawer, mini/horizontal, L-shell scoop
  * ║ Layer: package
  * ╚══════════════════════════════════════════════════════════════╝
@@ -296,6 +296,88 @@ describe('AzesDashboardLayout', () => {
     expect(main.getAttribute('data-azes-constrain')).toBe('false');
     const inner = main.firstElementChild as HTMLElement;
     expect(getComputedStyle(inner).maxWidth).toBe('none');
+  });
+
+  it('hides horizontal menu toolbar when hidePrimaryNav is set (rail + header remain)', () => {
+    stubMatchMedia(true);
+    const railNav: AzesNavConfig = [
+      {
+        id: 'rail',
+        items: [{ id: 'rail-apps', title: 'Apps', path: '/' }],
+      },
+    ];
+    const store = createAzesSettingsStore({
+      storage: 'none',
+      defaults: { navLayout: 'horizontal' },
+    });
+    render(
+      <AzesUiProvider store={store}>
+        <AzesNavProvider router={{ pathname: '/', toHref: (path) => `#${path}` }}>
+          <AzesDashboardLayout
+            nav={nav}
+            railNav={railNav}
+            hidePrimaryNav
+            slots={{
+              logo: <span>Logo</span>,
+              headerEnd: <button type="button">Sign in</button>,
+            }}
+          >
+            <h1>Demo home</h1>
+          </AzesDashboardLayout>
+        </AzesNavProvider>
+      </AzesUiProvider>,
+    );
+
+    const banner = screen.getByRole('banner');
+    expect(banner.querySelector('#azes-horizontal-menus')).toBeNull();
+    expect(within(banner).queryByLabelText('Hide menus')).not.toBeInTheDocument();
+    expect(within(banner).queryByLabelText('Show menus')).not.toBeInTheDocument();
+    expect(within(banner).queryByLabelText('Primary')).not.toBeInTheDocument();
+    expect(within(banner).getByText('Logo')).toBeInTheDocument();
+    expect(within(banner).getByRole('button', { name: 'Sign in' })).toBeInTheDocument();
+
+    const brandStrip = banner.querySelector('[data-azes-brand-strip]') as HTMLElement;
+    expect(brandStrip.getAttribute('data-azes-hide-primary-nav')).toBe('true');
+
+    const rail = document.querySelector('[data-azes-rail]') as HTMLElement;
+    expect(rail).toBeTruthy();
+    expect(within(rail).getByRole('link', { name: 'Apps', hidden: true })).toBeInTheDocument();
+    expect(document.querySelector('[data-azes-scoop]')).toBeTruthy();
+  });
+
+  it('hides horizontal menu toolbar when nav has no items (empty config)', () => {
+    stubMatchMedia(true);
+    const emptyNav: AzesNavConfig = [];
+    const store = createAzesSettingsStore({
+      storage: 'none',
+      defaults: { navLayout: 'horizontal' },
+    });
+    render(
+      <AzesUiProvider store={store}>
+        <AzesNavProvider router={{ pathname: '/', toHref: (path) => `#${path}` }}>
+          <AzesDashboardLayout
+            nav={emptyNav}
+            railNav={[
+              {
+                id: 'rail',
+                items: [{ id: 'rail-apps', title: 'Apps', path: '/' }],
+              },
+            ]}
+            slots={{ logo: <span>Logo</span> }}
+          >
+            Page
+          </AzesDashboardLayout>
+        </AzesNavProvider>
+      </AzesUiProvider>,
+    );
+
+    const banner = screen.getByRole('banner');
+    expect(banner.querySelector('#azes-horizontal-menus')).toBeNull();
+    expect(within(banner).queryByLabelText('Show menus')).not.toBeInTheDocument();
+    expect(
+      banner.querySelector('[data-azes-brand-strip]')?.getAttribute('data-azes-hide-primary-nav'),
+    ).toBe('true');
+    expect(document.querySelector('[data-azes-rail]')).toBeTruthy();
   });
 
   it('keeps scoop as the vertical scrollport by default (autoHide depends on it)', () => {

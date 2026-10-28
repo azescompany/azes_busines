@@ -4,16 +4,18 @@
 ║ File: docs/access_control/ACCESS_CONTROL_ARCHITECTURE.md
 ║ Author: AZES_COMPANY
 ║ Created: 2026-10-27
-║ Updated: 2026-10-27
-║ Purpose: Target access-control architecture for AZES (planning)
+║ Updated: 2026-10-28
+║ Purpose: Target access-control architecture for AZES (planning + Phase 09 delta)
 ║ Layer: docs
 ╚══════════════════════════════════════════════════════════════╝
 -->
 
 # Access Control Architecture (Target)
 
-**Status:** Planning target — implementation follows approved phases and `DECISIONS.md`.  
+**Status:** Target + Phase 00–09 implemented (engineering). Production GO still pending User.  
 **Phase 01 (2026-10-27):** AC-D01…AC-D08 locked as **option A** — see [`DECISIONS.md`](./DECISIONS.md).  
+**Phase 09 (2026-10-28):** LMS soft de-authz; GeneralAdmin capability; multi-org demo seed;
+audit Admin UI — see [`phases/PHASE_09_DELTA.md`](./phases/PHASE_09_DELTA.md).  
 **Source inputs (read-only):** [`AccessControlArixtektura.md`](../../AccessControlArixtektura.md),
 [`CURRENT_STATE_AUDIT.md`](./CURRENT_STATE_AUDIT.md), [`TAGET.MD`](../../TAGET.MD).  
 **Non-goal:** New parallel auth package or rewrite of working M1–M5.0-lite foundations.
@@ -96,16 +98,16 @@ flowchart TB
 
 These are **authority profiles**, not a mandatory single DB enum:
 
-| Level        | Intent                                                     | Current mapping (audit)                                                   |
-| ------------ | ---------------------------------------------------------- | ------------------------------------------------------------------------- |
-| SuperAdmin   | Protected platform owner                                   | `superAdmin` EXISTS                                                       |
-| GeneralAdmin | Platform ops without automatic tenant business-data bypass | MISSING as named role — see AC-D01                                        |
-| Admin        | Org administrator                                          | `orgAdmin`                                                                |
-| Delegated    | Branch/dept managers via org roles + unit scope            | Units + subtree + unified resolver EXISTS (Phase 03/05/06); UI → Phase 07 |
-| User         | Assigned modules/menus/perms/scope only                    | `member` + profiles PARTIAL                                               |
-| LMS roles    | Instructor/Student/Guest for Academy domain                | Keep separate from ERP grants                                             |
+| Level        | Intent                                                     | Current mapping (audit)                                                  |
+| ------------ | ---------------------------------------------------------- | ------------------------------------------------------------------------ |
+| SuperAdmin   | Protected platform owner                                   | `superAdmin` EXISTS                                                      |
+| GeneralAdmin | Platform ops without automatic tenant business-data bypass | Capability profile `generalAdmin` (AC-D01 A) — Phase 09                  |
+| Admin        | Org administrator                                          | `orgAdmin`                                                               |
+| Delegated    | Branch/dept managers via org roles + unit scope            | Units + subtree + unified resolver EXISTS (Phase 03/05/06); UI Phase 07  |
+| User         | Assigned modules/menus/perms/scope only                    | `member` + profiles                                                      |
+| LMS roles    | Instructor/Student/Guest for Academy domain                | Enum kept; soft de-authz — no platform/ERP via LMS (Phase 09 / AC-D07 A) |
 
-LMS roles must not silently grant ERP module administration.
+LMS roles must not silently grant ERP module administration (enforced Phase 09 soft de-authz).
 
 ---
 

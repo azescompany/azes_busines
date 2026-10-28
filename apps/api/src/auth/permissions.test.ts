@@ -4,15 +4,19 @@
  * ║ File: apps/api/src/auth/permissions.test.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-27
- * ║ Updated: 2026-10-27
- * ║ Purpose: AC-D05 claim hygiene — JWT permissions not authoritative
+ * ║ Updated: 2026-10-28
+ * ║ Purpose: AC-D05 claim hygiene + Phase 09 soft de-authz / GA
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
  */
 
 import { describe, expect, it } from 'vitest';
 
-import { claimHasPermission } from './permissions.js';
+import {
+  claimHasPermission,
+  GENERAL_ADMIN_CAPABILITY_PERMISSIONS,
+  permissionsForRoles,
+} from './permissions.js';
 import { trustedRequestContext } from './requestContext.js';
 
 describe('claimHasPermission (AC-D05)', () => {
@@ -30,6 +34,19 @@ describe('claimHasPermission (AC-D05)', () => {
       true,
     );
     expect(claimHasPermission({ roles: ['orgAdmin'] }, 'org.manage')).toBe(true);
+  });
+});
+
+describe('Phase 09 soft de-authz / GeneralAdmin', () => {
+  it('LMS roles never include ERP codes from baseline', () => {
+    expect(permissionsForRoles(['instructor'])).not.toContain('crm.customers.read');
+    expect(permissionsForRoles(['student'])).not.toContain('org.manage');
+  });
+
+  it('generalAdmin capability set is exact AC-D01 profile', () => {
+    expect(permissionsForRoles(['generalAdmin']).sort()).toEqual(
+      [...GENERAL_ADMIN_CAPABILITY_PERMISSIONS].sort(),
+    );
   });
 });
 

@@ -29,6 +29,7 @@ import { useNavigate } from 'react-router';
 
 import { pathTo, userAccessPath } from '../../../../app/router/paths.js';
 import { checkPermission } from '../../../../auth/checkPermission.js';
+import { invalidateAccessQueries } from '../../../../auth/invalidateAccessQueries.js';
 import { useSessionMe } from '../../../../auth/useSessionMe.js';
 import { ADMIN_NAMESPACE } from '../../../../i18n/createAdminI18n.js';
 import {
@@ -389,6 +390,7 @@ export function UsersView() {
                     });
                     resetForm();
                     await queryClient.invalidateQueries({ queryKey: getGetApiV1UsersQueryKey() });
+                    await invalidateAccessQueries(queryClient);
                     notify.success(t('users.drawer.created'));
                     void createPanel.close();
                   } catch (err) {

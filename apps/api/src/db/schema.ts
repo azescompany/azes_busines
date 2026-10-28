@@ -216,7 +216,8 @@ export const organizationInvitations = sqliteTable(
       .notNull()
       .references(() => organizations.id, { onDelete: 'cascade' }),
     email: text('email').notNull(),
-    role: text('role', { enum: ['orgAdmin', 'instructor', 'student'] }).notNull(),
+    /** Phase 09: `member` for ERP; instructor/student remain LMS channel (AC-D07). */
+    role: text('role', { enum: ['orgAdmin', 'instructor', 'student', 'member'] }).notNull(),
     tokenHash: text('token_hash').notNull(),
     status: text('status', { enum: ['pending', 'accepted', 'revoked', 'expired'] })
       .notNull()

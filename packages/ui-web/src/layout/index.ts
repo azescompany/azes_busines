@@ -4,7 +4,7 @@
  * ║ File: packages/ui-web/src/layout/index.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-04
- * ║ Updated: 2026-10-14
+ * ║ Updated: 2026-10-28
  * ║ Purpose: Public entry point for @azes/ui-web/layout
  * ║ Layer: package
  * ╚══════════════════════════════════════════════════════════════╝
@@ -15,6 +15,7 @@ import '../theme/mui-augment';
 export {
   AzesDashboardLayout,
   DEFAULT_AZES_LAYOUT_LABELS,
+  hasPrimaryNavItems,
   type AzesDashboardLayoutProps,
   type AzesDashboardLayoutSlots,
   type AzesLayoutLabels,
@@ -56,6 +57,7 @@ export {
   type AzesMainContentProps,
   type AzesSkipLinkProps,
 } from './AzesMainContent';
+export { AzesMainSidebar, type AzesMainSidebarProps } from './AzesMainSidebar';
 export { AzesContentRail, type AzesContentRailProps } from './AzesContentRail';
 export {
   AzesHorizontalNav,

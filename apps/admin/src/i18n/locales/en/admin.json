@@ -12,7 +12,9 @@
     "platformRoles": "Roles",
     "platformRolesCaption": "Catalog",
     "customers": "Customers",
-    "customersCaption": "CRM"
+    "customersCaption": "CRM",
+    "auditLogs": "Audit logs",
+    "auditLogsCaption": "Security"
   },
   "shell": {
     "primaryNav": "Primary navigation",
@@ -44,6 +46,18 @@
     "title": "Home",
     "subtitle": "AZES Admin — signed in via Account SSO",
     "welcome": "Welcome"
+  },
+  "landing": {
+    "title": "AZES Apps",
+    "subtitle": "Explore product modules in demo mode, or sign in to your organization workspace.",
+    "ctaLogin": "Sign in",
+    "ctaExplore": "Explore modules",
+    "demoHint": "Demo changes are not saved. Sign in for your live tenant."
+  },
+  "demo": {
+    "banner": "Demo mode — changes are not saved.",
+    "reset": "Reset demo",
+    "readOnlyNote": "This is a public demo placeholder. Full module UI opens after sign-in under Apps."
   },
   "brand": {
     "homeAria": "AZES COMPANY — home"
@@ -379,6 +393,398 @@
       "instructor": "Instructor",
       "student": "Student",
       "guest": "Guest"
+    }
+  },
+  "audit": {
+    "title": "Audit logs",
+    "subtitle": "Privileged actions recorded by the API (read-only).",
+    "forbidden": "You do not have permission to view audit logs.",
+    "loadError": "Could not load audit logs.",
+    "filters": {
+      "action": "Filter by action",
+      "limit": "Limit"
+    },
+    "columns": {
+      "createdAt": "When",
+      "action": "Action",
+      "actor": "Actor",
+      "org": "Organization",
+      "targetType": "Target type",
+      "targetId": "Target id"
+    }
+  },
+  "apps": {
+    "demoBanner": "This is a demo environment — modules are placeholders.",
+    "favorites": "Favorites",
+    "recent": "Recently used",
+    "allApps": "All apps",
+    "favorite": "Add to favorites",
+    "unfavorite": "Remove from favorites",
+    "empty": "No apps found",
+    "emptyHint": "Try another search term.",
+    "backToApps": "Apps",
+    "railCaption": "Open apps launcher",
+    "moduleSidebar": {
+      "label": "Module menu",
+      "open": "Open module menu",
+      "close": "Close module menu"
+    },
+    "breadcrumb": {
+      "apps": "Apps"
+    },
+    "search": {
+      "placeholder": "Search apps… (press /)"
+    },
+    "view": {
+      "label": "View mode",
+      "all": "All",
+      "grouped": "Grouped"
+    },
+    "category": {
+      "productivity": "Productivity",
+      "sales": "Sales",
+      "finance": "Finance",
+      "operations": "Operations",
+      "marketing": "Marketing",
+      "hr": "Human Resources",
+      "system": "System"
+    },
+    "placeholder": {
+      "title": "This section is under construction",
+      "body": "Module menus and sample data are demo-only for now.",
+      "unknownTitle": "Unknown module",
+      "unknownBody": "Return to the apps launcher and pick a valid app."
+    },
+    "table": {
+      "sampleTitle": "Sample records",
+      "id": "ID",
+      "name": "Name",
+      "status": "Status"
+    },
+    "menus": {
+      "discuss": {
+        "overview": "Overview",
+        "channels": "Channels",
+        "direct": "Direct messages"
+      },
+      "calendar": {
+        "overview": "Overview",
+        "meetings": "Meetings",
+        "config": "Configuration"
+      },
+      "appointments": {
+        "overview": "Overview",
+        "slots": "Slots",
+        "config": "Configuration"
+      },
+      "todo": {
+        "overview": "Overview",
+        "lists": "Lists",
+        "archive": "Archive"
+      },
+      "knowledge": {
+        "overview": "Overview",
+        "articles": "Articles",
+        "workspace": "Workspace"
+      },
+      "contacts": {
+        "overview": "Overview",
+        "companies": "Companies",
+        "tags": "Tags"
+      },
+      "crm": {
+        "overview": "Overview",
+        "pipeline": "Pipeline",
+        "contacts": "Contacts",
+        "reports": "Reports",
+        "config": "Configuration"
+      },
+      "sales": {
+        "overview": "Overview",
+        "quotations": "Quotations",
+        "orders": "Orders",
+        "customers": "Customers"
+      },
+      "dashboards": {
+        "overview": "Overview",
+        "boards": "Boards",
+        "config": "Configuration"
+      },
+      "subscriptions": {
+        "overview": "Overview",
+        "plans": "Plans",
+        "invoices": "Invoices"
+      },
+      "rental": {
+        "overview": "Overview",
+        "orders": "Orders",
+        "products": "Products"
+      },
+      "pos": {
+        "overview": "Overview",
+        "sessions": "Sessions",
+        "config": "Configuration"
+      },
+      "kitchen": {
+        "overview": "Overview",
+        "orders": "Orders",
+        "displays": "Displays"
+      },
+      "accounting": {
+        "overview": "Overview",
+        "journals": "Journals",
+        "reports": "Reports",
+        "config": "Configuration"
+      },
+      "documents": {
+        "overview": "Overview",
+        "workspace": "Workspace",
+        "share": "Shared"
+      },
+      "project": {
+        "overview": "Overview",
+        "tasks": "Tasks",
+        "milestones": "Milestones",
+        "config": "Configuration"
+      },
+      "timesheets": {
+        "overview": "Overview",
+        "entries": "Entries",
+        "reports": "Reports"
+      },
+      "planning": {
+        "overview": "Overview",
+        "shifts": "Shifts",
+        "resources": "Resources"
+      },
+      "helpdesk": {
+        "overview": "Overview",
+        "tickets": "Tickets",
+        "teams": "Teams"
+      },
+      "website": {
+        "overview": "Overview",
+        "pages": "Pages",
+        "theme": "Theme"
+      },
+      "email_marketing": {
+        "overview": "Overview",
+        "campaigns": "Campaigns",
+        "lists": "Lists"
+      },
+      "events": {
+        "overview": "Overview",
+        "agenda": "Agenda",
+        "attendees": "Attendees"
+      },
+      "purchase": {
+        "overview": "Overview",
+        "requests": "Requests",
+        "orders": "Orders",
+        "vendors": "Vendors"
+      },
+      "inventory": {
+        "overview": "Overview",
+        "products": "Products",
+        "transfers": "Transfers",
+        "warehouses": "Warehouses"
+      },
+      "manufacturing": {
+        "overview": "Overview",
+        "orders": "Orders",
+        "boms": "Bills of materials"
+      },
+      "shop_floor": {
+        "overview": "Overview",
+        "workcenters": "Work centers",
+        "boards": "Boards"
+      },
+      "barcode": {
+        "overview": "Overview",
+        "scan": "Scan",
+        "config": "Configuration"
+      },
+      "sign": {
+        "overview": "Overview",
+        "requests": "Requests",
+        "templates": "Templates"
+      },
+      "employees": {
+        "overview": "Overview",
+        "directory": "Directory",
+        "departments": "Departments"
+      },
+      "recruitment": {
+        "overview": "Overview",
+        "jobs": "Jobs",
+        "applicants": "Applicants"
+      },
+      "time_off": {
+        "overview": "Overview",
+        "requests": "Requests",
+        "types": "Types"
+      },
+      "payroll": {
+        "overview": "Overview",
+        "payslips": "Payslips",
+        "employees": "Employees",
+        "config": "Configuration"
+      },
+      "expenses": {
+        "overview": "Overview",
+        "reports": "Reports",
+        "categories": "Categories"
+      },
+      "apps": {
+        "overview": "Overview",
+        "installed": "Installed",
+        "store": "Store"
+      },
+      "settings": {
+        "overview": "Overview",
+        "general": "General",
+        "users": "Users"
+      }
+    },
+    "discuss": {
+      "title": "Discuss",
+      "caption": "Discuss"
+    },
+    "calendar": {
+      "title": "Calendar",
+      "caption": "Calendar"
+    },
+    "appointments": {
+      "title": "Appointments",
+      "caption": "Appointments"
+    },
+    "todo": {
+      "title": "To-do",
+      "caption": "To-do"
+    },
+    "knowledge": {
+      "title": "Knowledge",
+      "caption": "Knowledge"
+    },
+    "contacts": {
+      "title": "Contacts",
+      "caption": "Contacts"
+    },
+    "crm": {
+      "title": "CRM",
+      "caption": "CRM"
+    },
+    "sales": {
+      "title": "Sales",
+      "caption": "Sales"
+    },
+    "dashboards": {
+      "title": "Dashboards",
+      "caption": "Dashboards"
+    },
+    "subscriptions": {
+      "title": "Subscriptions",
+      "caption": "Subscriptions"
+    },
+    "rental": {
+      "title": "Rental",
+      "caption": "Rental"
+    },
+    "pos": {
+      "title": "Point of Sale",
+      "caption": "Point of Sale"
+    },
+    "kitchen": {
+      "title": "Kitchen Display",
+      "caption": "Kitchen Display"
+    },
+    "accounting": {
+      "title": "Accounting",
+      "caption": "Accounting"
+    },
+    "documents": {
+      "title": "Documents",
+      "caption": "Documents"
+    },
+    "project": {
+      "title": "Project",
+      "caption": "Project"
+    },
+    "timesheets": {
+      "title": "Timesheets",
+      "caption": "Timesheets"
+    },
+    "planning": {
+      "title": "Planning",
+      "caption": "Planning"
+    },
+    "helpdesk": {
+      "title": "Helpdesk",
+      "caption": "Helpdesk"
+    },
+    "website": {
+      "title": "Website",
+      "caption": "Website"
+    },
+    "email_marketing": {
+      "title": "Email Marketing",
+      "caption": "Email Marketing"
+    },
+    "events": {
+      "title": "Events",
+      "caption": "Events"
+    },
+    "purchase": {
+      "title": "Purchase",
+      "caption": "Purchase"
+    },
+    "inventory": {
+      "title": "Inventory",
+      "caption": "Inventory"
+    },
+    "manufacturing": {
+      "title": "Manufacturing",
+      "caption": "Manufacturing"
+    },
+    "shop_floor": {
+      "title": "Shop Floor",
+      "caption": "Shop Floor"
+    },
+    "barcode": {
+      "title": "Barcode",
+      "caption": "Barcode"
+    },
+    "sign": {
+      "title": "Sign",
+      "caption": "Sign"
+    },
+    "employees": {
+      "title": "Employees",
+      "caption": "Employees"
+    },
+    "recruitment": {
+      "title": "Recruitment",
+      "caption": "Recruitment"
+    },
+    "time_off": {
+      "title": "Time Off",
+      "caption": "Time Off"
+    },
+    "payroll": {
+      "title": "Payroll",
+      "caption": "Payroll"
+    },
+    "expenses": {
+      "title": "Expenses",
+      "caption": "Expenses"
+    },
+    "apps": {
+      "title": "Apps",
+      "caption": "Apps"
+    },
+    "settings": {
+      "title": "Settings",
+      "caption": "Settings"
     }
   }
 }

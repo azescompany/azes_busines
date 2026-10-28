@@ -4,7 +4,7 @@
  * ║ File: apps/api/src/routes/menu.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-26
- * ║ Updated: 2026-10-27
+ * ║ Updated: 2026-10-28
  * ║ Purpose: Menu catalog + role↔menu binding HTTP APIs (M1.5)
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
@@ -13,7 +13,10 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 
-import { assertNotProtectedPlatformRole } from '../access/delegation.js';
+import {
+  assertLmsRoleMenusExcludeErp,
+  assertNotProtectedPlatformRole,
+} from '../access/delegation.js';
 import { LMS_ROLES } from '../auth/permissions.js';
 import {
   getAuthUser,
@@ -102,6 +105,14 @@ export function createMenuRoutes(options: CreateMenuRoutesOptions = {}) {
       }
       const body = parseBody(putRoleMenusSchema, await c.req.json());
       const repo = resolveMenuRepo(c.env, options.menuRepo);
+      const allMenus = await repo.listMenus('admin');
+      const byId = new Map(allMenus.map((m) => [m.id, m]));
+      const boundCodes: string[] = [];
+      for (const menuId of body.menuIds) {
+        const m = byId.get(menuId);
+        if (m?.permissionCodes?.length) boundCodes.push(...m.permissionCodes);
+      }
+      assertLmsRoleMenusExcludeErp({ role, menuPermissionCodes: boundCodes });
       const menuIds = await repo.setRoleMenus(role, body.menuIds);
       const actor = getAuthUser(c);
       await writeAuditLog(c.env, {

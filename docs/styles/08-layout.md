@@ -4,7 +4,7 @@
 ║ File: docs/styles/08-layout.md
 ║ Author: AZES_COMPANY
 ║ Created: 2026-10-04
-║ Updated: 2026-10-14
+║ Updated: 2026-10-28
 ║ Purpose: Layout engine components, slots, dimensions, scroll and responsive behavior
 ║ Layer: docs
 ╚══════════════════════════════════════════════════════════════╝
@@ -28,6 +28,7 @@ content frame (ADR-011, superseding the v1 "no AppShell" decision).
 | `AzesHorizontalNav`   | Bar under the header with menu children                                 |
 | `AzesMobileNav`       | Temporary drawer; closes when the pathname changes                      |
 | `AzesMainContent`     | Container fixed or fluid (optional `constrain`), tokenized page padding |
+| `AzesMainSidebar`     | In-content section/module nav (sticky `lg+`; drawer below) — not chrome |
 | `AzesContentRail`     | Settings-aware inner column for full-bleed marketing pages              |
 | `AzesFooter`          | Full-bleed chrome; Fixed/Fluid only on the inner content row            |
 | `AzesLayoutVars`      | `GlobalStyles` that emits `--azes-layout-*` once                        |
@@ -68,7 +69,28 @@ All sizes come from `theme.azes.layout` (03), emitted as CSS variables:
 --azes-layout-nav-mobile-width     288px
 --azes-layout-nav-horizontal-height 56px
 --azes-layout-content-max-width    1280px
+--azes-layout-content-sidebar-width 240px (AzesMainSidebar)
 ```
+
+## `AzesMainSidebar`
+
+In-page module/section menus inside the scoop (not L-shell `AzesVerticalNav`).
+
+```ts
+type AzesMainSidebarProps = {
+  nav: AzesNavConfig;
+  label: string;
+  title?: ReactNode;
+  header?: ReactNode;
+  layoutQuery?: Breakpoint; // default 'lg'
+  openMenuLabel?: string;
+  closeMenuLabel?: string;
+};
+```
+
+- Desktop (`lg+`): sticky aside, width `--azes-layout-content-sidebar-width`.
+- Below `layoutQuery`: menu button + temporary Drawer.
+- Apps pass already-translated module menus; shell chrome nav stays separate.
 
 Components use the variables, never literal px. The audit check `layout-hardcoded-values`
 rejects px literals in `packages/ui-web/src/layout`.

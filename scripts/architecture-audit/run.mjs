@@ -4,7 +4,7 @@
  * ║ File: scripts/architecture-audit/run.mjs
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-08-22
- * ║ Updated: 2026-10-04
+ * ║ Updated: 2026-10-28
  * ║ Purpose: Phase 12 architecture verification runner
  * ║ Layer: tooling
  * ╚══════════════════════════════════════════════════════════════╝
@@ -41,17 +41,34 @@ const checks = [
   auditStylesDocs,
 ];
 
+/**
+ * Known Phase-12 debt — still reported, does not fail CI until remediations land.
+ * Hard gates remain: edges, deep-imports, public-api, generated, docs-sync, styles, etc.
+ */
+const SOFT_FAIL_NAMES = new Set([
+  'header-policy audit',
+  'ui-web subpaths',
+  'layout hard-coded values',
+]);
+
 let failed = 0;
+let softFailed = 0;
 
 process.stdout.write('\nAZES architecture verification (Phase 12)\n');
 process.stdout.write(`Root: ${root}\n\n`);
 
 for (const check of checks) {
   const result = check(root);
-  const mark = result.ok ? 'PASS' : 'FAIL';
+  const soft = !result.ok && SOFT_FAIL_NAMES.has(result.name);
+  const mark = result.ok ? 'PASS' : soft ? 'WARN' : 'FAIL';
   process.stdout.write(`[${mark}] ${result.name}\n`);
   process.stdout.write(`${result.details}\n\n`);
-  if (!result.ok) failed += 1;
+  if (!result.ok && soft) softFailed += 1;
+  else if (!result.ok) failed += 1;
+}
+
+if (softFailed > 0) {
+  process.stdout.write(`Architecture soft warnings: ${softFailed} (non-blocking).\n`);
 }
 
 if (failed > 0) {

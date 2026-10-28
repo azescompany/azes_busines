@@ -4,8 +4,8 @@
 ║ File: docs/access_control/DECISIONS.md
 ║ Author: AZES_COMPANY
 ║ Created: 2026-10-27
-║ Updated: 2026-10-27
-║ Purpose: Locked architecture decisions for access control (Phase 01)
+║ Updated: 2026-10-28
+║ Purpose: Locked architecture decisions for access control (Phase 01 + Phase 09 notes)
 ║ Layer: docs
 ╚══════════════════════════════════════════════════════════════╝
 -->
@@ -15,6 +15,11 @@
 **Statuses:** `PROPOSED` | `APPROVED` | `REJECTED`  
 **Phase 01 lock:** 2026-10-27 — user confirmed plan “Phase 01 — Qərarların kilidlənməsi”;
 all AC-D01…AC-D08 locked as **option A** (recommended).
+
+**Phase 09 clarification (2026-10-28):** AC-D01/AC-D07 **not reversed**. Soft LMS de-authz
+keeps membership enum values; GeneralAdmin remains a **capability set** (optional platform
+role name `generalAdmin` via `user_roles` / `ROLE_PERMISSIONS` profile — **not** a new
+membership enum).
 
 ---
 

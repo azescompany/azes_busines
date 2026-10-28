@@ -12,7 +12,9 @@
     "platformRoles": "Rollar",
     "platformRolesCaption": "Kataloq",
     "customers": "Müştərilər",
-    "customersCaption": "CRM"
+    "customersCaption": "CRM",
+    "auditLogs": "Audit jurnalı",
+    "auditLogsCaption": "Təhlükəsizlik"
   },
   "shell": {
     "primaryNav": "Əsas naviqasiya",
@@ -44,6 +46,18 @@
     "title": "Ana səhifə",
     "subtitle": "AZES Admin — Account SSO ilə daxil olmusunuz",
     "welcome": "Xoş gəldiniz"
+  },
+  "landing": {
+    "title": "AZES Apps",
+    "subtitle": "Modulları demo rejimində kəşf edin və ya təşkilat iş sahənizə daxil olun.",
+    "ctaLogin": "Daxil ol",
+    "ctaExplore": "Modullara bax",
+    "demoHint": "Demo dəyişiklikləri saxlanılmır. Canlı tenant üçün daxil olun."
+  },
+  "demo": {
+    "banner": "Demo rejimi — dəyişikliklər saxlanılmır.",
+    "reset": "Demo-nu sıfırla",
+    "readOnlyNote": "Bu ictimai demo yer tutucudur. Tam modul UI daxil olduqdan sonra Apps altında açılır."
   },
   "brand": {
     "homeAria": "AZES COMPANY — ana səhifə"
@@ -379,6 +393,398 @@
       "instructor": "İnstruktor",
       "student": "Tələbə",
       "guest": "Qonaq"
+    }
+  },
+  "audit": {
+    "title": "Audit jurnalı",
+    "subtitle": "API tərəfindən qeydə alınan imtiyazlı əməliyyatlar (yalnız oxu).",
+    "forbidden": "Audit jurnalına baxmaq üçün icazəniz yoxdur.",
+    "loadError": "Audit jurnalı yüklənə bilmədi.",
+    "filters": {
+      "action": "Əməliyyata görə filtr",
+      "limit": "Limit"
+    },
+    "columns": {
+      "createdAt": "Vaxt",
+      "action": "Əməliyyat",
+      "actor": "İcraçı",
+      "org": "Təşkilat",
+      "targetType": "Hədəf tipi",
+      "targetId": "Hədəf id"
+    }
+  },
+  "apps": {
+    "demoBanner": "Bu demo mühitdir — modullar nümunə səhifələrdir.",
+    "favorites": "Sevimlilər",
+    "recent": "Son istifadə olunanlar",
+    "allApps": "Bütün tətbiqlər",
+    "favorite": "Sevimlilərə əlavə et",
+    "unfavorite": "Sevimlilərdən çıxar",
+    "empty": "Tətbiq tapılmadı",
+    "emptyHint": "Başqa axtarış termini yoxlayın.",
+    "backToApps": "Tətbiqlər",
+    "railCaption": "Tətbiqlər ekranını aç",
+    "moduleSidebar": {
+      "label": "Modul menyusu",
+      "open": "Modul menyusunu aç",
+      "close": "Modul menyusunu bağla"
+    },
+    "breadcrumb": {
+      "apps": "Tətbiqlər"
+    },
+    "search": {
+      "placeholder": "Tətbiq axtar… (/ düyməsi)"
+    },
+    "view": {
+      "label": "Görünüş",
+      "all": "Hamısı",
+      "grouped": "Qrup"
+    },
+    "category": {
+      "productivity": "Məhsuldarlıq",
+      "sales": "Satış",
+      "finance": "Maliyyə",
+      "operations": "Əməliyyat",
+      "marketing": "Marketinq",
+      "hr": "İnsan resursları",
+      "system": "Sistem"
+    },
+    "placeholder": {
+      "title": "Bu bölmə hələ hazırlanır",
+      "body": "Modul menyuları və nümunə məlumatlar hələlik demo üçündür.",
+      "unknownTitle": "Naməlum modul",
+      "unknownBody": "Tətbiqlər ekranına qayıdıb düzgün modul seçin."
+    },
+    "table": {
+      "sampleTitle": "Nümunə qeydlər",
+      "id": "ID",
+      "name": "Ad",
+      "status": "Status"
+    },
+    "menus": {
+      "discuss": {
+        "overview": "Ümumi baxış",
+        "channels": "Kanallar",
+        "direct": "Birbaşa mesajlar"
+      },
+      "calendar": {
+        "overview": "Ümumi baxış",
+        "meetings": "Görüşlər",
+        "config": "Konfiqurasiya"
+      },
+      "appointments": {
+        "overview": "Ümumi baxış",
+        "slots": "Slotlar",
+        "config": "Konfiqurasiya"
+      },
+      "todo": {
+        "overview": "Ümumi baxış",
+        "lists": "Siyahılar",
+        "archive": "Arxiv"
+      },
+      "knowledge": {
+        "overview": "Ümumi baxış",
+        "articles": "Məqalələr",
+        "workspace": "İş sahəsi"
+      },
+      "contacts": {
+        "overview": "Ümumi baxış",
+        "companies": "Şirkətlər",
+        "tags": "Teqlər"
+      },
+      "crm": {
+        "overview": "Ümumi baxış",
+        "pipeline": "Pipeline",
+        "contacts": "Əlaqələr",
+        "reports": "Hesabatlar",
+        "config": "Konfiqurasiya"
+      },
+      "sales": {
+        "overview": "Ümumi baxış",
+        "quotations": "Təkliflər",
+        "orders": "Sifarişlər",
+        "customers": "Müştərilər"
+      },
+      "dashboards": {
+        "overview": "Ümumi baxış",
+        "boards": "Panellər",
+        "config": "Konfiqurasiya"
+      },
+      "subscriptions": {
+        "overview": "Ümumi baxış",
+        "plans": "Planlar",
+        "invoices": "Qaimələr"
+      },
+      "rental": {
+        "overview": "Ümumi baxış",
+        "orders": "Sifarişlər",
+        "products": "Məhsullar"
+      },
+      "pos": {
+        "overview": "Ümumi baxış",
+        "sessions": "Sessiyalar",
+        "config": "Konfiqurasiya"
+      },
+      "kitchen": {
+        "overview": "Ümumi baxış",
+        "orders": "Sifarişlər",
+        "displays": "Ekranlar"
+      },
+      "accounting": {
+        "overview": "Ümumi baxış",
+        "journals": "Jurnallar",
+        "reports": "Hesabatlar",
+        "config": "Konfiqurasiya"
+      },
+      "documents": {
+        "overview": "Ümumi baxış",
+        "workspace": "İş sahəsi",
+        "share": "Paylaşılan"
+      },
+      "project": {
+        "overview": "Ümumi baxış",
+        "tasks": "Tapşırıqlar",
+        "milestones": "Mərhələlər",
+        "config": "Konfiqurasiya"
+      },
+      "timesheets": {
+        "overview": "Ümumi baxış",
+        "entries": "Qeydlər",
+        "reports": "Hesabatlar"
+      },
+      "planning": {
+        "overview": "Ümumi baxış",
+        "shifts": "Növbələr",
+        "resources": "Resurslar"
+      },
+      "helpdesk": {
+        "overview": "Ümumi baxış",
+        "tickets": "Biletlər",
+        "teams": "Komandalar"
+      },
+      "website": {
+        "overview": "Ümumi baxış",
+        "pages": "Səhifələr",
+        "theme": "Tema"
+      },
+      "email_marketing": {
+        "overview": "Ümumi baxış",
+        "campaigns": "Kampaniyalar",
+        "lists": "Siyahılar"
+      },
+      "events": {
+        "overview": "Ümumi baxış",
+        "agenda": "Gündəm",
+        "attendees": "İştirakçılar"
+      },
+      "purchase": {
+        "overview": "Ümumi baxış",
+        "requests": "Sorğular",
+        "orders": "Sifarişlər",
+        "vendors": "Təchizatçılar"
+      },
+      "inventory": {
+        "overview": "Ümumi baxış",
+        "products": "Məhsullar",
+        "transfers": "Köçürmələr",
+        "warehouses": "Anbarlar"
+      },
+      "manufacturing": {
+        "overview": "Ümumi baxış",
+        "orders": "Sifarişlər",
+        "boms": "Material spesifikasiyaları"
+      },
+      "shop_floor": {
+        "overview": "Ümumi baxış",
+        "workcenters": "İş mərkəzləri",
+        "boards": "Panellər"
+      },
+      "barcode": {
+        "overview": "Ümumi baxış",
+        "scan": "Skan",
+        "config": "Konfiqurasiya"
+      },
+      "sign": {
+        "overview": "Ümumi baxış",
+        "requests": "Sorğular",
+        "templates": "Şablonlar"
+      },
+      "employees": {
+        "overview": "Ümumi baxış",
+        "directory": "Kataloq",
+        "departments": "Şöbələr"
+      },
+      "recruitment": {
+        "overview": "Ümumi baxış",
+        "jobs": "Vakansiyalar",
+        "applicants": "Namizədlər"
+      },
+      "time_off": {
+        "overview": "Ümumi baxış",
+        "requests": "Sorğular",
+        "types": "Növlər"
+      },
+      "payroll": {
+        "overview": "Ümumi baxış",
+        "payslips": "Maaş vərəqələri",
+        "employees": "Əməkdaşlar",
+        "config": "Konfiqurasiya"
+      },
+      "expenses": {
+        "overview": "Ümumi baxış",
+        "reports": "Hesabatlar",
+        "categories": "Kateqoriyalar"
+      },
+      "apps": {
+        "overview": "Ümumi baxış",
+        "installed": "Quraşdırılmış",
+        "store": "Mağaza"
+      },
+      "settings": {
+        "overview": "Ümumi baxış",
+        "general": "Ümumi",
+        "users": "İstifadəçilər"
+      }
+    },
+    "discuss": {
+      "title": "Müzakirə edin",
+      "caption": "Müzakirə edin"
+    },
+    "calendar": {
+      "title": "Təqvim",
+      "caption": "Təqvim"
+    },
+    "appointments": {
+      "title": "Randevular",
+      "caption": "Randevular"
+    },
+    "todo": {
+      "title": "Görüləsi işlər",
+      "caption": "Görüləsi işlər"
+    },
+    "knowledge": {
+      "title": "Bilik",
+      "caption": "Bilik"
+    },
+    "contacts": {
+      "title": "Əlaqə",
+      "caption": "Əlaqə"
+    },
+    "crm": {
+      "title": "CRM",
+      "caption": "CRM"
+    },
+    "sales": {
+      "title": "Satışlar",
+      "caption": "Satışlar"
+    },
+    "dashboards": {
+      "title": "İdarəetmə panelləri",
+      "caption": "İdarəetmə panelləri"
+    },
+    "subscriptions": {
+      "title": "Abunəliklər",
+      "caption": "Abunəliklər"
+    },
+    "rental": {
+      "title": "Kirayə",
+      "caption": "Kirayə"
+    },
+    "pos": {
+      "title": "Satış Nöqtəsi",
+      "caption": "Satış Nöqtəsi"
+    },
+    "kitchen": {
+      "title": "Mətbəx Ekranı",
+      "caption": "Mətbəx Ekranı"
+    },
+    "accounting": {
+      "title": "Mühasibat uçotu",
+      "caption": "Mühasibat uçotu"
+    },
+    "documents": {
+      "title": "Sənədlər",
+      "caption": "Sənədlər"
+    },
+    "project": {
+      "title": "Layihə",
+      "caption": "Layihə"
+    },
+    "timesheets": {
+      "title": "İş vaxtı cədvəlləri",
+      "caption": "İş vaxtı cədvəlləri"
+    },
+    "planning": {
+      "title": "Planlaşdırma",
+      "caption": "Planlaşdırma"
+    },
+    "helpdesk": {
+      "title": "Yardım masası",
+      "caption": "Yardım masası"
+    },
+    "website": {
+      "title": "Veb sayt",
+      "caption": "Veb sayt"
+    },
+    "email_marketing": {
+      "title": "E-poçt Marketinqi",
+      "caption": "E-poçt Marketinqi"
+    },
+    "events": {
+      "title": "Tədbirlər",
+      "caption": "Tədbirlər"
+    },
+    "purchase": {
+      "title": "Alış",
+      "caption": "Alış"
+    },
+    "inventory": {
+      "title": "İnventar",
+      "caption": "İnventar"
+    },
+    "manufacturing": {
+      "title": "İstehsalat",
+      "caption": "İstehsalat"
+    },
+    "shop_floor": {
+      "title": "Mağaza Mərtəbəsi",
+      "caption": "Mağaza Mərtəbəsi"
+    },
+    "barcode": {
+      "title": "Barkod",
+      "caption": "Barkod"
+    },
+    "sign": {
+      "title": "İmza",
+      "caption": "İmza"
+    },
+    "employees": {
+      "title": "İşçilər",
+      "caption": "İşçilər"
+    },
+    "recruitment": {
+      "title": "İşə qəbul",
+      "caption": "İşə qəbul"
+    },
+    "time_off": {
+      "title": "İstirahət vaxtı",
+      "caption": "İstirahət vaxtı"
+    },
+    "payroll": {
+      "title": "Əmək haqqı",
+      "caption": "Əmək haqqı"
+    },
+    "expenses": {
+      "title": "Xərclər",
+      "caption": "Xərclər"
+    },
+    "apps": {
+      "title": "Tətbiqlər",
+      "caption": "Tətbiqlər"
+    },
+    "settings": {
+      "title": "Parametrlər",
+      "caption": "Parametrlər"
     }
   }
 }

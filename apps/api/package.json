@@ -14,7 +14,8 @@
     "db:migrate:local": "wrangler d1 migrations apply azes-api --local",
     "seed:local-user": "node scripts/seed-local-user.mjs",
     "seed:role-users": "node scripts/seed-role-users.mjs",
-    "seed:lms": "node scripts/seed-lms.mjs"
+    "seed:lms": "node scripts/seed-lms.mjs",
+    "seed:demo-env": "node scripts/seed-demo-env.mjs"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.4",

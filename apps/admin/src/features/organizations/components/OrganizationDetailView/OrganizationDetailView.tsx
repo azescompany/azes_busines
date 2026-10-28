@@ -458,6 +458,7 @@ export function OrganizationDetailView() {
                             selectedUnitId,
                           ),
                         });
+                        await invalidateAccessQueries(queryClient);
                         notify.success(t('orgs.units.memberAssigned'));
                       } catch {
                         notify.error(t('orgs.units.assignError'));

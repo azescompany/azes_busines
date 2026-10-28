@@ -4,7 +4,7 @@
  * ║ File: apps/admin/src/layout/AdminLogo.tsx
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-26
- * ║ Updated: 2026-10-26
+ * ║ Updated: 2026-10-28
  * ║ Purpose: AZES wordmark for Admin L-shell chrome (nav surface)
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
@@ -30,6 +30,7 @@ export function AdminLogo({ compact = false }: { compact?: boolean }) {
   const secondary = theme.vars.palette.secondary.main;
   const onChrome = theme.vars.palette.common.white;
   const onChromeMuted = `color-mix(in srgb, ${onChrome} 72%, transparent)`;
+  /** AppShell chrome — logo returns to unified launcher home. */
   const homeHref = pathTo(PATHS.home, locale);
 
   return (

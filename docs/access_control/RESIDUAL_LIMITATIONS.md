@@ -4,15 +4,16 @@
 ║ File: docs/access_control/RESIDUAL_LIMITATIONS.md
 ║ Author: AZES_COMPANY
 ║ Created: 2026-10-27
-║ Updated: 2026-10-27
-║ Purpose: Phase 08 — residual limitations + dated deprecations
+║ Updated: 2026-10-28
+║ Purpose: Phase 08–09 — residual limitations + dated deprecations
 ║ Layer: docs
 ╚══════════════════════════════════════════════════════════════╝
 -->
 
-# Residual Limitations & Deprecations (Phase 08)
+# Residual Limitations & Deprecations (Phase 08–09)
 
-**Date:** 2026-10-27. In-scope slice Phases 02–07 accepted; this file is the honest residual
+**Date:** 2026-10-28. Phases 02–08 engineering accepted; Phase 09 closes soft-de-authz /
+GeneralAdmin capability / demo seed / audit UI gaps. This file remains the honest residual
 list for release GO / NO-GO.
 
 ---
@@ -23,7 +24,7 @@ list for release GO / NO-GO.
 | -------------------------------------- | ------------------------------------------- | ------------------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | `ACCESS_RESOLVER_MODE=legacy`          | Deprecated alias                            | **2026-12-31**     | BE + Coord | Same deny/allow core as `unified` (no dual-truth). Emergency rollback only. After window: remove env + mode branch.                  |
 | JWT `permissions[]` emission           | Non-authoritative; still emitted for compat | **2026-12-31**     | BE + Coord | `claimHasPermission` / `requirePermission` ignore claim (AC-D05). Clients must use `/me`. After window: stop emitting in access JWT. |
-| Static `ROLE_PERMISSIONS` LMS baseline | Keep                                        | N/A (not removing) | BE         | Menu-covered ERP codes live via resolver; LMS personal learn/progress stay on static map (AC-D07).                                   |
+| Static `ROLE_PERMISSIONS` LMS baseline | Keep (LMS channel only)                     | N/A (not removing) | BE         | Phase 09 soft de-authz: LMS roles must not yield platform/ERP codes; Academy LMS perms stay (AC-D07 A).                              |
 
 **Answer — is legacy path still required?**  
 Yes, as a **named rollback switch** through 2026-12-31, **not** as a separate dual-read
@@ -35,15 +36,15 @@ rollback.
 
 ## 2. Residual product / security limitations
 
-| Limitation                           | Impact                                                                | Mitigation / next initiative                               |
-| ------------------------------------ | --------------------------------------------------------------------- | ---------------------------------------------------------- |
-| GeneralAdmin as distinct system role | Still capability set via `org.manage_all` / SuperAdmin (AC-D01 A)     | Future role catalog work — not Phase 08                    |
-| Subscription plans / grace billing   | Lite statuses only (active / blocked / read-only)                     | AC-D08 A deferred depth                                    |
-| Audit without D1 (`env.DB` absent)   | `writeAuditLog` no-ops in memory tests / no-DB                        | Production Workers always have DB                          |
-| Admin UI audit browser               | Escalation rows exist in API; rich audit UI incomplete                | Optional UI track                                          |
-| Unit subtree on every CRM list path  | Helpers + unit API exist; not every list filter may pass unitRepo yet | Expand as CRM/features adopt `isOwnerVisibleInUnitSubtree` |
-| OpenAPI clients caching `/me`        | `accessVersion` present; stale UI until refetch                       | OrgSwitcher invalidate (Phase 07); MANUAL smoke            |
-| Elastic platform roles               | Exists; not full ABAC                                                 | Out of scope                                               |
+| Limitation                           | Impact                                                                       | Mitigation / next initiative                               |
+| ------------------------------------ | ---------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| GeneralAdmin as distinct system role | Capability profile `generalAdmin` + const (AC-D01 A); **no** membership enum | Phase 09 seed + tests                                      |
+| Subscription plans / grace billing   | Lite statuses only (active / blocked / read-only)                            | AC-D08 A deferred depth                                    |
+| Audit without D1 (`env.DB` absent)   | `writeAuditLog` no-ops in memory tests / no-DB                               | Production Workers always have DB                          |
+| Admin UI audit browser               | Phase 09 — OpenAPI + Admin feature                                           | Was residual; closing in Phase 09                          |
+| Unit subtree on every CRM list path  | Helpers + unit API exist; not every list filter may pass unitRepo yet        | Expand as CRM/features adopt `isOwnerVisibleInUnitSubtree` |
+| OpenAPI clients caching `/me`        | `accessVersion` present; stale UI until refetch                              | OrgSwitcher invalidate (Phase 07); MANUAL smoke            |
+| Elastic platform roles               | Exists; not full ABAC                                                        | Out of scope                                               |
 
 ---
 

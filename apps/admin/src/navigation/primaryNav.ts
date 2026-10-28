@@ -4,8 +4,8 @@
  * ║ File: apps/admin/src/navigation/primaryNav.ts
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-26
- * ║ Updated: 2026-10-26
- * ║ Purpose: Map GET /me.nav → AzesNavConfig (TAGET M1.5)
+ * ║ Updated: 2026-10-28
+ * ║ Purpose: Map GET /me.nav → AzesNavConfig (tenant toolbar; home `/`)
  * ║ Layer: app
  * ╚══════════════════════════════════════════════════════════════╝
  */
@@ -29,6 +29,12 @@ const ICON_MAP: Record<string, typeof IconHome> = {
   security: IconSecurity,
 };
 
+/** Normalize server home seeds (`/` or legacy `/apps`) to unified launcher `/`. */
+function tenantNavPath(path: string): string {
+  if (path === '/' || path === '' || path === '/apps') return '/';
+  return path;
+}
+
 function resolveIcon(iconKey: string | null | undefined): ReactElement {
   const Comp = (iconKey && ICON_MAP[iconKey]) || IconHome;
   return createElement(Comp, { fontSize: 'small' }) as ReactElement;
@@ -39,18 +45,25 @@ function captionKey(i18nKey: string): string {
   return `${i18nKey}Caption`;
 }
 
-/** Build primary nav from server `me.nav` (fallback: home only). */
+function isHomePath(path: string): boolean {
+  return path === '/' || path === '' || path === '/apps' || path === '/apps/';
+}
+
+/** Build primary nav from server `me.nav` (fallback: launcher home). */
 export function createPrimaryNavFromMe(t: TFunction, nav: MeNavItem[] | undefined): AzesNavConfig {
   const items =
     nav && nav.length > 0
-      ? nav.map((entry) => ({
-          id: entry.id,
-          title: t(entry.i18nKey),
-          caption: t(captionKey(entry.i18nKey)),
-          path: entry.path,
-          match: (entry.path === '/' ? 'exact' : 'prefix') as 'exact' | 'prefix',
-          icon: resolveIcon(entry.iconKey),
-        }))
+      ? nav.map((entry) => {
+          const path = tenantNavPath(entry.path);
+          return {
+            id: entry.id,
+            title: t(entry.i18nKey),
+            caption: t(captionKey(entry.i18nKey)),
+            path,
+            match: (isHomePath(path) ? 'exact' : 'prefix') as 'exact' | 'prefix',
+            icon: resolveIcon(entry.iconKey),
+          };
+        })
       : [
           {
             id: 'home',
@@ -67,10 +80,13 @@ export function createPrimaryNavFromMe(t: TFunction, nav: MeNavItem[] | undefine
 
 /** Whether a logical (locale-stripped) path is allowed by server nav. */
 export function isPathAllowedByNav(logicalPath: string, nav: MeNavItem[] | undefined): boolean {
-  if (!nav || nav.length === 0) return logicalPath === '/' || logicalPath === '';
+  if (!nav || nav.length === 0) {
+    return isHomePath(logicalPath);
+  }
   const clean = logicalPath === '' ? '/' : logicalPath;
   return nav.some((entry) => {
-    if (entry.path === '/') return clean === '/';
-    return clean === entry.path || clean.startsWith(`${entry.path}/`);
+    const path = tenantNavPath(entry.path);
+    if (isHomePath(path)) return isHomePath(clean);
+    return clean === path || clean.startsWith(`${path}/`);
   });
 }

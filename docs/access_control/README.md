@@ -4,7 +4,7 @@
 ║ File: docs/access_control/README.md
 ║ Author: AZES_COMPANY
 ║ Created: 2026-10-27
-║ Updated: 2026-10-27
+║ Updated: 2026-10-28
 ║ Purpose: Access-control planning docs index and reading order
 ║ Layer: docs
 ╚══════════════════════════════════════════════════════════════╝
@@ -16,7 +16,9 @@ Bu qovluq AZES monorepo üçün **rol, icazə, tenant və naviqasiya** arxitektu
 planlaşdırma paketidir. Məqsəd mövcud M1–M5.0-lite implementasiyasını sıfırdan yazmaq deyil;
 onu vahid, təhlükəsiz və mərhələli sistemə çatdırmaqdır.
 
-**Bu paket yalnız sənəddir.** Application kodu, schema və migration burada dəyişdirilmir.
+**Phase 00–08:** planning + implementation complete (engineering).  
+**Phase 09:** delta implementation (LMS soft de-authz, GeneralAdmin capability, demo seed,
+audit UI) — see [phases/PHASE_09_DELTA.md](./phases/PHASE_09_DELTA.md).
 
 ## Oxu ardıcıllığı
 
@@ -28,7 +30,9 @@ onu vahid, təhlükəsiz və mərhələli sistemə çatdırmaqdır.
 6. [SECURITY_MATRIX.md](./SECURITY_MATRIX.md) + [RESIDUAL_LIMITATIONS.md](./RESIDUAL_LIMITATIONS.md) — Phase 08
 7. [backend/BACKEND_PLAN.md](./backend/BACKEND_PLAN.md) + [backend/WORKER.md](./backend/WORKER.md)
 8. [ui/UI_PLAN.md](./ui/UI_PLAN.md) + [ui/WORKER.md](./ui/WORKER.md)
-9. [phases/](./phases/) — Phase 00–08 icra kartları
+9. [phases/](./phases/) — Phase 00–09 icra kartları
+10. [DEMO_SEED.md](./DEMO_SEED.md) — local multi-org demo seed / login
+11. [DEMO_CLIENT_CONTRACT.md](./DEMO_CLIENT_CONTRACT.md) — public ephemeral demo (≠ D1 seed)
 
 ## Qısa vəziyyət (2026-10-27)
 
@@ -40,7 +44,10 @@ onu vahid, təhlükəsiz və mərhələli sistemə çatdırmaqdır.
 | Module registry + org modules          | EXISTS                                                  |
 | User menu overrides → effective access | EXISTS (Phase 05–06)                                    |
 | Organization Unit (branch/dept)        | EXISTS (API + Admin Phase 07)                           |
-| GeneralAdmin (ayrı sistem rolu)        | MISSING (AC-D01 A — capability set)                     |
+| GeneralAdmin (ayrı sistem rolu)        | Capability set (AC-D01 A) — Phase 09                    |
+| LMS soft de-authz (no ERP via LMS)     | Phase 09 (enum kept; AC-D07 A)                          |
+| Multi-org demo seed                    | Phase 09                                                |
+| Audit Admin UI + OpenAPI               | Phase 09                                                |
 | Subscription plans / grace / read-only | PARTIAL (lite read-only DONE; plans deferred)           |
 | Vahid Access Resolver                  | EXISTS (Phase 06; legacy alias deprecated → 2026-12-31) |
 | Security acceptance matrix             | EXISTS (Phase 08; prod GO pending User)                 |
@@ -69,6 +76,7 @@ monorepo `docs/ops/WORKER.md`-i əvəz etmir.
 | 06 Resolver    | [PHASE_06_EFFECTIVE_ACCESS_RESOLVER.md](./phases/PHASE_06_EFFECTIVE_ACCESS_RESOLVER.md)     | DONE (2026-10-27)                  |
 | 07 Admin UI    | [PHASE_07_ADMIN_UI.md](./phases/PHASE_07_ADMIN_UI.md)                                       | DONE (2026-10-27)                  |
 | 08 Security    | [PHASE_08_SECURITY_AND_ACCEPTANCE.md](./phases/PHASE_08_SECURITY_AND_ACCEPTANCE.md)         | DONE (2026-10-27; prod GO pending) |
+| 09 Delta       | [PHASE_09_DELTA.md](./phases/PHASE_09_DELTA.md)                                             | DONE (2026-10-28)                  |
 
 ## Dəmir qaydalar
 

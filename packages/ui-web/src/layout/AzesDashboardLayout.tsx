@@ -4,7 +4,7 @@
  * ║ File: packages/ui-web/src/layout/AzesDashboardLayout.tsx
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-10-04
- * ║ Updated: 2026-10-16
+ * ║ Updated: 2026-10-28
  * ║ Purpose: Dashboard shell — scoop resets canvas text color (anti white-on-white)
  * ║ Layer: package
  * ╚══════════════════════════════════════════════════════════════╝
@@ -83,6 +83,12 @@ export type AzesDashboardLayoutSlots = {
   footer?: ReactNode;
 };
 
+/** True when any nav group has at least one item (empty config ≡ no primary menus). */
+export function hasPrimaryNavItems(nav: AzesNavConfig | undefined): boolean {
+  if (!nav || nav.length === 0) return false;
+  return nav.some((group) => (group.items?.length ?? 0) > 0);
+}
+
 export type AzesDashboardLayoutProps = {
   nav: AzesNavConfig;
   /**
@@ -92,6 +98,11 @@ export type AzesDashboardLayoutProps = {
   railNav?: AzesNavConfig;
   /** Horizontal menus toolbar skeleton until API menus resolve. */
   navLoading?: boolean;
+  /**
+   * Hide primary/horizontal menu toolbar + hide/show-menus chrome.
+   * Also implied when `nav` has no items. Rail + header remain (demo audience).
+   */
+  hidePrimaryNav?: boolean;
   /** Defaults to the settings value, then `horizontal`. */
   navLayout?: AzesNavLayout;
   navColor?: AzesNavColor;
@@ -119,6 +130,7 @@ export function AzesDashboardLayout({
   nav,
   railNav,
   navLoading = false,
+  hidePrimaryNav = false,
   navLayout: navLayoutProp,
   navColor: navColorProp,
   container: containerProp,
@@ -195,7 +207,12 @@ export function AzesDashboardLayout({
   // Dual chrome brand strip:
   // - Menus open: logo flush to the rail edge (mark stacked over sidebar icons).
   // - Menus hide: Apps waffle occupies the rail column; logo slides inline-end.
-  const appsCollapsed = isHorizontal && isDesktop && !horizontalMenusOpen;
+  // - suppressPrimaryNav: no toolbar / no show-menus waffle — logo only over rail.
+  const suppressPrimaryNav = hidePrimaryNav || !hasPrimaryNavItems(nav);
+  /** Empty when suppressed so mobile drawer / side layouts never paint primary menus. */
+  const primaryNavConfig: AzesNavConfig = suppressPrimaryNav ? [] : nav;
+  const showPrimaryToolbar = isHorizontal && isDesktop && !suppressPrimaryNav;
+  const appsCollapsed = showPrimaryToolbar && !horizontalMenusOpen;
   const showHeaderLogo = Boolean(slots.logo) && (isDual || !isDesktop);
 
   const headerStart = (
@@ -214,6 +231,7 @@ export function AzesDashboardLayout({
         <Box
           data-azes-brand-strip=""
           data-azes-apps-collapsed={appsCollapsed ? 'true' : 'false'}
+          data-azes-hide-primary-nav={suppressPrimaryNav ? 'true' : 'false'}
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -223,38 +241,42 @@ export function AzesDashboardLayout({
             marginInlineStart: 'calc(-1 * var(--azes-layout-page-padding))',
           }}
         >
-          <Box
-            sx={(t) => ({
-              width: 'var(--azes-layout-nav-width)',
-              flexShrink: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              opacity: appsCollapsed ? 1 : 0,
-              pointerEvents: appsCollapsed ? 'auto' : 'none',
-              transition: t.transitions.create(['opacity'], {
-                duration: CHROME_MOTION_MS,
-                easing: t.transitions.easing.easeInOut,
-              }),
-              '@media (prefers-reduced-motion: reduce)': {
-                transition: 'none',
-              },
-            })}
-          >
-            <IconButton
-              aria-label={labels.showMenus}
-              aria-expanded={false}
-              aria-controls={menusId}
-              tabIndex={appsCollapsed ? undefined : -1}
-              onClick={() => {
-                setHorizontalMenusOpen(true);
-                setVisibilityPin((n) => n + 1);
-              }}
-              sx={(t) => appsTriggerSx(t, 'header')}
+          {showPrimaryToolbar ? (
+            <Box
+              sx={(t) => ({
+                width: 'var(--azes-layout-nav-width)',
+                flexShrink: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                opacity: appsCollapsed ? 1 : 0,
+                pointerEvents: appsCollapsed ? 'auto' : 'none',
+                transition: t.transitions.create(['opacity'], {
+                  duration: CHROME_MOTION_MS,
+                  easing: t.transitions.easing.easeInOut,
+                }),
+                '@media (prefers-reduced-motion: reduce)': {
+                  transition: 'none',
+                },
+              })}
             >
-              <AppsIcon />
-            </IconButton>
-          </Box>
+              <IconButton
+                aria-label={labels.showMenus}
+                aria-expanded={false}
+                aria-controls={menusId}
+                tabIndex={appsCollapsed ? undefined : -1}
+                onClick={() => {
+                  setHorizontalMenusOpen(true);
+                  setVisibilityPin((n) => n + 1);
+                }}
+                sx={(t) => appsTriggerSx(t, 'header')}
+              >
+                <AppsIcon />
+              </IconButton>
+            </Box>
+          ) : (
+            <Box sx={{ width: 'var(--azes-layout-nav-width)', flexShrink: 0 }} aria-hidden />
+          )}
           {showHeaderLogo ? (
             <Box
               sx={(t) => ({
@@ -264,9 +286,12 @@ export function AzesDashboardLayout({
                 flexShrink: 0,
                 minWidth: 0,
                 // Slight inset from the viewport start edge (rail stack).
-                paddingInlineStart: '12px',
-                // Menus open → pull back over the rail column; collapsed → after Apps.
-                marginInlineStart: appsCollapsed ? 0 : 'calc(-1 * var(--azes-layout-nav-width))',
+                paddingInlineStart: t.spacing(1.5),
+                // Menus open / suppressed primary → pull back over the rail column; collapsed → after Apps.
+                marginInlineStart:
+                  suppressPrimaryNav || !appsCollapsed
+                    ? 'calc(-1 * var(--azes-layout-nav-width))'
+                    : 0,
                 transition: t.transitions.create(['margin'], {
                   duration: CHROME_MOTION_MS,
                   easing: t.transitions.easing.easeInOut,
@@ -296,48 +321,47 @@ export function AzesDashboardLayout({
     </>
   );
 
-  const horizontalTop =
-    isHorizontal && isDesktop ? (
+  const horizontalTop = showPrimaryToolbar ? (
+    <Box
+      sx={(t) => ({
+        display: 'grid',
+        gridTemplateRows: horizontalMenusOpen ? '1fr' : '0fr',
+        transition: t.transitions.create('grid-template-rows', {
+          duration: 320,
+          easing: t.transitions.easing.easeInOut,
+        }),
+      })}
+    >
       <Box
-        sx={(t) => ({
-          display: 'grid',
-          gridTemplateRows: horizontalMenusOpen ? '1fr' : '0fr',
-          transition: t.transitions.create('grid-template-rows', {
-            duration: 320,
-            easing: t.transitions.easing.easeInOut,
+        sx={{
+          // Clip vertical collapse only — keep x free so the menus scrollbar can paint.
+          overflowX: 'visible',
+          overflowY: 'hidden',
+          minHeight: 0,
+          minWidth: 0,
+          opacity: horizontalMenusOpen ? 1 : 0,
+          pointerEvents: horizontalMenusOpen ? 'auto' : 'none',
+          transition: theme.transitions.create('opacity', {
+            duration: 280,
+            easing: theme.transitions.easing.easeInOut,
           }),
-        })}
+        }}
       >
-        <Box
-          sx={{
-            // Clip vertical collapse only — keep x free so the menus scrollbar can paint.
-            overflowX: 'visible',
-            overflowY: 'hidden',
-            minHeight: 0,
-            minWidth: 0,
-            opacity: horizontalMenusOpen ? 1 : 0,
-            pointerEvents: horizontalMenusOpen ? 'auto' : 'none',
-            transition: theme.transitions.create('opacity', {
-              duration: 280,
-              easing: theme.transitions.easing.easeInOut,
-            }),
-          }}
-        >
-          <AzesHorizontalNav
-            config={nav}
-            loading={navLoading}
-            tone={navColor}
-            label={labels.primaryNav}
-            layoutQuery={layoutQuery}
-            menusId={menusId}
-            hideMenusLabel={labels.hideMenus}
-            prevMenusLabel={labels.prevMenus}
-            nextMenusLabel={labels.nextMenus}
-            onHideMenus={() => setHorizontalMenusOpen(false)}
-          />
-        </Box>
+        <AzesHorizontalNav
+          config={primaryNavConfig}
+          loading={navLoading}
+          tone={navColor}
+          label={labels.primaryNav}
+          layoutQuery={layoutQuery}
+          menusId={menusId}
+          hideMenusLabel={labels.hideMenus}
+          prevMenusLabel={labels.prevMenus}
+          nextMenusLabel={labels.nextMenus}
+          onHideMenus={() => setHorizontalMenusOpen(false)}
+        />
       </Box>
-    ) : null;
+    </Box>
+  ) : null;
 
   const mainAndFooter = (
     <>
@@ -454,7 +478,7 @@ export function AzesDashboardLayout({
       <AzesSkipLink label={labels.skipToContent} />
       {isSide ? (
         <AzesVerticalNav
-          config={nav}
+          config={primaryNavConfig}
           tone={navColor}
           label={labels.primaryNav}
           layoutQuery={layoutQuery}
@@ -472,7 +496,7 @@ export function AzesDashboardLayout({
       ) : null}
       {isDesktop ? null : (
         <AzesMobileNav
-          config={nav}
+          config={primaryNavConfig}
           footerConfig={mobileFooterNav}
           tone={navColor}
           label={labels.primaryNav}

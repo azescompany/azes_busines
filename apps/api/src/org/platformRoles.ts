@@ -21,6 +21,7 @@ import type { PlatformRoleDto } from './types.js';
 
 const SYSTEM_ROLES = new Set([
   'superAdmin',
+  'generalAdmin',
   'orgAdmin',
   'member',
   'instructor',

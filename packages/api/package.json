@@ -75,6 +75,11 @@
       "types": "./src/azes/platform-roles/index.ts",
       "import": "./src/azes/platform-roles/index.ts",
       "default": "./src/azes/platform-roles/index.ts"
+    },
+    "./azes/audit": {
+      "types": "./src/azes/audit/index.ts",
+      "import": "./src/azes/audit/index.ts",
+      "default": "./src/azes/audit/index.ts"
     }
   },
   "files": [

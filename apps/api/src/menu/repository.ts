@@ -418,6 +418,17 @@ function defaultAdminMenus(): MenuDto[] {
         'crm.customers.delete',
       ],
     },
+    {
+      id: 'menu-admin-audit',
+      app: 'admin',
+      code: 'audit-logs',
+      path: '/audit-logs',
+      i18nKey: 'nav.auditLogs',
+      iconKey: 'security',
+      sortOrder: 60,
+      status: 'active',
+      permissionCodes: ['audit.read'],
+    },
   ];
 }
 
@@ -430,7 +441,10 @@ function defaultRoleMenus(): Record<string, string[]> {
       'menu-admin-role-menus',
       'menu-admin-platform-roles',
       'menu-admin-customers',
+      'menu-admin-audit',
     ],
+    /** AC-D01 A — platform ops without org.manage_all / CRM menus. */
+    generalAdmin: ['menu-admin-home', 'menu-admin-orgs', 'menu-admin-audit'],
     orgAdmin: ['menu-admin-home', 'menu-admin-orgs', 'menu-admin-users', 'menu-admin-customers'],
     instructor: ['menu-admin-home'],
     student: ['menu-admin-home'],

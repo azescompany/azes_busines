@@ -58,7 +58,8 @@ describe('@azes/account login', () => {
     window.history.replaceState(null, '', '/');
   });
 
-  it('renders login identity for smoke e2e parity', async () => {
+  // Heavy App mount under turbo parallel load — default 5s flakes in CI/monorepo.
+  it('renders login identity for smoke e2e parity', { timeout: 15_000 }, async () => {
     renderWithProviders(<App />);
     // Wait for form (boot loader also uses brand aria-label on the same SVG).
     await screen.findByRole('heading', { level: 1, name: 'Daxil ol' });

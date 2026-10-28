@@ -37,6 +37,7 @@ export function layoutVarsSx(
     '--azes-layout-nav-mobile-width': px(l.navMobileWidth),
     '--azes-layout-nav-horizontal-height': px(0),
     '--azes-layout-content-max-width': px(l.contentMaxWidth),
+    '--azes-layout-content-sidebar-width': px(l.contentSidebarWidth),
     '--azes-layout-page-padding': px(l.pagePaddingXs),
     '--azes-layout-chrome-gap': px(railChrome ? l.chromeGap : 0),
     '--azes-layout-chrome-radius': px(railChrome ? l.chromeRadius : 0),

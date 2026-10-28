@@ -32,6 +32,7 @@ import { useNavigate } from 'react-router';
 
 import { organizationDetailPath, pathTo, PATHS } from '../../../../app/router/paths.js';
 import { checkPermission } from '../../../../auth/checkPermission.js';
+import { invalidateAccessQueries } from '../../../../auth/invalidateAccessQueries.js';
 import { useSessionMe } from '../../../../auth/useSessionMe.js';
 import { ADMIN_NAMESPACE } from '../../../../i18n/createAdminI18n.js';
 import {
@@ -295,6 +296,7 @@ export function OrganizationsView() {
           subscriptionStatus: blocked ? 'active' : 'blocked',
         });
         await queryClient.invalidateQueries({ queryKey: getGetApiV1OrgsQueryKey() });
+        await invalidateAccessQueries(queryClient);
         notify.success(blocked ? t('orgs.dialog.unblocked') : t('orgs.dialog.blocked'));
       } catch {
         notify.error(t('orgs.loadError'));

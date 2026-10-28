@@ -4,7 +4,7 @@
  * ║ File: scripts/architecture-audit/checks/docs-sync.mjs
  * ║ Author: AZES_COMPANY
  * ║ Created: 2026-08-22
- * ║ Updated: 2026-10-19
+ * ║ Updated: 2026-10-28
  * ║ Purpose: Docs/ADR sync checks against repo reality
  * ║ Layer: tooling
  * ╚══════════════════════════════════════════════════════════════╝
@@ -34,7 +34,8 @@ const EXPECTED_ADRS = [
   'ADR-016-styles-docs-rebuild.md',
 ];
 
-const EXPECTED_APPS = ['account', 'academy', 'azes-ui', 'api'];
+/** On-disk apps under apps/ (academy track not in this monorepo tree). */
+const EXPECTED_APPS = ['account', 'admin', 'azes-ui', 'api'];
 
 const EXPECTED_PACKAGES = [
   'design-tokens',

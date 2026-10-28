@@ -54,6 +54,7 @@ raw tokens (primitives)        color ramps, font sizes, spacing, radius, layout 
 | `navMobileWidth`      | 288      | `AzesMobileNav`                             |
 | `navHorizontalHeight` | 56       | `AzesHorizontalNav`                         |
 | `contentMaxWidth`     | 1280     | `AzesMainContent` when `container: 'fixed'` |
+| `contentSidebarWidth` | 240      | `AzesMainSidebar` in-content rail           |
 | `pagePaddingXs/Md/Lg` | 16/24/32 | `AzesMainContent` horizontal padding        |
 
 These are AZES values. They are exposed on the theme as `theme.azes.layout` and in CSS as

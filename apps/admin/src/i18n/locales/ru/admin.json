@@ -12,7 +12,9 @@
     "platformRoles": "Роли",
     "platformRolesCaption": "Каталог",
     "customers": "Клиенты",
-    "customersCaption": "CRM"
+    "customersCaption": "CRM",
+    "auditLogs": "Журнал аудита",
+    "auditLogsCaption": "Безопасность"
   },
   "shell": {
     "primaryNav": "Основная навигация",
@@ -44,6 +46,18 @@
     "title": "Главная",
     "subtitle": "AZES Admin — вход через Account SSO",
     "welcome": "Добро пожаловать"
+  },
+  "landing": {
+    "title": "AZES Apps",
+    "subtitle": "Изучайте модули в демо-режиме или войдите в рабочее пространство организации.",
+    "ctaLogin": "Войти",
+    "ctaExplore": "Смотреть модули",
+    "demoHint": "Изменения в демо не сохраняются. Войдите для живого тенанта."
+  },
+  "demo": {
+    "banner": "Демо-режим — изменения не сохраняются.",
+    "reset": "Сбросить демо",
+    "readOnlyNote": "Это публичный демо-заполнитель. Полный UI модуля откроется после входа в Apps."
   },
   "brand": {
     "homeAria": "AZES COMPANY — главная"
@@ -379,6 +393,398 @@
       "instructor": "Инструктор",
       "student": "Студент",
       "guest": "Гость"
+    }
+  },
+  "audit": {
+    "title": "Журнал аудита",
+    "subtitle": "Привилегированные действия, записанные API (только чтение).",
+    "forbidden": "У вас нет права просматривать журнал аудита.",
+    "loadError": "Не удалось загрузить журнал аудита.",
+    "filters": {
+      "action": "Фильтр по действию",
+      "limit": "Лимит"
+    },
+    "columns": {
+      "createdAt": "Когда",
+      "action": "Действие",
+      "actor": "Актор",
+      "org": "Организация",
+      "targetType": "Тип цели",
+      "targetId": "Id цели"
+    }
+  },
+  "apps": {
+    "demoBanner": "Это демо-среда — модули пока заглушки.",
+    "favorites": "Избранное",
+    "recent": "Недавние",
+    "allApps": "Все приложения",
+    "favorite": "В избранное",
+    "unfavorite": "Убрать из избранного",
+    "empty": "Приложения не найдены",
+    "emptyHint": "Попробуйте другой запрос.",
+    "backToApps": "Приложения",
+    "railCaption": "Открыть лаунчер",
+    "moduleSidebar": {
+      "label": "Меню модуля",
+      "open": "Открыть меню модуля",
+      "close": "Закрыть меню модуля"
+    },
+    "breadcrumb": {
+      "apps": "Приложения"
+    },
+    "search": {
+      "placeholder": "Поиск приложений… (клавиша /)"
+    },
+    "view": {
+      "label": "Вид",
+      "all": "Все",
+      "grouped": "Группы"
+    },
+    "category": {
+      "productivity": "Продуктивность",
+      "sales": "Продажи",
+      "finance": "Финансы",
+      "operations": "Операции",
+      "marketing": "Маркетинг",
+      "hr": "HR",
+      "system": "Система"
+    },
+    "placeholder": {
+      "title": "Раздел в разработке",
+      "body": "Меню и примеры данных пока демонстрационные.",
+      "unknownTitle": "Неизвестный модуль",
+      "unknownBody": "Вернитесь к лаунчеру и выберите приложение."
+    },
+    "table": {
+      "sampleTitle": "Пример записей",
+      "id": "ID",
+      "name": "Имя",
+      "status": "Статус"
+    },
+    "menus": {
+      "discuss": {
+        "overview": "Обзор",
+        "channels": "Каналы",
+        "direct": "Личные сообщения"
+      },
+      "calendar": {
+        "overview": "Обзор",
+        "meetings": "Встречи",
+        "config": "Настройки"
+      },
+      "appointments": {
+        "overview": "Обзор",
+        "slots": "Слоты",
+        "config": "Настройки"
+      },
+      "todo": {
+        "overview": "Обзор",
+        "lists": "Списки",
+        "archive": "Архив"
+      },
+      "knowledge": {
+        "overview": "Обзор",
+        "articles": "Статьи",
+        "workspace": "Рабочая область"
+      },
+      "contacts": {
+        "overview": "Обзор",
+        "companies": "Компании",
+        "tags": "Теги"
+      },
+      "crm": {
+        "overview": "Обзор",
+        "pipeline": "Воронка",
+        "contacts": "Контакты",
+        "reports": "Отчёты",
+        "config": "Настройки"
+      },
+      "sales": {
+        "overview": "Обзор",
+        "quotations": "Предложения",
+        "orders": "Заказы",
+        "customers": "Клиенты"
+      },
+      "dashboards": {
+        "overview": "Обзор",
+        "boards": "Доски",
+        "config": "Настройки"
+      },
+      "subscriptions": {
+        "overview": "Обзор",
+        "plans": "Планы",
+        "invoices": "Счета"
+      },
+      "rental": {
+        "overview": "Обзор",
+        "orders": "Заказы",
+        "products": "Товары"
+      },
+      "pos": {
+        "overview": "Обзор",
+        "sessions": "Сессии",
+        "config": "Настройки"
+      },
+      "kitchen": {
+        "overview": "Обзор",
+        "orders": "Заказы",
+        "displays": "Экраны"
+      },
+      "accounting": {
+        "overview": "Обзор",
+        "journals": "Журналы",
+        "reports": "Отчёты",
+        "config": "Настройки"
+      },
+      "documents": {
+        "overview": "Обзор",
+        "workspace": "Рабочая область",
+        "share": "Общие"
+      },
+      "project": {
+        "overview": "Обзор",
+        "tasks": "Задачи",
+        "milestones": "Вехи",
+        "config": "Настройки"
+      },
+      "timesheets": {
+        "overview": "Обзор",
+        "entries": "Записи",
+        "reports": "Отчёты"
+      },
+      "planning": {
+        "overview": "Обзор",
+        "shifts": "Смены",
+        "resources": "Ресурсы"
+      },
+      "helpdesk": {
+        "overview": "Обзор",
+        "tickets": "Тикеты",
+        "teams": "Команды"
+      },
+      "website": {
+        "overview": "Обзор",
+        "pages": "Страницы",
+        "theme": "Тема"
+      },
+      "email_marketing": {
+        "overview": "Обзор",
+        "campaigns": "Кампании",
+        "lists": "Списки"
+      },
+      "events": {
+        "overview": "Обзор",
+        "agenda": "Повестка",
+        "attendees": "Участники"
+      },
+      "purchase": {
+        "overview": "Обзор",
+        "requests": "Заявки",
+        "orders": "Заказы",
+        "vendors": "Поставщики"
+      },
+      "inventory": {
+        "overview": "Обзор",
+        "products": "Товары",
+        "transfers": "Перемещения",
+        "warehouses": "Склады"
+      },
+      "manufacturing": {
+        "overview": "Обзор",
+        "orders": "Заказы",
+        "boms": "Спецификации"
+      },
+      "shop_floor": {
+        "overview": "Обзор",
+        "workcenters": "Участки",
+        "boards": "Доски"
+      },
+      "barcode": {
+        "overview": "Обзор",
+        "scan": "Сканирование",
+        "config": "Настройки"
+      },
+      "sign": {
+        "overview": "Обзор",
+        "requests": "Заявки",
+        "templates": "Шаблоны"
+      },
+      "employees": {
+        "overview": "Обзор",
+        "directory": "Справочник",
+        "departments": "Отделы"
+      },
+      "recruitment": {
+        "overview": "Обзор",
+        "jobs": "Вакансии",
+        "applicants": "Кандидаты"
+      },
+      "time_off": {
+        "overview": "Обзор",
+        "requests": "Заявки",
+        "types": "Типы"
+      },
+      "payroll": {
+        "overview": "Обзор",
+        "payslips": "Расчётные листы",
+        "employees": "Сотрудники",
+        "config": "Настройки"
+      },
+      "expenses": {
+        "overview": "Обзор",
+        "reports": "Отчёты",
+        "categories": "Категории"
+      },
+      "apps": {
+        "overview": "Обзор",
+        "installed": "Установленные",
+        "store": "Магазин"
+      },
+      "settings": {
+        "overview": "Обзор",
+        "general": "Общие",
+        "users": "Пользователи"
+      }
+    },
+    "discuss": {
+      "title": "Обсуждение",
+      "caption": "Обсуждение"
+    },
+    "calendar": {
+      "title": "Календарь",
+      "caption": "Календарь"
+    },
+    "appointments": {
+      "title": "Встречи",
+      "caption": "Встречи"
+    },
+    "todo": {
+      "title": "Задачи",
+      "caption": "Задачи"
+    },
+    "knowledge": {
+      "title": "База знаний",
+      "caption": "База знаний"
+    },
+    "contacts": {
+      "title": "Контакты",
+      "caption": "Контакты"
+    },
+    "crm": {
+      "title": "CRM",
+      "caption": "CRM"
+    },
+    "sales": {
+      "title": "Продажи",
+      "caption": "Продажи"
+    },
+    "dashboards": {
+      "title": "Панели",
+      "caption": "Панели"
+    },
+    "subscriptions": {
+      "title": "Подписки",
+      "caption": "Подписки"
+    },
+    "rental": {
+      "title": "Аренда",
+      "caption": "Аренда"
+    },
+    "pos": {
+      "title": "Касса",
+      "caption": "Касса"
+    },
+    "kitchen": {
+      "title": "Кухонный экран",
+      "caption": "Кухонный экран"
+    },
+    "accounting": {
+      "title": "Бухгалтерия",
+      "caption": "Бухгалтерия"
+    },
+    "documents": {
+      "title": "Документы",
+      "caption": "Документы"
+    },
+    "project": {
+      "title": "Проекты",
+      "caption": "Проекты"
+    },
+    "timesheets": {
+      "title": "Табели",
+      "caption": "Табели"
+    },
+    "planning": {
+      "title": "Планирование",
+      "caption": "Планирование"
+    },
+    "helpdesk": {
+      "title": "Поддержка",
+      "caption": "Поддержка"
+    },
+    "website": {
+      "title": "Сайт",
+      "caption": "Сайт"
+    },
+    "email_marketing": {
+      "title": "Email-маркетинг",
+      "caption": "Email-маркетинг"
+    },
+    "events": {
+      "title": "События",
+      "caption": "События"
+    },
+    "purchase": {
+      "title": "Закупки",
+      "caption": "Закупки"
+    },
+    "inventory": {
+      "title": "Склад",
+      "caption": "Склад"
+    },
+    "manufacturing": {
+      "title": "Производство",
+      "caption": "Производство"
+    },
+    "shop_floor": {
+      "title": "Цех",
+      "caption": "Цех"
+    },
+    "barcode": {
+      "title": "Штрихкод",
+      "caption": "Штрихкод"
+    },
+    "sign": {
+      "title": "Подпись",
+      "caption": "Подпись"
+    },
+    "employees": {
+      "title": "Сотрудники",
+      "caption": "Сотрудники"
+    },
+    "recruitment": {
+      "title": "Найм",
+      "caption": "Найм"
+    },
+    "time_off": {
+      "title": "Отпуска",
+      "caption": "Отпуска"
+    },
+    "payroll": {
+      "title": "Зарплата",
+      "caption": "Зарплата"
+    },
+    "expenses": {
+      "title": "Расходы",
+      "caption": "Расходы"
+    },
+    "apps": {
+      "title": "Приложения",
+      "caption": "Приложения"
+    },
+    "settings": {
+      "title": "Настройки",
+      "caption": "Настройки"
     }
   }
 }
