@@ -36,19 +36,19 @@ Shared local password for **all** demo accounts:
 
 Mirror file (gitignored): `apps/api/.local/demo-credentials.json`
 
-| Label | Username | Password |
-| --- | --- | --- |
-| SuperAdmin | `superadmin@azes.local` | `LocalDevPass123!` |
-| GeneralAdmin | `generaladmin@azes.local` | `LocalDevPass123!` |
-| AZES Company orgAdmin | `azes.admin@azes.local` | `LocalDevPass123!` |
-| AZES Dev manager | `azes.devmgr@azes.local` | `LocalDevPass123!` |
-| AZES Sales | `azes.sales@azes.local` | `LocalDevPass123!` |
-| AZES Finance | `azes.finance@azes.local` | `LocalDevPass123!` |
-| AZES Member | `azes.member@azes.local` | `LocalDevPass123!` |
-| Demo Customer admin | `customer.admin@demo.local` | `LocalDevPass123!` |
-| Demo Customer manager | `customer.mgr@demo.local` | `LocalDevPass123!` |
-| Demo Customer user A | `customer.user.a@demo.local` | `LocalDevPass123!` |
-| Demo Customer user B | `customer.user.b@demo.local` | `LocalDevPass123!` |
+| Label                 | Username                     | Password           |
+| --------------------- | ---------------------------- | ------------------ |
+| SuperAdmin            | `superadmin@azes.local`      | `LocalDevPass123!` |
+| GeneralAdmin          | `generaladmin@azes.local`    | `LocalDevPass123!` |
+| AZES Company orgAdmin | `azes.admin@azes.local`      | `LocalDevPass123!` |
+| AZES Dev manager      | `azes.devmgr@azes.local`     | `LocalDevPass123!` |
+| AZES Sales            | `azes.sales@azes.local`      | `LocalDevPass123!` |
+| AZES Finance          | `azes.finance@azes.local`    | `LocalDevPass123!` |
+| AZES Member           | `azes.member@azes.local`     | `LocalDevPass123!` |
+| Demo Customer admin   | `customer.admin@demo.local`  | `LocalDevPass123!` |
+| Demo Customer manager | `customer.mgr@demo.local`    | `LocalDevPass123!` |
+| Demo Customer user A  | `customer.user.a@demo.local` | `LocalDevPass123!` |
+| Demo Customer user B  | `customer.user.b@demo.local` | `LocalDevPass123!` |
 
 ## Not this
 
